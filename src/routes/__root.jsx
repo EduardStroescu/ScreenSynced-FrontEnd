@@ -1,5 +1,4 @@
 import { Outlet, RootRoute, ScrollRestoration } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Layout } from "../components";
 
 export const route = new RootRoute({
@@ -8,7 +7,7 @@ export const route = new RootRoute({
       <Layout>
         <Outlet />
         <ScrollRestoration />
-        <TanStackRouterDevtools initialIsOpen={false} />
+        {/* <TanStackRouterDevtools initialIsOpen={false} /> */}
       </Layout>
     </>
   ),

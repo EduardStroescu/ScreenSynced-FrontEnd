@@ -1,6 +1,5 @@
 import { ReactLenis } from "@studio-freight/react-lenis";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Router, RouterProvider } from "@tanstack/react-router";
 
 import { routeTree } from "./routeTree";
@@ -29,7 +28,7 @@ function App() {
         >
           <RouterProvider router={router} />
         </ReactLenis>
-        <ReactQueryDevtools />
+        {/* <ReactQueryDevtools /> */}
       </QueryClientProvider>
     </>
   );
