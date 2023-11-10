@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  background-color: #070B11;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Scrollbar width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar-track {
+  background: #005f70; 
+}
+ 
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+  background: #0689a0; 
+  border-radius: 1rem;
+
+}
+
+/* Scrollbar Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
+}
+
+/* Image Reset */
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  font-style: italic;
+  background-repeat: no-repeat;
+  background-size: cover;
+  shape-margin: 0.75rem;
+}
