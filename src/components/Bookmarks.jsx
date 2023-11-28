@@ -55,7 +55,7 @@ export function Bookmarks() {
       <header className="flex flex-row items-center justify-start pb-4">
         <h2 className="py-1 text-2xl">Bookmarks</h2>
       </header>
-      {movieBookmarksDetailsData.length && (
+      {movieBookmarksDetailsData.length > 0 && (
         <article>
           <header className="flex flex-row items-center justify-between gap-2 py-2 pl-4">
             <h3 className="py-1 text-2xl">Movies</h3>
