@@ -100,11 +100,6 @@ export function ChangeAvatarForm() {
           >
             Update Avatar
           </button>
-          {/* {errorMessage && (
-            <div>
-              <div>{errorMessage}</div>
-            </div>
-          )} */}
         </form>
       </div>
     </section>

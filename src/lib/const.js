@@ -1,3 +1,5 @@
+// Variants used by Framer Motion
+
 export const desktopVariants = {
   open: (height = 1000) => ({
     display: "flex",
