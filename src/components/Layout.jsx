@@ -305,7 +305,7 @@ export function DesktopMenuDrawer({
             initial={false}
             animate={isMenuOpen ? "open" : "closed"}
             variants={desktopVariants}
-            className="absolute -left-[8rem] top-14 flex flex-col justify-around gap-4 rounded-lg border-4 border-double border-cyan-500 bg-[#070B11] px-10 pb-2 font-serif text-lg"
+            className="absolute right-0 top-14 flex flex-col justify-around gap-4 rounded-lg border-4 border-double border-cyan-500 bg-[#070B11] px-10 pb-2 font-serif text-lg"
           >
             <h3 className="w-full border-b-2 border-double border-cyan-500 py-2 text-center font-londrina text-3xl text-white">
               {user?.displayName}
@@ -320,7 +320,7 @@ export function DesktopMenuDrawer({
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="flex w-full flex-row gap-2 rounded text-center hover:bg-cyan-500"
+              className="flex w-full flex-row items-center justify-center gap-2 rounded text-center hover:bg-cyan-500"
             >
               <BookmarkIcon className={"w-4"} />
               Bookmarks

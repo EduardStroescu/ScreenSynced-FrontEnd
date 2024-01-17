@@ -38,6 +38,10 @@ Example:
 VITE_TMDB_KEY="" - Provided by TMBD
 VITE_FRONTEND_URL="http://localhost:5173" - The url of where the frontend is hosted.
 VITE_BACKEND_URL="" - The url of where the backend is hosted. The port can be chosen through the backend's .env
+
+VITE_DEMO_ACC_USERNAME="" - Credentials of the account created for demo purposes
+VITE_DEMO_ACC_PASSWORD="" - Credentials of the account created for demo purposes
+
 ```
 
 ### Installation && Local Development

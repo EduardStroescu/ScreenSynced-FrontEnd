@@ -7,6 +7,7 @@ import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useUser } from "../store";
 import { CloseIcon } from "./";
+import DemoAccountLogin from "./DemoAccountLogin";
 
 export function SignInForm({ acceptsRedirect }) {
   const { setUser, setLoggedIn, setOverlay, setOverlayType } = useUser();
@@ -122,6 +123,7 @@ export function SignInForm({ acceptsRedirect }) {
             </button>
           )}
         </nav>
+        <DemoAccountLogin acceptsRedirect={acceptsRedirect} />
       </section>
     </section>
   );

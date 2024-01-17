@@ -37,7 +37,7 @@ function PlayerSection({ data }) {
   const youtubeLink = getYoutubeLink(videoIds);
   return (
     <section className="flex h-[500px] w-full flex-col lg:h-[800px]">
-      {youtubeLink && (
+      {youtubeLink ? (
         <ReactPlayer
           url={youtubeLink}
           width="100%"
@@ -58,6 +58,12 @@ function PlayerSection({ data }) {
             },
           }}
           className={`h-full w-full cursor-pointer`}
+        />
+      ) : (
+        <img
+          src="/placeholders/placeholder-content.svg"
+          className="h-[95%] w-full"
+          loading="lazy"
         />
       )}
       <div className="text-serif flex flex-row gap-4 rounded-b-xl bg-[#131E2E] py-2 pl-4 text-xs sm:px-4 sm:text-sm">
