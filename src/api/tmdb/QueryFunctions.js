@@ -9,8 +9,8 @@ export const baseUrl = axios.create({
 
 export const fetchAllContent = async () => {
   const [moviesResponse, seriesResponse] = await Promise.all([
-    baseUrl.get(Sections.movies.sections[0].endpoint),
-    baseUrl.get(Sections.series.sections[0].endpoint),
+    baseUrl.get(Sections.movies.sections[0].endpoint.replace("page_number", 1)),
+    baseUrl.get(Sections.series.sections[0].endpoint.replace("page_number", 1)),
   ]);
   return {
     movies: moviesResponse.data,

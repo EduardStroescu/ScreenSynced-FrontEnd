@@ -188,7 +188,7 @@ export const Sections = {
     sections: [
       {
         title: "Popular Movies",
-        endpoint: `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&include_adult=true&include_video=false&language=en-US&page=page_number&sort_by=popularity.desc&with_original_language=en`,
+        endpoint: `/discover/movie?api_key=${API_KEY}&include_adult=true&include_video=false&language=en-US&page=page_number&sort_by=popularity.desc&with_original_language=en`,
       },
       {
         title: "DiscoverByGenre",
@@ -223,7 +223,7 @@ export const Sections = {
     sections: [
       {
         title: "Popular Series",
-        endpoint: `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=page_number&sort_by=popularity.desc&with_original_language=en&without_genres=10763%2C%2010764%2C%2010766%2C%2010767`,
+        endpoint: `/discover/tv?api_key=${API_KEY}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=page_number&sort_by=popularity.desc&with_original_language=en&without_genres=10763%2C%2010764%2C%2010766%2C%2010767`,
       },
       {
         title: "DiscoverByGenre",
