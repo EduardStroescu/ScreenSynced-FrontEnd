@@ -10,7 +10,7 @@ import { useUser } from "../store";
 import { CloseIcon } from "./";
 
 export function ChangePasswordForm() {
-  const [onRequest, setOnRequest] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { setUser, setLoggedIn, setOverlay, setOverlayType } = useUser();
   const navigate = useNavigate({ from: "/" });
 
@@ -37,14 +37,13 @@ export function ChangePasswordForm() {
         .required("The confirmation password is required"),
     }),
     onSubmit: async (values) => {
-      if (onRequest) return;
-      setOnRequest(true);
+      if (isLoading) return;
+      setIsLoading(true);
       const { response, error } =
         await updatePasswordMutation.mutateAsync(values);
 
-      setOnRequest(false);
-
       if (response) {
+        setIsLoading(false);
         changePasswordForm.resetForm();
         setUser(null);
         setLoggedIn(false);
@@ -56,6 +55,7 @@ export function ChangePasswordForm() {
 
       if (error) {
         toast.error(error.message);
+        setIsLoading(false);
       }
     },
   });
@@ -127,6 +127,7 @@ export function ChangePasswordForm() {
             type="submit"
             value="Send"
             className="my-5 rounded border-2 border-cyan-500 bg-[#005f70] px-4 py-1 text-white hover:bg-cyan-500"
+            disabled={isLoading}
           >
             Change Password
           </button>

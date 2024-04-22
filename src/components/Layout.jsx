@@ -202,16 +202,7 @@ function DesktopHeader({
   );
 }
 
-function MobileHeader({
-  setOverlayType,
-  setOverlay,
-  loggedIn,
-  setLoggedIn,
-  user,
-  setUser,
-  setItem,
-  getItem,
-}) {
+function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
   const [isMenuOpen, setMenuOpen] = useCycle(false, true);
   const [isSearchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -313,21 +304,21 @@ export function DesktopMenuDrawer({
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="w-full rounded text-center hover:bg-cyan-500"
+              className="w-full rounded px-2 text-center hover:bg-cyan-500"
             >
               Account
             </Link>
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="flex w-full flex-row items-center justify-center gap-2 rounded text-center hover:bg-cyan-500"
+              className="flex w-full flex-row items-center justify-center gap-2 rounded px-2 text-center hover:bg-cyan-500"
             >
               <BookmarkIcon className={"w-4"} />
               Bookmarks
             </Link>
             <Link
               to="/"
-              className="w-full rounded text-center hover:bg-cyan-500"
+              className="w-full rounded px-2 text-center hover:bg-cyan-500"
               onClick={() => {
                 setMenuOpen(false);
                 setItem(null);
@@ -358,93 +349,89 @@ export function DesktopMenuDrawer({
 export function MobileMenuDrawer({ isMenuOpen, setMenuOpen }) {
   return (
     <Drawer isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} openFrom="left">
-      <div className="grid">
-        <nav className="grid gap-4 p-6 text-white sm:gap-6 sm:px-12 sm:py-8">
-          <Link
-            onClick={() => setMenuOpen()}
-            to="/"
-            className="font-serif text-lg hover:text-cyan-400"
-          >
-            Home
-          </Link>
-          <Link
-            to="/account"
-            onClick={() => setMenuOpen()}
-            className="font-serif text-lg hover:text-cyan-400"
-          >
-            Account
-          </Link>
-          <Link
-            to="/discover/$pageNumber"
-            params={{ pageNumber: 1 }}
-            onClick={() => setMenuOpen()}
-            className="font-serif text-lg hover:text-cyan-400"
-            activeProps={{
-              className: "text-cyan-400",
-            }}
-          >
-            Discover
-          </Link>
-          <Link
-            to="/movies/$pageNumber"
-            params={{ pageNumber: 1 }}
-            onClick={() => setMenuOpen()}
-            className="font-serif text-lg hover:text-cyan-400"
-            activeProps={{
-              className: "text-cyan-400",
-            }}
-          >
-            Movies
-          </Link>
-          <Link
-            to="/tvs/$pageNumber"
-            params={{ pageNumber: 1 }}
-            onClick={() => setMenuOpen()}
-            className="font-serif text-lg hover:text-cyan-400"
-            activeProps={{
-              className: "text-cyan-400 ",
-            }}
-          >
-            Series
-          </Link>
-        </nav>
-      </div>
+      <nav className="flex w-full flex-col items-center justify-center gap-4 p-6 text-white sm:gap-6 sm:px-12 sm:py-8">
+        <Link
+          onClick={setMenuOpen}
+          to="/"
+          className="font-serif text-2xl hover:text-cyan-400"
+        >
+          Home
+        </Link>
+        <Link
+          to="/account"
+          onClick={setMenuOpen}
+          className="font-serif text-2xl hover:text-cyan-400"
+        >
+          Account
+        </Link>
+        <Link
+          to="/discover/$pageNumber"
+          params={{ pageNumber: 1 }}
+          onClick={setMenuOpen}
+          className="font-serif text-2xl hover:text-cyan-400"
+          activeProps={{
+            className: "text-cyan-400",
+          }}
+        >
+          Discover
+        </Link>
+        <Link
+          to="/movies/$pageNumber"
+          params={{ pageNumber: 1 }}
+          onClick={setMenuOpen}
+          className="font-serif text-2xl hover:text-cyan-400"
+          activeProps={{
+            className: "text-cyan-400",
+          }}
+        >
+          Movies
+        </Link>
+        <Link
+          to="/tvs/$pageNumber"
+          params={{ pageNumber: 1 }}
+          onClick={setMenuOpen}
+          className="font-serif text-2xl hover:text-cyan-400"
+          activeProps={{
+            className: "text-cyan-400 ",
+          }}
+        >
+          Series
+        </Link>
+      </nav>
     </Drawer>
   );
 }
 
 function Footer() {
   return (
-    <>
-      <footer className="flex w-full flex-col items-center justify-center border-t border-cyan-500 px-2 py-6 lg:py-10">
-        <div className="flex max-w-full flex-col items-center justify-center gap-2 rounded-xl border-4 border-double border-cyan-500 bg-[#131E2E] px-4 py-6 text-white lg:gap-4">
-          <nav className="flex w-full flex-row justify-center gap-4 text-cyan-500">
-            <Link to="/discover/$pageNumber" params={{ pageNumber: 1 }}>
-              Discover
-            </Link>
-            <Link to="/movies/1">Movies</Link>
-            <Link to="/tvs/1">Series</Link>
-            <Link to="/account">Account</Link>
-          </nav>
-          <section className="flex w-full flex-col text-center">
-            <p>
-              Your destination for online movie streaming. Watch movies anytime,
-              anywhere. Explore our vast collection and experience cinematic
-              wonders at your fingertips.
-            </p>
-            <div className="self-center pt-4 text-white">
-              <a
-                rel="noreferrer"
-                target="_blank"
-                href="https://eduardstroescu-portofolio.vercel.app/"
-                className="text-cyan-300"
-              >
-                &copy; {new Date().getFullYear()} / Eduard Stroescu
-              </a>
-            </div>
-          </section>
-        </div>
-      </footer>
-    </>
+    <footer className="flex w-full flex-col items-center justify-center border-t border-cyan-500 px-2 py-6 lg:py-10">
+      <div className="flex max-w-full flex-col items-center justify-center gap-2 rounded-xl border-4 border-double border-cyan-500 bg-[#131E2E] px-4 py-6 text-white lg:gap-4">
+        <nav className="flex w-full flex-row justify-center gap-4 text-cyan-500">
+          <Link to="/discover/$pageNumber" params={{ pageNumber: 1 }}>
+            Discover
+          </Link>
+          <Link to="/movies/1">Movies</Link>
+          <Link to="/tvs/1">Series</Link>
+          <Link to="/account">Account</Link>
+        </nav>
+        <section className="flex w-full flex-col text-center">
+          <p>
+            Your destination for online movie streaming. Watch movies anytime,
+            anywhere. Explore our vast collection and experience cinematic
+            wonders at your fingertips.
+          </p>
+          <div className="self-center pt-4 text-white">
+            <a
+              rel="noreferrer"
+              target="_blank"
+              href="https://eduardstroescu-portofolio.vercel.app/"
+              className="text-cyan-300"
+            >
+              &copy; {new Date().getFullYear()} / Eduard Stroescu
+            </a>
+          </div>
+        </section>
+      </div>
+    </footer>
   );
 }

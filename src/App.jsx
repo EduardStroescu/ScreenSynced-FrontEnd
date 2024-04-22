@@ -2,12 +2,14 @@ import { ReactLenis } from "@studio-freight/react-lenis";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Router, RouterProvider } from "@tanstack/react-router";
 
+import ErrorComponent from "./components/ErrorComponent";
 import { routeTree } from "./routeTree";
 
 const queryClient = new QueryClient();
 const router = new Router({
   routeTree,
   defaultPreload: "intent",
+  defaultErrorComponent: () => <ErrorComponent />,
   context: {
     queryClient,
   },

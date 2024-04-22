@@ -9,7 +9,7 @@ import { useUser } from "../store";
 import { CloseIcon } from "./";
 
 export function ChangeAvatarForm() {
-  const [onRequest, setOnRequest] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user, setUser, setOverlay } = useUser();
   const { setItem, getItem } = useLocalStorage("user");
   const [avatar, setAvatar] = useState(user?.avatar);
@@ -24,14 +24,15 @@ export function ChangeAvatarForm() {
     },
     validationSchema: Yup.object({}),
     onSubmit: async (values) => {
-      if (onRequest) return;
-      setOnRequest(true);
+      if (isLoading) return;
+      setIsLoading(true);
 
       const { response, error } =
         await updateAvatarMutation.mutateAsync(values);
 
       if (response) {
         changeAvatarForm.resetForm();
+        setIsLoading(false);
         setItem(response);
         setUser(getItem());
         setOverlay(false);
@@ -40,9 +41,8 @@ export function ChangeAvatarForm() {
 
       if (error) {
         toast.error(error.message);
+        setIsLoading(false);
       }
-
-      setOnRequest(false);
     },
   });
 
@@ -97,6 +97,7 @@ export function ChangeAvatarForm() {
             type="submit"
             value="Send"
             className="my-4 rounded border-2 border-cyan-500 bg-[#005f70] px-6 py-1 text-white hover:bg-cyan-500"
+            disabled={isLoading}
           >
             Update Avatar
           </button>

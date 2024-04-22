@@ -1,5 +1,5 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { useRouteContext } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import {
   fetchMovieDetails,
   fetchSerieDetails,
@@ -55,7 +55,19 @@ export function Bookmarks() {
       <header className="flex flex-row items-center justify-start pb-4">
         <h2 className="py-1 text-2xl">Bookmarks</h2>
       </header>
-      {movieBookmarksDetailsData.length > 0 && (
+      {!movieBookmarksDetailsData?.length &&
+        !tvBookmarksDetailsData?.length && (
+          <div className="ml-2 flex items-center gap-4">
+            <p className="text-red-500">None added yet</p>
+            <Link
+              to="/discover/1"
+              className="rounded bg-cyan-500 px-2 py-1 hover:bg-cyan-600"
+            >
+              Discover Now
+            </Link>
+          </div>
+        )}
+      {movieBookmarksDetailsData?.length > 0 && (
         <article>
           <header className="flex flex-row items-center justify-between gap-2 py-2 pl-4">
             <h3 className="py-1 text-2xl">Movies</h3>
@@ -95,7 +107,7 @@ export function Bookmarks() {
           </Swiper>
         </article>
       )}
-      {tvBookmarksDetailsData.length > 0 ? (
+      {tvBookmarksDetailsData?.length > 0 && (
         <article>
           <header className="flex flex-row items-center justify-between py-4 pl-4">
             <h3 className="py-1 text-2xl">Series</h3>
@@ -134,7 +146,7 @@ export function Bookmarks() {
             </div>
           </Swiper>
         </article>
-      ) : null}
+      )}
     </section>
   );
 }

@@ -17,6 +17,7 @@ export {
 export { Image } from "./Image";
 export { Layout } from "./Layout";
 export { Overlay } from "./Overlay";
+export { PaginationButtons } from "./PaginationButtons";
 export { SearchBarDesktop, SearchBarMobile } from "./SearchBar";
 export { Sidebar } from "./Sidebar";
 export { SignInForm } from "./SignInForm";

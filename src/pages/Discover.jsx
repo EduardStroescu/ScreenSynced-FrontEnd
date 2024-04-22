@@ -3,7 +3,7 @@ import { Link, useRouteContext } from "@tanstack/react-router";
 import { useState } from "react";
 import { fetchContentByGenre } from "../api/tmdb/QueryFunctions";
 import { contentGenres } from "../api/tmdb/movieEndpoints";
-import { ContentGrid } from "../components";
+import { ContentGrid, PaginationButtons } from "../components";
 
 export function Discover() {
   const [contentType, setContentType] = useState("movies");
@@ -80,46 +80,13 @@ export function Discover() {
         contentType={contentType === "movies" ? "movie" : "tv"}
         contentQuery={contentQuery}
       />
-      <NavigationButtons contentQuery={contentQuery} pageNumber={pageNumber} />
-    </>
-  );
-}
-
-function NavigationButtons({ contentQuery, pageNumber }) {
-  return (
-    <>
       {contentQuery && (
-        <nav className="col-span-6 flex flex-row items-center justify-around gap-4 p-6 lg:col-span-3">
-          <Link
-            to={`/discover/$pageNumber`}
-            params={{
-              pageNumber:
-                Number(pageNumber) > 1
-                  ? Number(pageNumber) - 1
-                  : Number(pageNumber),
-            }}
-            className={`${
-              Number(pageNumber) === 1 ? "hidden" : "block"
-            } text-md w-full rounded-full bg-cyan-500 px-1 py-1 text-center lg:p-2`}
-          >
-            Go Back
-          </Link>
-          <Link
-            disabled={Number(pageNumber) === 500}
-            to={`/discover/$pageNumber`}
-            params={{
-              pageNumber:
-                Number(pageNumber) < 500
-                  ? Number(pageNumber) + 1
-                  : Number(pageNumber),
-            }}
-            className="text-md w-full rounded-full bg-cyan-500 px-1 py-1 text-center lg:p-2"
-          >
-            {Number(pageNumber.pageNumber) === 500
-              ? "You've reached the end"
-              : "See More"}
-          </Link>
-        </nav>
+        <PaginationButtons
+          contentType={"discover"}
+          contentQuery={contentQuery}
+          context={pageNumber}
+          totalPages={500}
+        />
       )}
     </>
   );

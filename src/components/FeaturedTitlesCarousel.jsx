@@ -22,18 +22,18 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
 
   const isInView = useInView(isInViewRef, { once: true, amount: 0 });
 
-  const slicedResults = apiData?.results.slice(0, 5);
+  const slicedResults = apiData.results?.slice(0, 5);
   const contentIds = [].concat(...slicedResults.map((movie) => [movie.id]));
 
   const queryContent = {
     movies: {
-      queries: contentIds.map((id) => ({
+      queries: contentIds?.map((id) => ({
         queryKey: ["movieId", id],
         queryFn: () => fetchCarouselMovieVideos(id),
       })),
     },
     series: {
-      queries: contentIds.map((id) => ({
+      queries: contentIds?.map((id) => ({
         queryKey: ["serieId", id],
         queryFn: () => fetchCarouselSeriesVideos(id),
       })),
@@ -70,7 +70,7 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
         modules={[Autoplay, Pagination]}
         className="z-[104]"
       >
-        {apiData.results.slice(0, 5).map((content, index) => {
+        {apiData.results?.slice(0, 5).map((content, index) => {
           const contentImage =
             content.poster_path !== null && content.poster_path !== undefined
               ? "https://image.tmdb.org/t/p/original" + content.poster_path

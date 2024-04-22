@@ -5,19 +5,22 @@ import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useUser } from "../store";
 
-const DemoAccountLogin = ({ acceptsRedirect }) => {
+const DemoAccountLogin = ({ acceptsRedirect, isLoading, setIsLoading }) => {
   const { setUser, setLoggedIn, setOverlay, setOverlayType } = useUser();
   const { setItem, getItem } = useLocalStorage("user");
   const navigate = useNavigate({ from: "/" });
   const signInMutation = useMutation((values) => userApi.signin(values));
   const handleDemoLogin = async () => {
+    setIsLoading(true);
     const username = import.meta.env.VITE_DEMO_ACC_USERNAME;
     const password = import.meta.env.VITE_DEMO_ACC_PASSWORD;
     const { response, error } = await signInMutation.mutateAsync({
       password: password,
       username: username,
     });
+
     if (response) {
+      setIsLoading(false);
       setItem(response);
       setUser(getItem());
       setLoggedIn(true);
@@ -27,7 +30,10 @@ const DemoAccountLogin = ({ acceptsRedirect }) => {
       toast.success("Logged In");
     }
 
-    if (error) toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -36,8 +42,9 @@ const DemoAccountLogin = ({ acceptsRedirect }) => {
       <button
         className="w-full rounded border-2 border-cyan-500 bg-[#bb1e09] py-1 text-white hover:bg-[#df250d]"
         onClick={() => handleDemoLogin()}
+        disabled={isLoading}
       >
-        Log in As Demo User
+        {!isLoading ? "Log in As Demo User" : "Loading..."}
       </button>
     </div>
   );

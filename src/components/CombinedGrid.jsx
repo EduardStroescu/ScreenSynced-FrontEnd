@@ -8,8 +8,8 @@ export function CombinedGrid() {
   const { data: contentQuery } = useQuery(queryContent);
   const [queryType, setQueryType] = useState("movies");
   return (
-    <article className="col-span-6 rounded-xl px-1 py-6 lg:p-6 xl:col-span-3">
-      <header className="flex flex-col justify-start gap-6 pb-4 pl-2 sm:flex-row">
+    <article className="col-span-6 my-6 px-1 lg:px-4 xl:col-span-3">
+      <header className="flex flex-col items-center justify-start gap-6 pb-6  sm:flex-row">
         <h2 className="text-2xl">Recommended</h2>
         <div className="flex flex-row items-center justify-center">
           <button
@@ -32,7 +32,7 @@ export function CombinedGrid() {
       </header>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-3 xl:grid-cols-6">
-        {(queryType ? contentQuery[queryType]?.results : contentQuery.results)
+        {(queryType ? contentQuery[queryType]?.results : contentQuery?.results)
           ?.slice(0, 18)
           .map((content, index) => (
             <ContentCard

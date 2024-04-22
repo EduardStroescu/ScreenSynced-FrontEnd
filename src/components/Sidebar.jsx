@@ -21,8 +21,8 @@ export function Sidebar({ contentType, queryType }) {
       : upcomingData?.upcomingSeries;
 
   return (
-    <aside className="col-span-1 hidden overflow-hidden p-1 lg:p-6 xl:block">
-      <header className="flex flex-col items-center justify-between gap-4 pb-[1.46rem] pt-1 lg:flex-row lg:gap-0">
+    <aside className="col-span-1 my-6 hidden px-2 lg:px-4 xl:block">
+      <header className="flex flex-col items-center justify-between gap-4 pb-6 lg:flex-row lg:gap-0">
         <h2 className="text-2xl text-cyan-500">
           Upcoming {contentType === "movie" ? "Movies" : "Series"}
         </h2>
@@ -81,7 +81,7 @@ export function Sidebar({ contentType, queryType }) {
               ].join(" ");
 
               return (
-                <motion.div
+                <motion.ul
                   layout="position"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -93,13 +93,13 @@ export function Sidebar({ contentType, queryType }) {
                   key={content.id}
                   className="col-span-1 flex w-full items-center justify-start rounded-xl border-r-2 border-cyan-500 bg-[#131E2E]"
                 >
-                  <div className="flex w-12 items-center justify-center px-8 text-center">
+                  <li className="flex w-12 items-center justify-center px-8 text-center">
                     <p
                       className={`${style} text-center font-londrina text-5xl`}
                     >
                       {index + 1}
                     </p>
-                  </div>
+                  </li>
                   <div className="flex w-full flex-row items-center justify-start gap-2 overflow-hidden">
                     <Image
                       isInView={isInView}
@@ -110,7 +110,7 @@ export function Sidebar({ contentType, queryType }) {
                       className={"aspect-[2/3] w-1/5 object-cover"}
                       placeholderClassName={"aspect-[2/3] w-1/5 object-cover"}
                     />
-                    <div className="flex w-[80%] flex-col p-2">
+                    <div className="flex w-[78%] flex-col p-2">
                       <Link
                         to={`/${contentType}/$${contentType}Id`}
                         params={{ [`${contentType}Id`]: content.id }}
@@ -130,7 +130,7 @@ export function Sidebar({ contentType, queryType }) {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </motion.ul>
               );
             })}
         </article>

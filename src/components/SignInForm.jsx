@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import userApi from "../api/backend/modules/user.api";
@@ -10,6 +11,7 @@ import { CloseIcon } from "./";
 import DemoAccountLogin from "./DemoAccountLogin";
 
 export function SignInForm({ acceptsRedirect }) {
+  const [isLoading, setIsLoading] = useState(false);
   const { setUser, setLoggedIn, setOverlay, setOverlayType } = useUser();
   const { setItem, getItem } = useLocalStorage("user");
   const navigate = useNavigate({ from: "/" });
@@ -29,10 +31,12 @@ export function SignInForm({ acceptsRedirect }) {
         .required("A password is required"),
     }),
     onSubmit: async (values) => {
+      setIsLoading(true);
       const { response, error } = await signInMutation.mutateAsync(values);
 
       if (response) {
         signInForm.resetForm();
+        setIsLoading(false);
         setItem(response);
         setUser(getItem());
         setLoggedIn(true);
@@ -42,7 +46,10 @@ export function SignInForm({ acceptsRedirect }) {
         toast.success("Logged In");
       }
 
-      if (error) toast.error(error.message);
+      if (error) {
+        toast.error(error.message);
+        setIsLoading(false);
+      }
     },
   });
 
@@ -99,8 +106,9 @@ export function SignInForm({ acceptsRedirect }) {
             className="mt-4 w-1/2 rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white hover:bg-cyan-500"
             type="submit"
             value="Send"
+            disabled={isLoading}
           >
-            Log In
+            {!isLoading ? "Log In" : "Loading..."}
           </button>
         </form>
         <nav className="flex w-full flex-row items-center justify-start gap-2 self-end pb-6 pt-10">
@@ -123,7 +131,11 @@ export function SignInForm({ acceptsRedirect }) {
             </button>
           )}
         </nav>
-        <DemoAccountLogin acceptsRedirect={acceptsRedirect} />
+        <DemoAccountLogin
+          acceptsRedirect={acceptsRedirect}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
       </section>
     </section>
   );
