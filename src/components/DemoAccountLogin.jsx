@@ -1,22 +1,30 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUser } from "../store";
+import { useUserStoreActions } from "../store";
 
-const DemoAccountLogin = ({ acceptsRedirect, isLoading, setIsLoading }) => {
-  const { setUser, setLoggedIn, setOverlay, setOverlayType } = useUser();
+const DemoAccountLogin = ({
+  acceptsRedirect = false,
+  isLoading,
+  setIsLoading,
+}) => {
+  const { setUser, setLoggedIn, setOverlay, setOverlayType } =
+    useUserStoreActions();
   const { setItem, getItem } = useLocalStorage("user");
   const navigate = useNavigate({ from: "/" });
-  const signInMutation = useMutation((values) => userApi.signin(values));
+  const signInMutation = useMutation({
+    mutationFn: (values) => userApi.signin(values),
+  });
   const handleDemoLogin = async () => {
     setIsLoading(true);
-    const username = import.meta.env.VITE_DEMO_ACC_USERNAME;
+    const userName = import.meta.env.VITE_DEMO_ACC_USERNAME;
     const password = import.meta.env.VITE_DEMO_ACC_PASSWORD;
     const { response, error } = await signInMutation.mutateAsync({
       password: password,
-      username: username,
+      userName: userName,
     });
 
     if (response) {
@@ -51,3 +59,9 @@ const DemoAccountLogin = ({ acceptsRedirect, isLoading, setIsLoading }) => {
 };
 
 export default DemoAccountLogin;
+
+DemoAccountLogin.propTypes = {
+  acceptsRedirect: PropTypes.bool,
+  isLoading: PropTypes.bool.isRequired,
+  setIsLoading: PropTypes.func.isRequired,
+};

@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView } from "framer-motion";
+import PropTypes from "prop-types";
 import { useRef, useState } from "react";
 import { fetchPopularUpcomingMoviesandSeries } from "../api/tmdb/QueryFunctions";
+import { backdropPrefixSmall, posterPrefixSmall } from "../lib/const";
+import { placeholderImage } from "../lib/placeholders";
 import { AddBookmarkButton, Image } from "./";
 
 export function Sidebar({ contentType, queryType }) {
@@ -54,7 +57,7 @@ export function Sidebar({ contentType, queryType }) {
         </div>
       </header>
       <AnimatePresence>
-        <article ref={isInViewRef} className="grid grid-cols-1 gap-2">
+        <ul ref={isInViewRef} className="grid grid-cols-1 gap-2">
           {(queryType
             ? contentQuery[queryType]?.results
             : contentQuery?.results
@@ -68,11 +71,11 @@ export function Sidebar({ contentType, queryType }) {
               const contentImage =
                 content.poster_path !== null &&
                 content.poster_path !== undefined
-                  ? "https://image.tmdb.org/t/p/w185" + content.poster_path
+                  ? posterPrefixSmall + content.poster_path
                   : content.backdrop_path !== null &&
                     content.backdrop_path !== undefined
-                  ? "https://image.tmdb.org/t/p/w300" + content.backdrop_path
-                  : "https://placehold.co/400x400/070B11/06b6d4?text=A+picture+is+worth\\na+thousand+words,\\nbut+not+today.&font=sans";
+                  ? backdropPrefixSmall + content.backdrop_path
+                  : placeholderImage;
 
               const style = [
                 isFirst && "text-red-500",
@@ -81,7 +84,8 @@ export function Sidebar({ contentType, queryType }) {
               ].join(" ");
 
               return (
-                <motion.ul
+                <motion.li
+                  key={content.id}
                   layout="position"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -90,21 +94,20 @@ export function Sidebar({ contentType, queryType }) {
                     duration: 0.25,
                     delay: index / 6,
                   }}
-                  key={content.id}
-                  className="col-span-1 flex w-full items-center justify-start rounded-xl border-r-2 border-cyan-500 bg-[#131E2E]"
+                  className="group col-span-1 flex w-full items-center justify-start rounded-xl border-r-2 border-cyan-500 bg-[#131E2E] text-left"
                 >
-                  <li className="flex w-12 items-center justify-center px-8 text-center">
+                  <div className="flex w-12 items-center justify-center px-8 text-center">
                     <p
                       className={`${style} text-center font-londrina text-5xl`}
                     >
                       {index + 1}
                     </p>
-                  </li>
+                  </div>
                   <div className="flex w-full flex-row items-center justify-start gap-2 overflow-hidden">
                     <Image
                       isInView={isInView}
                       src={contentImage}
-                      alt={content?.name}
+                      alt={`${content?.name} poster`}
                       width={185}
                       height={278}
                       className={"aspect-[2/3] w-1/5 object-cover"}
@@ -114,14 +117,14 @@ export function Sidebar({ contentType, queryType }) {
                       <Link
                         to={`/${contentType}/$${contentType}Id`}
                         params={{ [`${contentType}Id`]: content.id }}
-                        className="w-full truncate font-sans text-lg hover:text-cyan-500"
+                        className="w-full truncate font-sans text-lg group-hover:text-cyan-500"
                       >
                         {content.title || content.name}
                       </Link>
                       <div className="flex flex-row gap-1 text-xs">
                         <AddBookmarkButton
                           className={"w-[0.7rem]"}
-                          contentId={content.id}
+                          contentId={content?.id}
                           mediaType={
                             content.mediaType ? content.mediaType : contentType
                           }
@@ -130,11 +133,16 @@ export function Sidebar({ contentType, queryType }) {
                       </div>
                     </div>
                   </div>
-                </motion.ul>
+                </motion.li>
               );
             })}
-        </article>
+        </ul>
       </AnimatePresence>
     </aside>
   );
 }
+
+Sidebar.propTypes = {
+  contentType: PropTypes.oneOf(["movie", "tv"]).isRequired,
+  queryType: PropTypes.oneOf(["movies", "tv"]),
+};

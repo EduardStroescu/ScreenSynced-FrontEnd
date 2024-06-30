@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import PropTypes from "prop-types";
 
 export function PaginationButtons({ contentType, context, totalPages }) {
   return (
@@ -31,3 +32,9 @@ export function PaginationButtons({ contentType, context, totalPages }) {
     </nav>
   );
 }
+
+PaginationButtons.propTypes = {
+  contentType: PropTypes.string.isRequired,
+  context: PropTypes.string.isRequired,
+  totalPages: PropTypes.number,
+};

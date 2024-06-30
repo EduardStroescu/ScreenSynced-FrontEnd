@@ -1,33 +1,37 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUser } from "../store";
+import { placeholderAvatar } from "../lib/placeholders";
+import { useUserStoreActions } from "../store";
 import { CloseIcon } from "./";
 
-export function SignUpForm({ acceptsRedirect }) {
+export function SignUpForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser, setLoggedIn, setOverlayType, setOverlay } = useUser();
+  const { setUser, setLoggedIn, setOverlayType, setOverlay } =
+    useUserStoreActions();
   const { setItem, getItem } = useLocalStorage("user");
   const navigate = useNavigate({ from: "/" });
-  const [avatar, setAvatar] = useState(
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png",
-  );
+  const [avatar, setAvatar] = useState(placeholderAvatar);
 
-  const useSignup = useMutation((values) => userApi.signup(values));
+  const useSignup = useMutation({
+    mutationFn: (values) => userApi.signup(values),
+  });
+
   const signUpForm = useFormik({
     initialValues: {
       password: "",
-      username: "",
+      userName: "",
       displayName: "",
       confirmPassword: "",
     },
     validationSchema: Yup.object({
-      username: Yup.string()
+      userName: Yup.string()
         .min(8, "The username must have minimum 8 characters")
         .required("A username is required"),
       password: Yup.string()
@@ -114,14 +118,14 @@ export function SignUpForm({ acceptsRedirect }) {
           <input
             type="text"
             placeholder="Username"
-            name="username"
-            value={signUpForm.values.username}
+            name="userName"
+            value={signUpForm.values.userName}
             onChange={signUpForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signUpForm.touched.username && signUpForm.errors.username && (
+          {signUpForm.touched.userName && signUpForm.errors.userName && (
             <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-              {signUpForm.errors.username}
+              {signUpForm.errors.userName}
             </div>
           )}
           <input
@@ -195,3 +199,7 @@ export function SignUpForm({ acceptsRedirect }) {
     </section>
   );
 }
+
+SignUpForm.propTypes = {
+  acceptsRedirect: PropTypes.bool,
+};

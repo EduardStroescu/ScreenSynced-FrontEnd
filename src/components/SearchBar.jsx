@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
+import PropTypes from "prop-types";
 import * as Yup from "yup";
 
 import { CloseIcon, SearchIcon } from "./";
@@ -80,3 +81,7 @@ export function SearchBarMobile({ setSearchModalOpen }) {
     </div>
   );
 }
+
+SearchBarMobile.propTypes = {
+  setSearchModalOpen: PropTypes.func.isRequired,
+};

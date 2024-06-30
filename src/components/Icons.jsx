@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 export function HamburgerIcon() {
   return (
     <svg
@@ -119,3 +121,15 @@ export function BookmarkIcon({ className }) {
     </svg>
   );
 }
+
+CloseIcon.propTypes = {
+  className: PropTypes.string,
+};
+
+SearchIcon.propTypes = {
+  className: PropTypes.string,
+};
+
+BookmarkIcon.propTypes = {
+  className: PropTypes.string,
+};

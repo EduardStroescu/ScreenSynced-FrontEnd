@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useInView } from "framer-motion";
+import PropTypes from "prop-types";
 import { useRef } from "react";
+import { backdropPrefixSmall, posterPrefixMedium } from "../lib/const";
+import { placeholderImage } from "../lib/placeholders";
+import { contentItemPropTypes } from "../lib/types";
 import { AddBookmarkButton, Image } from "./";
 
 export function ContentCard({ content, contentType }) {
@@ -9,10 +13,10 @@ export function ContentCard({ content, contentType }) {
 
   const contentImage =
     content?.poster_path !== null && content?.poster_path !== undefined
-      ? "https://image.tmdb.org/t/p/w342" + content.poster_path
+      ? posterPrefixMedium + content.poster_path
       : content?.backdrop_path !== null && content?.backdrop_path !== undefined
-      ? "https://image.tmdb.org/t/p/w300" + content.backdrop_path
-      : "https://placehold.co/400x400/070B11/06b6d4?text=A+picture+is+worth\\na+thousand+words,\\nbut+not+today.&font=sans";
+      ? backdropPrefixSmall + content.backdrop_path
+      : placeholderImage;
 
   return (
     <motion.section
@@ -33,7 +37,7 @@ export function ContentCard({ content, contentType }) {
         <Image
           isInView={isInView}
           src={contentImage}
-          alt={content?.title || content?.name}
+          alt={`${content?.title} poster` || `${content?.name} poster`}
           width={342}
           height={513}
           className={
@@ -55,7 +59,7 @@ export function ContentCard({ content, contentType }) {
               contentId={content?.id}
               mediaType={content?.mediaType ? content?.mediaType : contentType}
             />
-            {content?.vote_average} |{" "}
+            {content?.vote_average?.toFixed(1)} |{" "}
             {content?.release_date?.slice(0, 4) ||
               content?.first_air_date?.slice(0, 4)}
           </span>
@@ -67,3 +71,8 @@ export function ContentCard({ content, contentType }) {
     </motion.section>
   );
 }
+
+ContentCard.propTypes = {
+  content: contentItemPropTypes,
+  contentType: PropTypes.oneOf(["tv", "movie"]).isRequired,
+};

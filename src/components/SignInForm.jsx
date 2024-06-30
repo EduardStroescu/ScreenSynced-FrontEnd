@@ -1,29 +1,34 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUser } from "../store";
+import { useUserStoreActions } from "../store";
 import { CloseIcon } from "./";
 import DemoAccountLogin from "./DemoAccountLogin";
 
-export function SignInForm({ acceptsRedirect }) {
+export function SignInForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser, setLoggedIn, setOverlay, setOverlayType } = useUser();
+  const { setUser, setLoggedIn, setOverlay, setOverlayType } =
+    useUserStoreActions();
   const { setItem, getItem } = useLocalStorage("user");
   const navigate = useNavigate({ from: "/" });
 
-  const signInMutation = useMutation((values) => userApi.signin(values));
+  const signInMutation = useMutation({
+    mutationFn: (values) => userApi.signin(values),
+  });
+
   const signInForm = useFormik({
     initialValues: {
       password: "",
-      username: "",
+      userName: "",
     },
     validationSchema: Yup.object({
-      username: Yup.string()
+      userName: Yup.string()
         .min(8, "The username must have minimum 8 characters")
         .required("A username is required"),
       password: Yup.string()
@@ -79,14 +84,14 @@ export function SignInForm({ acceptsRedirect }) {
           <input
             type="text"
             placeholder="Username"
-            name="username"
-            value={signInForm.values.username}
+            name="userName"
+            value={signInForm.values.userName}
             onChange={signInForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signInForm.touched.username && signInForm.errors.username && (
+          {signInForm.touched.userName && signInForm.errors.userName && (
             <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-              {signInForm.errors.username}
+              {signInForm.errors.userName}
             </div>
           )}
           <input
@@ -140,3 +145,7 @@ export function SignInForm({ acceptsRedirect }) {
     </section>
   );
 }
+
+SignInForm.propTypes = {
+  acceptsRedirect: PropTypes.bool,
+};

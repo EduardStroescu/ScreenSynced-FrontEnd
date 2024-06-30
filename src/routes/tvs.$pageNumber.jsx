@@ -1,8 +1,13 @@
-import { FileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { fetchSeries } from "../api/tmdb/QueryFunctions";
-import { Series } from "../pages/Series";
+import {
+  ContentGrid,
+  FeaturedTitlesCarousel,
+  PaginationButtons,
+  Sidebar,
+} from "../components";
 
-export const route = new FileRoute("/tvs/$pageNumber").createRoute({
+export const Route = createFileRoute("/tvs/$pageNumber")({
   beforeLoad: ({ params: { pageNumber } }) => {
     const queryContent = {
       queryKey: ["series", pageNumber],
@@ -14,13 +19,43 @@ export const route = new FileRoute("/tvs/$pageNumber").createRoute({
     return { queryContent, context };
   },
   loader: async ({ context: { queryClient, queryContent } }) => {
-    await queryClient.ensureQueryData(queryContent);
+    return await queryClient.ensureQueryData(queryContent);
   },
-  component: () => {
-    return (
-      <section className="flex flex-col gap-10">
-        <Series />
-      </section>
-    );
-  },
+  component: SeriesPage,
 });
+
+function SeriesPage() {
+  const { data } = Route.useLoaderData();
+  const contentQuery = {
+    results: data?.results?.map((obj) => ({
+      ...obj,
+      ["mediaType"]: "tv",
+    })),
+  };
+  const context = Route.useRouteContext({
+    select: (context) => context.context,
+  });
+
+  return (
+    <>
+      <FeaturedTitlesCarousel
+        contentType={"tv"}
+        queryType={"series"}
+        apiData={contentQuery}
+      />
+      <section className="grid grid-cols-4">
+        <ContentGrid
+          contentType={"tv"}
+          title={"Series"}
+          contentQuery={contentQuery}
+        />
+        <Sidebar contentType={"tv"} contentQuery={contentQuery} />
+        <PaginationButtons
+          contentType={"tvs"}
+          context={context}
+          totalPages={500}
+        />
+      </section>
+    </>
+  );
+}

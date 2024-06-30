@@ -6,8 +6,8 @@ import { Flip, ToastContainer } from "react-toastify";
 import { bookmarkApi } from "../api/backend/modules/bookmark.api";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { desktopVariants } from "../lib/const";
-import { useUser } from "../store.js";
+import { desktopVariants } from "../lib/framerMotionVariants.js";
+import { useUserStore, useUserStoreActions } from "../store.js";
 import {
   BookmarkIcon,
   ChangeAvatarForm,
@@ -23,19 +23,22 @@ import {
 } from "./";
 
 import "react-toastify/dist/ReactToastify.css";
+import { useShallow } from "zustand/react/shallow";
+import { placeholderAvatar } from "../lib/placeholders.js";
+
+import PropTypes from "prop-types";
 
 export function Layout({ children }) {
-  const {
-    user,
-    setUser,
-    loggedIn,
-    setLoggedIn,
-    setBookmarkList,
-    isOverlay,
-    setOverlay,
-    setOverlayType,
-    overlayType,
-  } = useUser();
+  const { user, loggedIn, isOverlay, overlayType } = useUserStore(
+    useShallow((state) => ({
+      user: state.user,
+      loggedIn: state.loggedIn,
+      isOverlay: state.isOverlay,
+      overlayType: state.overlayType,
+    })),
+  );
+  const { setUser, setLoggedIn, setBookmarkList, setOverlay, setOverlayType } =
+    useUserStoreActions();
   const { setItem, getItem } = useLocalStorage("user");
 
   const { data: bookmarksQuery } = useQuery({
@@ -53,8 +56,8 @@ export function Layout({ children }) {
   }, []);
 
   useEffect(() => {
-    if (user && bookmarksQuery && bookmarksQuery.response) {
-      setBookmarkList(bookmarksQuery.response);
+    if (user && bookmarksQuery) {
+      setBookmarkList(bookmarksQuery);
     }
     if (!user) {
       setBookmarkList([]);
@@ -242,7 +245,7 @@ function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
             <div className="relative w-[2.5rem]">
               <Link to="/account">
                 <motion.img
-                  src={user?.avatar}
+                  src={user?.avatar || placeholderAvatar}
                   alt={user?.displayName + "picture"}
                   className="aspect-[1/1] translate-y-1 rounded-full object-cover"
                 />
@@ -287,7 +290,7 @@ export function DesktopMenuDrawer({
         <div ref={menuRef} className="relative w-[2.5rem]">
           <button type="button" onClick={() => setMenuOpen((x) => !x)}>
             <img
-              src={user?.avatar}
+              src={user?.avatar || placeholderAvatar}
               alt={user?.displayName + "picture"}
               className="aspect-[1/1] translate-y-1 rounded-full object-cover"
             />
@@ -435,3 +438,53 @@ function Footer() {
     </footer>
   );
 }
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+const userPropTypes = PropTypes.shape({
+  avatar: PropTypes.string,
+  createdAt: PropTypes.string,
+  displayName: PropTypes.string,
+  id: PropTypes.number,
+  updatedAt: PropTypes.string,
+  userName: PropTypes.string,
+});
+DesktopHeader.propTypes = {
+  setOverlayType: PropTypes.func.isRequired,
+  setOverlay: PropTypes.func.isRequired,
+  loggedIn: PropTypes.bool.isRequired,
+  setLoggedIn: PropTypes.func.isRequired,
+  user: userPropTypes,
+  setUser: PropTypes.func.isRequired,
+  setBookmarkList: PropTypes.func.isRequired,
+  setItem: PropTypes.func.isRequired,
+  getItem: PropTypes.func.isRequired,
+};
+
+MobileHeader.propTypes = {
+  setOverlayType: PropTypes.func.isRequired,
+  setOverlay: PropTypes.func.isRequired,
+  loggedIn: PropTypes.bool.isRequired,
+  user: userPropTypes,
+};
+
+DesktopMenuDrawer.propTypes = {
+  user: userPropTypes,
+  loggedIn: PropTypes.bool.isRequired,
+  isMenuOpen: PropTypes.bool.isRequired,
+  setMenuOpen: PropTypes.func.isRequired,
+  setItem: PropTypes.func.isRequired,
+  getItem: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
+  setBookmarkList: PropTypes.func.isRequired,
+  setLoggedIn: PropTypes.func.isRequired,
+  setOverlay: PropTypes.func.isRequired,
+  setOverlayType: PropTypes.func.isRequired,
+};
+
+MobileMenuDrawer.propTypes = {
+  isMenuOpen: PropTypes.bool.isRequired,
+  setMenuOpen: PropTypes.func.isRequired,
+};

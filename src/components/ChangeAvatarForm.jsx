@@ -5,18 +5,20 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUser } from "../store";
+import { placeholderAvatar } from "../lib/placeholders";
+import { useUserStore, useUserStoreActions } from "../store";
 import { CloseIcon } from "./";
 
 export function ChangeAvatarForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const { user, setUser, setOverlay } = useUser();
-  const { setItem, getItem } = useLocalStorage("user");
+  const user = useUserStore((state) => state.user);
+  const { setUser, setOverlay } = useUserStoreActions();
   const [avatar, setAvatar] = useState(user?.avatar);
+  const [isLoading, setIsLoading] = useState(false);
+  const { setItem, getItem } = useLocalStorage("user");
 
-  const updateAvatarMutation = useMutation((values) =>
-    userApi.avatarUpdate(values),
-  );
+  const updateAvatarMutation = useMutation({
+    mutationFn: (values) => userApi.avatarUpdate(values),
+  });
 
   const changeAvatarForm = useFormik({
     initialValues: {
@@ -78,7 +80,7 @@ export function ChangeAvatarForm() {
       </header>
       <div className="flex flex-col items-center justify-center gap-8">
         <img
-          src={avatar}
+          src={avatar || placeholderAvatar}
           alt={user?.displayName + "'s" + "avatar"}
           className="aspect-[1/1] w-[20rem] rounded-full border-t-8 border-t-cyan-500"
         />
@@ -99,7 +101,7 @@ export function ChangeAvatarForm() {
             className="my-4 rounded border-2 border-cyan-500 bg-[#005f70] px-6 py-1 text-white hover:bg-cyan-500"
             disabled={isLoading}
           >
-            Update Avatar
+            {isLoading ? "Updating..." : "Update Avatar"}
           </button>
         </form>
       </div>

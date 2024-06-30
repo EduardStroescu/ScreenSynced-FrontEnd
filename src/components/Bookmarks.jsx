@@ -1,21 +1,20 @@
-import { useQueries, useQuery } from "@tanstack/react-query";
-import { Link, useRouteContext } from "@tanstack/react-router";
+import { useQueries } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
   fetchMovieDetails,
   fetchSerieDetails,
 } from "../api/tmdb/QueryFunctions";
 import { ContentCard } from "./";
 
+import PropTypes from "prop-types";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-export function Bookmarks() {
-  const { queryBookmarks } = useRouteContext();
-  const { data: bookmarksQuery } = useQuery(queryBookmarks);
-  const movieBookmarksIds = bookmarksQuery?.response
+export function Bookmarks({ bookmarksQuery }) {
+  const movieBookmarksIds = bookmarksQuery
     ?.filter((bookmark) => bookmark?.mediaType === "movie")
     ?.map((bookmark) => bookmark.mediaId);
-  const tvBookmarksIds = bookmarksQuery?.response
+  const tvBookmarksIds = bookmarksQuery
     ?.filter((bookmark) => bookmark?.mediaType === "tv")
     ?.map((bookmark) => bookmark.mediaId);
 
@@ -150,3 +149,14 @@ export function Bookmarks() {
     </section>
   );
 }
+
+Bookmarks.propTypes = {
+  bookmarksQuery: PropTypes.arrayOf(
+    PropTypes.shape({
+      if: PropTypes.number,
+      mediaId: PropTypes.number,
+      mediaType: PropTypes.oneOf(["tv", "movie"]),
+      userId: PropTypes.number,
+    }),
+  ).isRequired,
+};

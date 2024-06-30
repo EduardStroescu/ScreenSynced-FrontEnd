@@ -1,8 +1,8 @@
-import { FileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { fetchMovieDetailsAndCredits } from "../api/tmdb/QueryFunctions";
 import { ContentDetailsPage } from "../pages";
 
-export const route = new FileRoute("/movie/$movieId").createRoute({
+export const Route = createFileRoute("/movie/$movieId")({
   beforeLoad: ({ params: { movieId } }) => {
     const queryOptions = {
       queryKey: ["movie", "videos", "credits", "similarMovies", movieId],
@@ -13,9 +13,19 @@ export const route = new FileRoute("/movie/$movieId").createRoute({
     return { queryOptions };
   },
   loader: async ({ context: { queryClient, queryOptions } }) => {
-    await queryClient.ensureQueryData(queryOptions);
+    return await queryClient.ensureQueryData(queryOptions);
   },
-  component: () => {
-    return <ContentDetailsPage />;
-  },
+  component: MovieIdPage,
 });
+
+function MovieIdPage() {
+  const queryData = Route.useLoaderData();
+  const contentDetails = queryData?.contentDetails;
+  return (
+    <ContentDetailsPage
+      queryData={queryData}
+      contentDetails={contentDetails}
+      mediaType={"movie"}
+    />
+  );
+}

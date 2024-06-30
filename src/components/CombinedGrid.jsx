@@ -1,11 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRouteContext } from "@tanstack/react-router";
+import PropTypes from "prop-types";
 import { useState } from "react";
+import { contentItemPropTypes } from "../lib/types";
 import { ContentCard } from "./";
 
-export function CombinedGrid() {
-  const { queryContent } = useRouteContext();
-  const { data: contentQuery } = useQuery(queryContent);
+export function CombinedGrid({ contentQuery }) {
   const [queryType, setQueryType] = useState("movies");
   return (
     <article className="col-span-6 my-6 px-1 lg:px-4 xl:col-span-3">
@@ -46,3 +44,18 @@ export function CombinedGrid() {
     </article>
   );
 }
+
+const resultsPropTypes = PropTypes.arrayOf(contentItemPropTypes).isRequired;
+
+CombinedGrid.propTypes = {
+  contentQuery: PropTypes.shape({
+    results: PropTypes.shape({
+      movies: PropTypes.shape({
+        results: resultsPropTypes,
+      }).isRequired,
+      tv: PropTypes.shape({
+        results: resultsPropTypes,
+      }).isRequired,
+    }),
+  }).isRequired,
+};

@@ -1,16 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUser } from "../store";
+import { placeholderAvatar } from "../lib/placeholders";
+import { useUserStore, useUserStoreActions } from "../store";
 
 export function Account() {
-  const { user, setLoggedIn, setOverlayType, setOverlay, setBookmarkList } =
-    useUser();
+  const user = useUserStore((state) => state.user);
+  useUserStore();
+  const { setLoggedIn, setOverlayType, setOverlay, setBookmarkList } =
+    useUserStoreActions();
   const { setItem } = useLocalStorage("user");
   return (
     <section className="mt-20 flex w-full flex-col items-center rounded-t-sm border-t-4 border-t-cyan-500 sm:mt-28 sm:flex-row sm:items-start">
       <div className="group relative -translate-y-14 rounded-full sm:-translate-y-20">
         <img
-          src={user?.avatar || "placeholders/placeholder-content.svg"}
+          src={user?.avatar || placeholderAvatar}
           alt={user?.displayName + "'s" + "avatar"}
           className="aspect-[1/1] w-[10rem] rounded-full border-t-8 border-t-cyan-500 sm:w-[25rem]"
         />

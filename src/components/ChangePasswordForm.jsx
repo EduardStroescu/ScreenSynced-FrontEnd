@@ -6,17 +6,18 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
 import userApi from "../api/backend/modules/user.api";
-import { useUser } from "../store";
+import { useUserStoreActions } from "../store";
 import { CloseIcon } from "./";
 
 export function ChangePasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser, setLoggedIn, setOverlay, setOverlayType } = useUser();
+  const { setUser, setLoggedIn, setOverlay, setOverlayType } =
+    useUserStoreActions();
   const navigate = useNavigate({ from: "/" });
 
-  const updatePasswordMutation = useMutation((values) =>
-    userApi.passwordUpdate(values),
-  );
+  const updatePasswordMutation = useMutation({
+    mutationFn: (values) => userApi.passwordUpdate(values),
+  });
 
   const changePasswordForm = useFormik({
     initialValues: {
@@ -129,7 +130,7 @@ export function ChangePasswordForm() {
             className="my-5 rounded border-2 border-cyan-500 bg-[#005f70] px-4 py-1 text-white hover:bg-cyan-500"
             disabled={isLoading}
           >
-            Change Password
+            {isLoading ? "Updating..." : "Change Password"}
           </button>
         </form>
       </div>

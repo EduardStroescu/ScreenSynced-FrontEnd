@@ -1,42 +1,19 @@
 import privateClient from "../privateClient";
 
 const bookmarkEndpoints = {
-  list: "user/bookmarks",
-  add: "user/bookmarks",
-  remove: ({ bookmarkId }) => `user/bookmarks/${bookmarkId}`,
+  list: "bookmarks",
+  add: "bookmarks",
+  remove: ({ bookmarkId }) => `bookmarks/${bookmarkId}`,
 };
 
 export const bookmarkApi = {
-  getList: async () => {
-    try {
-      const response = await privateClient.get(bookmarkEndpoints.list);
+  getList: async () => await privateClient.get(bookmarkEndpoints.list),
 
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
-  add: async ({ mediaId, mediaType }) => {
-    try {
-      const response = await privateClient.post(bookmarkEndpoints.add, {
-        mediaId,
-        mediaType,
-      });
-
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
-  remove: async ({ bookmarkId }) => {
-    try {
-      const response = await privateClient.delete(
-        bookmarkEndpoints.remove({ bookmarkId }),
-      );
-
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
+  add: async ({ mediaId, mediaType }) =>
+    await privateClient.post(bookmarkEndpoints.add, {
+      mediaId,
+      mediaType,
+    }),
+  remove: async ({ bookmarkId }) =>
+    await privateClient.delete(bookmarkEndpoints.remove({ bookmarkId })),
 };

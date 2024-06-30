@@ -1,59 +1,66 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
+import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import { useShallow } from "zustand/react/shallow";
 import { bookmarkApi } from "../api/backend/modules/bookmark.api";
-import { useUser } from "../store";
+import { useUserStore, useUserStoreActions } from "../store";
 import { BookmarkIcon } from "./";
 
 export function AddBookmarkButton({
   children,
   size,
   className,
-  contentId,
-  mediaType,
+  contentId = 1,
+  mediaType = "movie",
 }) {
-  const { user, setOverlay, bookmarkList, setBookmarkList } = useUser();
+  const { user, bookmarkList } = useUserStore(
+    useShallow((state) => ({
+      user: state.user,
+      bookmarkList: state.bookmarkList,
+    })),
+  );
+  const { setOverlay, setBookmarkList } = useUserStoreActions();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
-  const addBookmarkMutation = useMutation((body) => bookmarkApi.add(body), {
+  const addBookmarkMutation = useMutation({
+    mutationFn: (body) => bookmarkApi.add(body),
     onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
+      queryClient.removeQueries({ queryKey: ["bookmarks"] });
+      router.invalidate();
       setBookmarkList([...bookmarkList, response]);
-      queryClient.invalidateQueries(["bookmarks"]);
+      queryClient.refetchQueries({ queryKey: ["bookmarks"] });
       toast.success("Bookmark Added");
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error);
     },
   });
 
-  const removeBookmarkMutation = useMutation(
-    (bookmarkId) => bookmarkApi.remove({ bookmarkId }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["bookmarks"]);
-        setBookmarkList(
-          [...bookmarkList].filter(
-            (e) => e.mediaId.toString() !== contentId.toString(),
-          ),
-        );
-        toast.success("Bookmark Removed");
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
+  const removeBookmarkMutation = useMutation({
+    mutationFn: (bookmarkId) => bookmarkApi.remove({ bookmarkId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
+      queryClient.removeQueries({ queryKey: ["bookmarks"] });
+      router.invalidate();
+      setBookmarkList(bookmarkList.filter((e) => e.mediaId !== contentId));
+      toast.info("Bookmark Removed");
     },
-  );
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
 
   const onAddBookmark = async () => {
     if (!user) return setOverlay(true);
 
     if (addBookmarkMutation.isLoading) return;
 
-    if (
-      bookmarkList.map((item) => item.mediaId).includes(contentId.toString())
-    ) {
-      removeBookmarkMutation.mutate(
-        bookmarkList.find((e) => e.mediaId.toString() === contentId.toString())
-          .id,
+    if (bookmarkList.map((item) => item.mediaId).includes(contentId)) {
+      removeBookmarkMutation.mutateAsync(
+        bookmarkList.find((e) => e.mediaId === contentId).id,
       );
       return;
     }
@@ -63,12 +70,12 @@ export function AddBookmarkButton({
       mediaType: mediaType,
     };
 
-    addBookmarkMutation.mutate(body);
+    addBookmarkMutation.mutateAsync(body);
   };
 
   const isBookmarked = bookmarkList
     .map((item) => item.mediaId)
-    .includes(contentId?.toString())
+    .includes(contentId)
     ? "fill-cyan-500"
     : "";
 
@@ -79,3 +86,11 @@ export function AddBookmarkButton({
     </button>
   );
 }
+
+AddBookmarkButton.propTypes = {
+  children: PropTypes.node,
+  size: PropTypes.string,
+  className: PropTypes.string,
+  contentId: PropTypes.number,
+  mediaType: PropTypes.oneOf(["tv", "movie"]).isRequired,
+};

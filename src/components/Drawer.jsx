@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { mobileVariants } from "../lib/const";
+import PropTypes from "prop-types";
+import { mobileVariants } from "../lib/framerMotionVariants";
 import { CloseIcon } from "./";
 
 export function Drawer({ isMenuOpen, setMenuOpen, children }) {
@@ -36,3 +37,9 @@ export function Drawer({ isMenuOpen, setMenuOpen, children }) {
     </motion.div>
   );
 }
+
+Drawer.propTypes = {
+  isMenuOpen: PropTypes.bool.isRequired,
+  setMenuOpen: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+};

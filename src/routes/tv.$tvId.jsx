@@ -1,8 +1,8 @@
-import { FileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { fetchSerieDetailsAndCredits } from "../api/tmdb/QueryFunctions";
 import { ContentDetailsPage } from "../pages";
 
-export const route = new FileRoute("/tv/$tvId").createRoute({
+export const Route = createFileRoute("/tv/$tvId")({
   beforeLoad: ({ params: { tvId } }) => {
     const queryOptions = {
       queryKey: ["serie", "videos, credits", tvId],
@@ -13,9 +13,19 @@ export const route = new FileRoute("/tv/$tvId").createRoute({
     return { queryOptions };
   },
   loader: async ({ context: { queryClient, queryOptions } }) => {
-    await queryClient.ensureQueryData(queryOptions);
+    return await queryClient.ensureQueryData(queryOptions);
   },
-  component: () => {
-    return <ContentDetailsPage />;
-  },
+  component: SerieIdPage,
 });
+
+function SerieIdPage() {
+  const queryData = Route.useLoaderData();
+  const contentDetails = queryData?.contentDetails;
+  return (
+    <ContentDetailsPage
+      contentDetails={contentDetails}
+      queryData={queryData}
+      mediaType={"tv"}
+    />
+  );
+}

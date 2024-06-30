@@ -2,19 +2,19 @@ import privateClient from "../privateClient";
 import publicClient from "../publicClient";
 
 const userEndpoints = {
-  signin: "user/signin",
-  signup: "user/signup",
-  getInfo: "user/info",
-  passwordUpdate: "user/update-password",
-  avatarUpdate: "user/update-avatar",
+  login: "auth/login",
+  register: "auth/register",
+  getUserInfo: "users/current-user",
+  passwordUpdate: "users/update-password",
+  avatarUpdate: "users/change-avatar",
 };
 
 const userApi = {
-  signin: async ({ password, username }) => {
+  signin: async ({ password, userName }) => {
     try {
-      const response = await publicClient.post(userEndpoints.signin, {
+      const response = await publicClient.post(userEndpoints.login, {
         password,
-        username,
+        userName,
       });
 
       return { response };
@@ -25,15 +25,15 @@ const userApi = {
 
   signup: async ({
     avatar,
-    username,
+    userName,
     password,
     confirmPassword,
     displayName,
   }) => {
     try {
-      const response = await publicClient.post(userEndpoints.signup, {
+      const response = await publicClient.post(userEndpoints.register, {
         avatar,
-        username,
+        userName,
         password,
         confirmPassword,
         displayName,
@@ -45,15 +45,7 @@ const userApi = {
     }
   },
 
-  getInfo: async () => {
-    try {
-      const response = await privateClient.get(userEndpoints.getInfo);
-
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
+  getInfo: async () => await privateClient.get(userEndpoints.getUserInfo),
 
   passwordUpdate: async ({ password, newPassword, confirmNewPassword }) => {
     try {
@@ -71,7 +63,7 @@ const userApi = {
 
   avatarUpdate: async ({ avatar }) => {
     try {
-      const response = await privateClient.put(userEndpoints.avatarUpdate, {
+      const response = await privateClient.patch(userEndpoints.avatarUpdate, {
         avatar,
       });
 

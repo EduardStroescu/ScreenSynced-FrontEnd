@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 
 export function Image({
@@ -58,3 +59,21 @@ export function ImagePlaceholder({ className, width, height }) {
     />
   );
 }
+
+Image.propTypes = {
+  as: PropTypes.elementType,
+  isInView: PropTypes.bool.isRequired,
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  className: PropTypes.string,
+  placeholderClassName: PropTypes.string,
+  motionProps: PropTypes.object,
+};
+
+ImagePlaceholder.propTypes = {
+  className: PropTypes.string,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+};

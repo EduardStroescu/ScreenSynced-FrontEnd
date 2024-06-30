@@ -1,18 +1,27 @@
+<p align="center">
+  <a href="https://screensynced.vercel.app/" target="blank"><img src="https://raw.githubusercontent.com/EduardStroescu/PubImages/main/WebsiteImages/screenSynced.jpg" alt="ScreenSynced Preview" /></a>
+</p>
+
 # ScreenSynced FrontEnd
 
-### Link to the backend/database:
+### Links to the REST API/backend:
 
-https://github.com/EduardStroescu/ScreenSynced-Database
+https://github.com/EduardStroescu/NestJs-ScreenSynced-Backend-CookieAuth - New Backend GIT Repository
+https://screensynced-backend.vercel.app/ - New Backend HomePage
+https://screensynced-backend.vercel.app/api/docs - New Backend API Documentation made with Swagger
+
+https://github.com/EduardStroescu/ScreenSynced-Backend - OLD Backend GIT Repository
+https://screensynced-database.vercel.app/- OLD Backend HomePage
 
 # Introduction
 
-Full-Stack content streaming website using the TMDB API and an expressJS server along mongodb and cloudinary for authentication and bookmarking.
+Full-Stack content streaming website using the TMDB API and what used to be an ExpressJS REST API along with MongoDB and Cloudinary for authentication and bookmarking. The backend is now a NestJS REST API with Cookie based JWT authentication using NeonDB coupled with Prisma ORM and Cloudinary CDN for avatar uploads.
 
 ## Overview
 
 Used Tanstack Router in combination with Tanstack Query in order to preload and manage the content required for all the routes, including TMDB data and user details. The profile pictures used by the users are sent to cloudinary where they are optimized by their specific tools and the encoded params(tokens) linking them to the users stored on the backend.
 
-In order not to keep asking the user to log in for every visit I've used the browser's local storage to keep track of the user's last session state, which is then managed by zustand.
+In order not to keep asking the user to log in for every visit I've used the browser's local storage to keep track of the user's last session state, which is then managed by Zustand.
 
 ## Technologies Used
 
@@ -36,7 +45,7 @@ Remember to update `.env` with your tmbd token! You also need to provide the url
 Example:
 
 VITE_TMDB_KEY="" - Provided by TMBD
-VITE_FRONTEND_URL="http://localhost:5173" - The url of where the frontend is hosted.
+VITE_FRONTEND_URL="http://localhost:5173" for local dev - The url of where the frontend is hosted.
 VITE_BACKEND_URL="" - The url of where the backend is hosted. The port can be chosen through the backend's .env
 
 VITE_DEMO_ACC_USERNAME="" - Credentials of the account created for demo purposes

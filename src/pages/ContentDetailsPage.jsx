@@ -1,36 +1,31 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRouteContext } from "@tanstack/react-router";
 import { useState } from "react";
 import ReactPlayer from "react-player";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { AddBookmarkButton, BookmarkIcon, ContentCard } from "../components";
+import { placeholderImage } from "../lib/placeholders";
 import { getYoutubeLink } from "../lib/utils";
 
-export function ContentDetailsPage() {
-  const { queryOptions } = useRouteContext();
-  const { data: queryData } = useQuery(queryOptions);
-  const data = queryData?.contentDetails;
-
+export function ContentDetailsPage({ queryData, contentDetails, mediaType }) {
   return (
     <section className="grid w-full gap-4 px-2 py-16 sm:grid-cols-6 sm:px-6 sm:py-20">
       <div
         className={`${
-          data.seasons ? "col-span-6 xl:col-span-5" : "col-span-6"
+          contentDetails.seasons ? "col-span-6 xl:col-span-5" : "col-span-6"
         } grid h-full w-full grid-flow-row gap-4`}
       >
-        <PlayerSection data={data} />
-        <ContentDetails queryData={queryData} data={data} />
+        <PlayerSection contentDetails={contentDetails} mediaType={mediaType} />
+        <ContentDetails queryData={queryData} contentDetails={contentDetails} />
       </div>
-      <SeasonsSection data={data} />
+      <SeasonsSection contentDetails={contentDetails} />
       <CastSection queryData={queryData} />
       <SimilarSection queryData={queryData} />
     </section>
   );
 }
 
-function PlayerSection({ data }) {
-  const videoIds = data.videos?.results?.find(
+function PlayerSection({ contentDetails, mediaType }) {
+  const videoIds = contentDetails.videos?.results?.find(
     (type) => type.type === "Trailer",
   )?.key;
 
@@ -68,10 +63,10 @@ function PlayerSection({ data }) {
       )}
       <div className="text-serif flex flex-row gap-4 rounded-b-xl bg-[#131E2E] py-2 pl-4 text-xs sm:px-4 sm:text-sm">
         <AddBookmarkButton
-          contentId={data.id}
+          contentId={contentDetails?.id}
+          mediaType={mediaType}
           size={"w-[0.7rem]"}
           className={"flex flex-row items-center justify-center gap-1"}
-          mediaType={"movie"}
         >
           Add Bookmark
         </AddBookmarkButton>
@@ -80,12 +75,13 @@ function PlayerSection({ data }) {
   );
 }
 
-function ContentDetails({ queryData, data }) {
+function ContentDetails({ queryData, contentDetails }) {
   const contentImage =
-    data?.poster_path !== null || data?.backdrop_path !== null
-      ? "https://image.tmdb.org/t/p/w342" + data.poster_path ||
-        "https://image.tmdb.org/t/p/w300" + data.backdrop_path
-      : "https://placehold.co/400x400/070B11/06b6d4?text=A+picture+is+worth\\na+thousand+words,\\nbut+not+today.&font=sans";
+    contentDetails?.poster_path !== null ||
+    contentDetails?.backdrop_path !== null
+      ? "https://image.tmdb.org/t/p/w342" + contentDetails.poster_path ||
+        "https://image.tmdb.org/t/p/w300" + contentDetails.backdrop_path
+      : placeholderImage;
 
   const director = queryData.credits?.crew?.find(
     (crew) => crew.job === "Director",
@@ -94,7 +90,7 @@ function ContentDetails({ queryData, data }) {
   const directorImage =
     director?.profile_path !== null && director?.profile_path !== undefined
       ? "https://image.tmdb.org/t/p/w185" + director?.profile_path
-      : "https://placehold.co/400x400/070B11/06b6d4?text=A+picture+is+worth\\na+thousand+words,\\nbut+not+today.&font=sans";
+      : placeholderImage;
 
   return (
     <article className="flex flex-col rounded-xl bg-[#131E2E] sm:flex-row">
@@ -105,23 +101,25 @@ function ContentDetails({ queryData, data }) {
       />
       <div className="m-1 flex w-[calc(100%-8px)] flex-col items-start gap-4 rounded-xl bg-[#070B11] px-2 py-6 sm:m-1 sm:px-4">
         <div className="flex flex-row gap-1 font-serif">
-          {data.original_language?.toUpperCase()} |{" "}
+          {contentDetails.original_language?.toUpperCase()} |{" "}
           <BookmarkIcon className="w-[0.7rem]" />
-          {data.vote_average?.toFixed(1)} |{" "}
-          {data.release_date?.slice(0, 4) ||
-            data.first_air_date?.slice(0, 4) ||
+          {contentDetails.vote_average?.toFixed(1)} |{" "}
+          {contentDetails.release_date?.slice(0, 4) ||
+            contentDetails.first_air_date?.slice(0, 4) ||
             "unknown"}{" "}
-          | {data.runtime || data.episode_run_time?.[0] || 0} min
+          |{" "}
+          {contentDetails.runtime || contentDetails.episode_run_time?.[0] || 0}{" "}
+          min
         </div>
-        <h2 className="font-londrina text-4xl">{data.title}</h2>
+        <h2 className="font-londrina text-4xl">{contentDetails.title}</h2>
         <div className="font-serif">
           <p className="pb-2 text-cyan-500">Description:</p>
-          <p>{data.overview}</p>
+          <p>{contentDetails.overview}</p>
         </div>
-        {!!data.genres.length && (
+        {!!contentDetails.genres.length && (
           <div className="flex flex-row gap-2">
             <p className="text-cyan-500">Genres:</p>
-            {data.genres.map((genre, index) => {
+            {contentDetails.genres.map((genre, index) => {
               return <p key={index}>{genre.name}</p>;
             })}
           </div>
@@ -142,16 +140,19 @@ function ContentDetails({ queryData, data }) {
   );
 }
 
-function SeasonsSection({ data }) {
+function SeasonsSection({ contentDetails }) {
   const [selectedSeason, setSelectedSeason] = useState(
-    data.seasons?.find((season) => season.season_number === 1),
+    contentDetails.seasons?.find((season) => season.season_number === 1),
   );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  if (!data.seasons) return;
+  if (!contentDetails.seasons) return;
 
   return (
-    <aside className="col-span-6 flex w-full flex-col items-center rounded-xl bg-[#131E2E] p-4 xl:col-span-1">
+    <aside
+      data-lenis-prevent
+      className="col-span-6 flex max-h-[1300px] w-full flex-col items-center overflow-auto rounded-xl bg-[#131E2E] p-4 xl:col-span-1"
+    >
       <div className="border-rounded-sm relative flex w-full flex-col gap-4">
         <button
           onClick={() => setIsDropdownOpen((x) => !x)}
@@ -166,7 +167,7 @@ function SeasonsSection({ data }) {
         </button>
         <div className="border-b-2 border-cyan-500" />
         <ul className="flex flex-col gap-1">
-          {data.seasons?.map((season) => {
+          {contentDetails.seasons?.map((season) => {
             return (
               <li
                 key={season.id}
@@ -193,7 +194,7 @@ function SeasonsSection({ data }) {
         </ul>
       </div>
       {!isDropdownOpen && selectedSeason && (
-        <ul className="flex w-full flex-col gap-1 text-center">
+        <ul className="flex w-full flex-col gap-1 text-center ">
           {Array.from(
             { length: selectedSeason.episode_count },
             (_, index) => index,
@@ -229,7 +230,7 @@ function CastSection({ queryData }) {
           const castImage =
             cast.profile_path !== null && cast.profile_path !== undefined
               ? "https://image.tmdb.org/t/p/w185" + cast.profile_path
-              : "https://placehold.co/400x400/070B11/06b6d4?text=A+picture+is+worth\\na+thousand+words,\\nbut+not+today.&font=sans";
+              : placeholderImage;
           return (
             <div
               key={cast.id}

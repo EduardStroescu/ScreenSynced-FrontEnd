@@ -1,6 +1,6 @@
-import { FileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
-export const route = new FileRoute("$").createRoute({
+export const Route = createFileRoute("/$")({
   component: () => {
     return (
       <section className="flex h-[100vh] w-full flex-col items-center justify-center gap-24">

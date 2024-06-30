@@ -10,10 +10,14 @@ import {
 } from "../api/tmdb/QueryFunctions";
 import { getYoutubeLinks } from "../lib/utils";
 
+import PropTypes from "prop-types";
 import { Suspense, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import "swiper/css";
 import "swiper/css/navigation";
+import { imagePrefixOriginal } from "../lib/const";
+import { placeholderImage } from "../lib/placeholders";
+import { contentItemPropTypes } from "../lib/types";
 import { AddBookmarkButton, Image, PlayIcon } from "./";
 
 export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
@@ -22,8 +26,8 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
 
   const isInView = useInView(isInViewRef, { once: true, amount: 0 });
 
-  const slicedResults = apiData.results?.slice(0, 5);
-  const contentIds = [].concat(...slicedResults.map((movie) => [movie.id]));
+  const slicedResults = apiData?.results?.slice(0, 5);
+  const contentIds = slicedResults?.map((movie) => [movie.id]);
 
   const queryContent = {
     movies: {
@@ -70,14 +74,14 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
         modules={[Autoplay, Pagination]}
         className="z-[104]"
       >
-        {apiData.results?.slice(0, 5).map((content, index) => {
+        {apiData?.results?.slice(0, 5).map((content, index) => {
           const contentImage =
             content.poster_path !== null && content.poster_path !== undefined
-              ? "https://image.tmdb.org/t/p/original" + content.poster_path
+              ? imagePrefixOriginal + content.poster_path
               : content.backdrop_path !== null &&
                 content.backdrop_path !== undefined
-              ? "https://image.tmdb.org/t/p/original" + content.backdrop_path
-              : "https://placehold.co/2000x3000/070B11/06b6d4?text=A+picture+is+worth\\na+thousand+words,\\nbut+not+today.&font=sans";
+              ? imagePrefixOriginal + content.backdrop_path
+              : placeholderImage;
 
           return (
             <SwiperSlide
@@ -127,7 +131,7 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
                     className={
                       "group flex items-center justify-center gap-2 rounded-full border border-cyan-500 px-2 py-1 hover:bg-cyan-500 sm:px-4"
                     }
-                    contentId={content.id}
+                    contentId={content?.id}
                     mediaType={content.mediaType}
                   >
                     <span>Add Bookmark</span>
@@ -178,3 +182,15 @@ function YoutubePlayer({ video }) {
     </Suspense>
   );
 }
+
+FeaturedTitlesCarousel.propTypes = {
+  contentType: PropTypes.oneOf(["movie", "tv"]).isRequired,
+  queryType: PropTypes.oneOf(["movies", "series"]).isRequired,
+  apiData: PropTypes.shape({
+    results: PropTypes.arrayOf(contentItemPropTypes).isRequired,
+  }),
+};
+
+YoutubePlayer.propTypes = {
+  video: PropTypes.string,
+};

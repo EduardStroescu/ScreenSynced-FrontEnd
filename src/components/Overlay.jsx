@@ -1,7 +1,8 @@
-import { useUser } from "../store";
+import PropTypes from "prop-types";
+import { useUserStoreActions } from "../store";
 
 export function Overlay({ children }) {
-  const { setOverlay } = useUser();
+  const { setOverlay } = useUserStoreActions();
   return (
     <div className="fixed left-0 top-0 z-[1000] flex h-full w-full flex-col items-center justify-center">
       <div
@@ -12,3 +13,7 @@ export function Overlay({ children }) {
     </div>
   );
 }
+
+Overlay.propTypes = {
+  children: PropTypes.node.isRequired,
+};

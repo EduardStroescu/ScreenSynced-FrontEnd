@@ -1,15 +1,15 @@
-import { route as rootRoute } from "./routes/__root";
-import { route as IndexRoute } from "./routes/index";
-import { route as MoviesRoute } from "./routes/movies.$pageNumber";
-import { route as MovieMovieIdRoute } from "./routes/movie.$movieId";
-import { route as TvsRoute } from "./routes/tvs.$pageNumber";
-import { route as TvRouteTvIdRoute } from "./routes/tv.$tvId";
-import { route as AccountRoute } from "./routes/account";
 import { route as CatchAllRoute } from "./routes/$";
-import { route as SignUpRoute } from "./routes/signUp";
-import { route as LoginRoute } from "./routes/login";
-import { route as SearchRoute } from "./routes/search.$searchTerm.$pageNumber";
+import { route as rootRoute } from "./routes/__root";
+import { route as AccountRoute } from "./routes/account";
 import { route as DiscoverRoute } from "./routes/discover.$pageNumber";
+import { route as IndexRoute } from "./routes/index";
+import { route as LoginRoute } from "./routes/login";
+import { route as MovieMovieIdRoute } from "./routes/movie.$movieId";
+import { route as MoviesRoute } from "./routes/movies.$pageNumber";
+import { route as SearchRoute } from "./routes/search.$searchTerm.$pageNumber";
+import { route as SignUpRoute } from "./routes/signUp";
+import { route as TvRouteTvIdRoute } from "./routes/tv.$tvId";
+import { route as TvsRoute } from "./routes/tvs.$pageNumber";
 
 Object.assign(IndexRoute.options, {
   path: "/",

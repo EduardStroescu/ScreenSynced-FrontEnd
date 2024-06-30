@@ -1,8 +1,8 @@
-import { FileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { SignInForm } from "../components";
 import { isAuthenticated } from "../lib/isAuthenticated";
 
-export const route = new FileRoute("/login").createRoute({
+export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
     if (isAuthenticated()) {
       throw redirect({

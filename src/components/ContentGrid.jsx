@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
+import PropTypes from "prop-types";
+import { contentItemPropTypes } from "../lib/types";
 import { ContentCard } from "./";
 
 export function ContentGrid({
@@ -47,3 +49,28 @@ export function ContentGrid({
     </article>
   );
 }
+
+const resultsPropTypes = PropTypes.arrayOf(contentItemPropTypes).isRequired;
+
+ContentGrid.propTypes = {
+  contentType: PropTypes.oneOf(["movie", "tv"]).isRequired,
+  seeMore: PropTypes.bool,
+  title: PropTypes.string,
+  queryType: PropTypes.oneOf(["movies", "tv"]),
+  contentQuery: PropTypes.oneOfType([
+    PropTypes.shape({
+      page: PropTypes.number,
+      results: resultsPropTypes,
+      total_pages: PropTypes.number,
+      total_results: PropTypes.number,
+    }),
+    PropTypes.shape({
+      movies: PropTypes.shape({
+        results: resultsPropTypes,
+      }),
+      tv: PropTypes.shape({
+        results: resultsPropTypes,
+      }),
+    }),
+  ]),
+};
