@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { toast } from "react-toastify";
+import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { placeholderAvatar } from "../lib/placeholders";
 import { useUserStore, useUserStoreActions } from "../store";
@@ -9,6 +11,17 @@ export function Account() {
   const { setLoggedIn, setOverlayType, setOverlay, setBookmarkList } =
     useUserStoreActions();
   const { setItem } = useLocalStorage("user");
+  const handleLogout = async () => {
+    try {
+      await userApi.logout();
+      setItem(null);
+      setLoggedIn(false);
+      setBookmarkList([]);
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <section className="mt-20 flex w-full flex-col items-center rounded-t-sm border-t-4 border-t-cyan-500 sm:mt-28 sm:flex-row sm:items-start">
       <div className="group relative -translate-y-14 rounded-full sm:-translate-y-20">
@@ -35,21 +48,28 @@ export function Account() {
         </header>
         <button
           onClick={() => {
-            setOverlayType("change-password");
+            setOverlayType("change-details");
             setOverlay(true);
           }}
-          className="text-lg"
+          className="text-lg hover:text-cyan-500"
         >
-          Change Password
+          Change Account Details
         </button>
+        {!user?.facebookId && !user?.googleId && (
+          <button
+            onClick={() => {
+              setOverlayType("change-password");
+              setOverlay(true);
+            }}
+            className="text-lg hover:text-cyan-500"
+          >
+            Change Password
+          </button>
+        )}
         <Link
           to="/"
-          className="text-lg"
-          onClick={() => {
-            setItem(null);
-            setLoggedIn(false);
-            setBookmarkList([]);
-          }}
+          className="text-lg hover:text-cyan-500"
+          onClick={handleLogout}
         >
           Log Out
         </Link>

@@ -9,7 +9,7 @@ import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { placeholderAvatar } from "../lib/placeholders";
 import { useUserStoreActions } from "../store";
-import { CloseIcon } from "./";
+import { CloseIcon, Separator, ThirdPartyLogin } from "./";
 
 export function SignUpForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,20 +26,21 @@ export function SignUpForm({ acceptsRedirect = false }) {
   const signUpForm = useFormik({
     initialValues: {
       password: "",
-      userName: "",
+      email: "",
       displayName: "",
       confirmPassword: "",
     },
     validationSchema: Yup.object({
-      userName: Yup.string()
-        .min(8, "The username must have minimum 8 characters")
-        .required("A username is required"),
+      email: Yup.string()
+        .email("Invalid Email")
+        .min(8, "The email must have minimum 8 characters")
+        .required("An email is required"),
       password: Yup.string()
         .min(8, "A password must have minimum 8 characters")
         .required("A password is required"),
       displayName: Yup.string()
-        .min(8, "The display name must have minimum 8 characters")
-        .required("displayName is required"),
+        .min(8, "The Display Name must have minimum 8 characters")
+        .required("A Display Name is required"),
       confirmPassword: Yup.string()
         .oneOf([Yup.ref("password")], "Confirm Password does not match")
         .min(8, "Confirm Password must have minimum 8 characters")
@@ -84,7 +85,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
   };
 
   return (
-    <section className="flex w-[90%] min-w-[10rem] max-w-[30rem] flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-2 py-4 text-black sm:px-6">
+    <section className="flex w-[90%] min-w-[10rem] max-w-[30rem] flex-col justify-center gap-5 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-2 py-4 text-black sm:px-6">
       <header className="flex flex-col">
         {!acceptsRedirect && (
           <button
@@ -117,15 +118,15 @@ export function SignUpForm({ acceptsRedirect = false }) {
           />
           <input
             type="text"
-            placeholder="Username"
-            name="userName"
-            value={signUpForm.values.userName}
+            placeholder="Email"
+            name="email"
+            value={signUpForm.values.email}
             onChange={signUpForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signUpForm.touched.userName && signUpForm.errors.userName && (
+          {signUpForm.touched.email && signUpForm.errors.email && (
             <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-              {signUpForm.errors.userName}
+              {signUpForm.errors.email}
             </div>
           )}
           <input
@@ -177,23 +178,24 @@ export function SignUpForm({ acceptsRedirect = false }) {
             Sign up
           </button>
         </form>
+        <Separator className="my-4">
+          <p className="z-[2] bg-[#070B11] px-2 text-center text-white">Or</p>
+        </Separator>
+        <div className="flex flex-col gap-2">
+          <ThirdPartyLogin />
+        </div>
         <nav className="flex w-full flex-row items-center justify-start gap-2 self-end pl-4 pt-4 sm:py-4">
           <p className="text-white">Already registered to ScreenSynced?</p>
-          {acceptsRedirect ? (
-            <button
-              onClick={() => navigate({ to: "/account" })}
-              className="text-cyan-500"
-            >
-              Log In
-            </button>
-          ) : (
-            <button
-              onClick={() => setOverlayType("login")}
-              className="text-cyan-500"
-            >
-              Log In
-            </button>
-          )}
+          <button
+            onClick={() => {
+              acceptsRedirect
+                ? navigate({ to: "/account" })
+                : setOverlayType("login");
+            }}
+            className="text-cyan-500 hover:text-cyan-400"
+          >
+            Log In
+          </button>
         </nav>
       </div>
     </section>

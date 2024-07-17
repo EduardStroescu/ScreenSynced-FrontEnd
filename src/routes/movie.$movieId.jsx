@@ -1,6 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { fetchMovieDetailsAndCredits } from "../api/tmdb/QueryFunctions";
-import { ContentDetailsPage } from "../pages";
+import {
+  AddBookmarkButton,
+  CastSection,
+  ContentDetailsSection,
+  PlayerSection,
+  SeasonsSection,
+  SimilarContentSection,
+} from "../components";
+import { getYoutubeLink } from "../lib/utils";
 
 export const Route = createFileRoute("/movie/$movieId")({
   beforeLoad: ({ params: { movieId } }) => {
@@ -15,17 +23,45 @@ export const Route = createFileRoute("/movie/$movieId")({
   loader: async ({ context: { queryClient, queryOptions } }) => {
     return await queryClient.ensureQueryData(queryOptions);
   },
-  component: MovieIdPage,
+  component: MovieDetailsPage,
 });
 
-function MovieIdPage() {
+function MovieDetailsPage() {
   const queryData = Route.useLoaderData();
   const contentDetails = queryData?.contentDetails;
+  const videoIds = contentDetails.videos?.results?.find(
+    (type) => type.type === "Trailer",
+  )?.key;
+  const youtubeLink = getYoutubeLink(videoIds);
+
   return (
-    <ContentDetailsPage
-      queryData={queryData}
-      contentDetails={contentDetails}
-      mediaType={"movie"}
-    />
+    <section className="grid w-full gap-4 px-2 py-16 sm:grid-cols-6 sm:px-6 sm:py-20">
+      <div
+        className={`${
+          contentDetails.seasons ? "col-span-6 xl:col-span-5" : "col-span-6"
+        } grid h-full w-full grid-flow-row gap-4`}
+      >
+        <PlayerSection youtubeLink={youtubeLink}>
+          <AddBookmarkButton
+            contentId={contentDetails?.id}
+            mediaType={"movie"}
+            size={"w-[0.7rem]"}
+            className={"flex flex-row items-center justify-center gap-1"}
+          >
+            Add Bookmark
+          </AddBookmarkButton>
+        </PlayerSection>
+        <ContentDetailsSection
+          queryData={queryData}
+          contentDetails={contentDetails}
+        />
+      </div>
+      <SeasonsSection contentDetails={contentDetails} />
+      <CastSection cast={queryData.credits?.cast} />
+      <SimilarContentSection
+        similarContent={queryData?.similarMovies}
+        mediaType={"movie"}
+      />
+    </section>
   );
 }

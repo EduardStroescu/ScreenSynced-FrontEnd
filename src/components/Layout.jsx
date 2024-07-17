@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useCycle } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Flip, ToastContainer } from "react-toastify";
+import { Flip, toast, ToastContainer } from "react-toastify";
 import { bookmarkApi } from "../api/backend/modules/bookmark.api";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useLocalStorage } from "../hooks/useLocalStorage";
@@ -10,6 +10,7 @@ import { desktopVariants } from "../lib/framerMotionVariants.js";
 import { useUserStore, useUserStoreActions } from "../store.js";
 import {
   BookmarkIcon,
+  ChangeAccountDetailsForm,
   ChangeAvatarForm,
   ChangePasswordForm,
   Drawer,
@@ -27,6 +28,7 @@ import { useShallow } from "zustand/react/shallow";
 import { placeholderAvatar } from "../lib/placeholders.js";
 
 import PropTypes from "prop-types";
+import userApi from "../api/backend/modules/user.api.js";
 
 export function Layout({ children }) {
   const { user, loggedIn, isOverlay, overlayType } = useUserStore(
@@ -40,6 +42,8 @@ export function Layout({ children }) {
   const { setUser, setLoggedIn, setBookmarkList, setOverlay, setOverlayType } =
     useUserStoreActions();
   const { setItem, getItem } = useLocalStorage("user");
+  const { search } = useLocation();
+  const navigate = useNavigate();
 
   const { data: bookmarksQuery } = useQuery({
     queryKey: ["bookmarks"],
@@ -48,10 +52,22 @@ export function Layout({ children }) {
   });
 
   useEffect(() => {
-    const checkUser = getItem();
-    if (checkUser) {
-      setUser(checkUser);
+    const user = getItem();
+    if (user) {
+      setUser(user);
       setLoggedIn(true);
+    } else if (search.redirect) {
+      (async () => {
+        const { response } = await userApi.getInfo();
+        if (response) {
+          setUser(response);
+          setLoggedIn(true);
+          setItem(response);
+          navigate({ to: "/", replace: true });
+        } else {
+          toast.error("Something went wrong");
+        }
+      })();
     }
   }, []);
 
@@ -74,6 +90,8 @@ export function Layout({ children }) {
         return <ChangeAvatarForm />;
       case "change-password":
         return <ChangePasswordForm />;
+      case "change-details":
+        return <ChangeAccountDetailsForm />;
       default:
         return null;
     }
@@ -143,7 +161,7 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className="fixed top-0 z-[200] hidden h-16 w-full items-center justify-between gap-8 bg-gradient-to-b from-[#070B11] via-[#070B11]/80 to-[#070B11]/0 px-12 py-8 text-white transition duration-300 dark:text-white md:px-10 lg:flex"
+      className="fixed top-0 z-[200] hidden h-16 w-full items-center justify-between gap-8 bg-gradient-to-b from-[#070B11] via-[#070B11]/80 to-[#070B11]/0 px-12 py-8 text-white transition duration-300 md:px-10 lg:flex dark:text-white"
     >
       <nav className="flex items-center justify-center">
         <Link
@@ -284,6 +302,18 @@ export function DesktopMenuDrawer({
 }) {
   const menuRef = useRef(null);
   useClickOutside(menuRef, () => setMenuOpen(false));
+  const handleLogout = async () => {
+    try {
+      await userApi.logout();
+      setMenuOpen(false);
+      setItem(null);
+      setUser(getItem());
+      setLoggedIn(false);
+      setBookmarkList([]);
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
   return (
     <AnimatePresence>
       {loggedIn ? (
@@ -322,13 +352,7 @@ export function DesktopMenuDrawer({
             <Link
               to="/"
               className="w-full rounded px-2 text-center hover:bg-cyan-500"
-              onClick={() => {
-                setMenuOpen(false);
-                setItem(null);
-                setUser(getItem());
-                setLoggedIn(false);
-                setBookmarkList([]);
-              }}
+              onClick={handleLogout}
             >
               Log Out
             </Link>
@@ -449,7 +473,9 @@ const userPropTypes = PropTypes.shape({
   displayName: PropTypes.string,
   id: PropTypes.number,
   updatedAt: PropTypes.string,
-  userName: PropTypes.string,
+  email: PropTypes.string,
+  googleId: PropTypes.string,
+  facebookId: PropTypes.string,
 });
 DesktopHeader.propTypes = {
   setOverlayType: PropTypes.func.isRequired,

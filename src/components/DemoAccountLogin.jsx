@@ -6,11 +6,11 @@ import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useUserStoreActions } from "../store";
 
-const DemoAccountLogin = ({
+export function DemoAccountLogin({
   acceptsRedirect = false,
   isLoading,
   setIsLoading,
-}) => {
+}) {
   const { setUser, setLoggedIn, setOverlay, setOverlayType } =
     useUserStoreActions();
   const { setItem, getItem } = useLocalStorage("user");
@@ -20,11 +20,11 @@ const DemoAccountLogin = ({
   });
   const handleDemoLogin = async () => {
     setIsLoading(true);
-    const userName = import.meta.env.VITE_DEMO_ACC_USERNAME;
+    const email = import.meta.env.VITE_DEMO_ACC_EMAIL;
     const password = import.meta.env.VITE_DEMO_ACC_PASSWORD;
     const { response, error } = await signInMutation.mutateAsync({
       password: password,
-      userName: userName,
+      email: email,
     });
 
     if (response) {
@@ -48,17 +48,15 @@ const DemoAccountLogin = ({
     <div className="mb-4 flex flex-col items-center justify-center gap-4">
       <p className="text-white">For presentation purposes:</p>
       <button
-        className="w-full rounded border-2 border-cyan-500 bg-[#bb1e09] py-1 text-white hover:bg-[#df250d]"
+        className="w-full rounded border-2 border-cyan-500  py-1 text-[#fe391f] hover:bg-[#bb1e09] hover:text-white"
         onClick={() => handleDemoLogin()}
         disabled={isLoading}
       >
-        {!isLoading ? "Log in As Demo User" : "Loading..."}
+        {!isLoading ? "Continue with Demo Account" : "Loading..."}
       </button>
     </div>
   );
-};
-
-export default DemoAccountLogin;
+}
 
 DemoAccountLogin.propTypes = {
   acceptsRedirect: PropTypes.bool,

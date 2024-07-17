@@ -1,7 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { bookmarkApi } from "../api/backend/modules/bookmark.api";
-import { Account } from "../components";
-import { Bookmarks } from "../components/Bookmarks";
+import { Account, Bookmarks } from "../components";
 import { isAuthenticated } from "../lib/isAuthenticated";
 
 export const Route = createFileRoute("/account")({

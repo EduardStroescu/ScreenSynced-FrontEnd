@@ -8,8 +8,7 @@ import * as Yup from "yup";
 import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useUserStoreActions } from "../store";
-import { CloseIcon } from "./";
-import DemoAccountLogin from "./DemoAccountLogin";
+import { CloseIcon, DemoAccountLogin, Separator, ThirdPartyLogin } from "./";
 
 export function SignInForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,12 +24,13 @@ export function SignInForm({ acceptsRedirect = false }) {
   const signInForm = useFormik({
     initialValues: {
       password: "",
-      userName: "",
+      email: "",
     },
     validationSchema: Yup.object({
-      userName: Yup.string()
-        .min(8, "The username must have minimum 8 characters")
-        .required("A username is required"),
+      email: Yup.string()
+        .email("Invalid Email")
+        .min(8, "The Email must have minimum 8 characters")
+        .required("An Email is required"),
       password: Yup.string()
         .min(8, "The password must have minimum 8 characters")
         .required("A password is required"),
@@ -59,8 +59,8 @@ export function SignInForm({ acceptsRedirect = false }) {
   });
 
   return (
-    <section className="flex w-[90%] min-w-[10rem] max-w-[30rem] flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black lg:w-[50%]">
-      <header className="flex flex-col pb-6">
+    <section className="flex w-[90%] min-w-[10rem] max-w-[30rem] flex-col justify-center gap-5 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black lg:w-[50%]">
+      <header className="flex flex-col">
         {!acceptsRedirect && (
           <button
             onClick={() => setOverlay(false)}
@@ -76,6 +76,12 @@ export function SignInForm({ acceptsRedirect = false }) {
           Log In
         </h1>
       </header>
+      <div className="flex flex-col gap-2">
+        <ThirdPartyLogin />
+      </div>
+      <Separator>
+        <p className="z-[2] bg-[#070B11] px-2 text-center text-white">Or</p>
+      </Separator>
       <section className="flex flex-col justify-center">
         <form
           onSubmit={signInForm.handleSubmit}
@@ -83,15 +89,15 @@ export function SignInForm({ acceptsRedirect = false }) {
         >
           <input
             type="text"
-            placeholder="Username"
-            name="userName"
-            value={signInForm.values.userName}
+            placeholder="Email"
+            name="email"
+            value={signInForm.values.email}
             onChange={signInForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signInForm.touched.userName && signInForm.errors.userName && (
+          {signInForm.touched.email && signInForm.errors.email && (
             <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-              {signInForm.errors.userName}
+              {signInForm.errors.email}
             </div>
           )}
           <input
@@ -118,23 +124,16 @@ export function SignInForm({ acceptsRedirect = false }) {
         </form>
         <nav className="flex w-full flex-row items-center justify-start gap-2 self-end pb-6 pt-10">
           <p className="text-white">New to ScreenSynced?</p>
-          {acceptsRedirect ? (
-            <button
-              onClick={() => navigate({ to: "/signup" })}
-              className="text-cyan-500 "
-            >
-              Sign Up
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                setOverlayType("sign-up");
-              }}
-              className="text-cyan-500 "
-            >
-              Sign Up
-            </button>
-          )}
+          <button
+            onClick={() => {
+              acceptsRedirect
+                ? navigate({ to: "/signup" })
+                : setOverlayType("sign-up");
+            }}
+            className="text-cyan-500 hover:text-cyan-400"
+          >
+            Sign Up
+          </button>
         </nav>
         <DemoAccountLogin
           acceptsRedirect={acceptsRedirect}

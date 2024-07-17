@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-export default function ErrorComponent() {
+export function ErrorComponent() {
   return (
     <section className="flex h-[100vh] w-full flex-col items-center justify-center gap-24">
       <h2 className="text-center text-7xl text-red-500">
