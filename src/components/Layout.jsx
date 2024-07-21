@@ -56,18 +56,21 @@ export function Layout({ children }) {
     if (user) {
       setUser(user);
       setLoggedIn(true);
-    } else if (search.redirect) {
+    } else if (!user && search.success) {
       (async () => {
         const { response } = await userApi.getInfo();
         if (response) {
           setUser(response);
           setLoggedIn(true);
           setItem(response);
-          navigate({ to: "/", replace: true });
         } else {
-          toast.error("Something went wrong");
+          toast.error("Something went wrong, please try again later");
         }
+        navigate({ to: "/", replace: true });
       })();
+    } else if (!user && search.error) {
+      toast.error("Something went wrong");
+      navigate({ to: "/", replace: true });
     }
   }, []);
 
