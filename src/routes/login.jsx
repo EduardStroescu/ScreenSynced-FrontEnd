@@ -12,7 +12,7 @@ export const Route = createFileRoute("/login")({
   },
   component: () => {
     return (
-      <section className="flex h-[100vh] w-full flex-col items-center justify-center bg-[url('/pageBackground.jpg')]">
+      <section className="flex min-h-[100vh] w-full flex-col items-center justify-center bg-[url('/pageBackground.jpg')] px-4 pb-4 pt-14 sm:p-0">
         <SignInForm acceptsRedirect={true} />
       </section>
     );

@@ -59,8 +59,8 @@ export function SignInForm({ acceptsRedirect = false }) {
   });
 
   return (
-    <section className="flex w-[90%] min-w-[10rem] max-w-[30rem] flex-col justify-center gap-5 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black lg:w-[50%]">
-      <header className="flex flex-col">
+    <section className="flex w-full min-w-[10rem] max-w-[30rem] flex-col justify-center gap-4 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black lg:w-[50%]">
+      <header className="mb-2 flex flex-col">
         {!acceptsRedirect && (
           <button
             onClick={() => setOverlay(false)}
@@ -114,7 +114,7 @@ export function SignInForm({ acceptsRedirect = false }) {
             </div>
           )}
           <button
-            className="mt-4 w-1/2 rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white hover:bg-cyan-500"
+            className="mt-2 w-1/2 rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white hover:bg-cyan-500"
             type="submit"
             value="Send"
             disabled={isLoading}
@@ -122,15 +122,15 @@ export function SignInForm({ acceptsRedirect = false }) {
             {!isLoading ? "Log In" : "Loading..."}
           </button>
         </form>
-        <nav className="flex w-full flex-row items-center justify-start gap-2 self-end pb-6 pt-10">
-          <p className="text-white">New to ScreenSynced?</p>
+        <nav className="w-full py-4">
+          <p className="inline text-white">New to ScreenSynced? </p>
           <button
             onClick={() => {
               acceptsRedirect
                 ? navigate({ to: "/signup" })
                 : setOverlayType("sign-up");
             }}
-            className="text-cyan-500 hover:text-cyan-400"
+            className="whitespace-nowrap text-cyan-500 hover:text-cyan-400"
           >
             Sign Up
           </button>

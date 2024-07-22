@@ -93,7 +93,7 @@ export function ChangeAvatarForm() {
             name="avatar"
             accept="image/*"
             onChange={uploadFile}
-            className="rounded bg-[#005f70] text-center text-white"
+            className="rounded-full bg-[#005f70] text-center text-white"
           />
           <button
             type="submit"

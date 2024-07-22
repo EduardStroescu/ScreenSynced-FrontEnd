@@ -254,7 +254,7 @@ function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
         </nav>
         <div className="flex w-full items-center justify-end gap-4">
           <button onClick={() => setSearchModalOpen(true)}>
-            <SearchIcon className={"w-[1.2rem] translate-y-1 stroke-white"} />
+            <SearchIcon className={"w-[1.2rem] stroke-white"} />
           </button>
           {isSearchModalOpen && (
             <>

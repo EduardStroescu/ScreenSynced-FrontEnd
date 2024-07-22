@@ -85,7 +85,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
   };
 
   return (
-    <section className="flex w-[90%] min-w-[10rem] max-w-[30rem] flex-col justify-center gap-5 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-2 py-4 text-black sm:px-6">
+    <section className="flex w-full min-w-[10rem] max-w-[30rem] flex-col justify-center gap-5 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-2 py-4 text-black sm:px-6">
       <header className="flex flex-col">
         {!acceptsRedirect && (
           <button
@@ -114,7 +114,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
             name="avatar"
             accept="image/*"
             onChange={uploadFile}
-            className="w-full rounded bg-[#005f70] text-center text-white"
+            className="w-full rounded-full bg-[#005f70] text-center text-white"
           />
           <input
             type="text"
@@ -170,7 +170,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
               </div>
             )}
           <button
-            className="mt-4 w-full rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white hover:bg-cyan-500"
+            className="mt-2 w-full rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white hover:bg-cyan-500"
             type="submit"
             value="Send"
             disabled={isLoading}
@@ -184,15 +184,17 @@ export function SignUpForm({ acceptsRedirect = false }) {
         <div className="flex flex-col gap-2">
           <ThirdPartyLogin />
         </div>
-        <nav className="flex w-full flex-row items-center justify-start gap-2 self-end pl-4 pt-4 sm:py-4">
-          <p className="text-white">Already registered to ScreenSynced?</p>
+        <nav className="w-full pt-4">
+          <p className="inline text-white">
+            Already registered to ScreenSynced?{" "}
+          </p>
           <button
             onClick={() => {
               acceptsRedirect
                 ? navigate({ to: "/account" })
                 : setOverlayType("login");
             }}
-            className="text-cyan-500 hover:text-cyan-400"
+            className="whitespace-nowrap text-cyan-500 hover:text-cyan-400"
           >
             Log In
           </button>

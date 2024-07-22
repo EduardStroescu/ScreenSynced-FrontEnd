@@ -80,3 +80,17 @@ img {
   background-size: cover;
   shape-margin: 0.75rem;
 }
+
+input[type=file]::file-selector-button {
+  border: 2px solid #06b6d4;
+  padding: .2em .4em;
+  border-radius: .2em;
+  background-color: #131314;
+  transition: 1s;
+  color: white;
+  border-radius: 9999px;
+}
+
+input[type=file]::file-selector-button:hover {
+  background-color: #06b6d4;
+}
