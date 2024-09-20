@@ -9,7 +9,9 @@ import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { placeholderAvatar } from "../lib/placeholders";
 import { useUserStoreActions } from "../store";
-import { CloseIcon, Separator, ThirdPartyLogin } from "./";
+import { CloseIcon } from "./Icons";
+import { Separator } from "./Separator";
+import { ThirdPartyLogin } from "./ThirdPartyLogin";
 
 export function SignUpForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);

@@ -7,7 +7,7 @@ import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { placeholderAvatar } from "../lib/placeholders";
 import { useUserStore, useUserStoreActions } from "../store";
-import { CloseIcon } from "./";
+import { CloseIcon } from "./Icons";
 
 export function ChangeAvatarForm() {
   const user = useUserStore((state) => state.user);

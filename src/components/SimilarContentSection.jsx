@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { ContentCard } from "./";
+import { ContentCard } from "./ContentCard";
 
 export function SimilarContentSection({ similarContent, mediaType }) {
   if (!similarContent?.results?.length) return;

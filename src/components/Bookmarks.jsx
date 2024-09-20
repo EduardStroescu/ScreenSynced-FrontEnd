@@ -4,7 +4,7 @@ import {
   fetchMovieDetails,
   fetchSerieDetails,
 } from "../api/tmdb/QueryFunctions";
-import { ContentCard } from "./";
+import { ContentCard } from "./ContentCard";
 
 import PropTypes from "prop-types";
 import { Navigation } from "swiper/modules";

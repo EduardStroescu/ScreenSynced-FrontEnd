@@ -17,27 +17,28 @@ export const Route = createFileRoute("/")({
     };
   },
   loader: async ({ context: { queryClient, queryContent } }) => {
-    return await queryClient.ensureQueryData(queryContent);
+    const data = await queryClient.ensureQueryData(queryContent);
+
+    return {
+      movies: {
+        results: data?.movies?.results.map((obj) => ({
+          ...obj,
+          mediaType: "movie",
+        })),
+      },
+      tv: {
+        results: data?.tv?.results?.map((obj) => ({
+          ...obj,
+          mediaType: "tv",
+        })),
+      },
+    };
   },
   component: HomePage,
 });
 
 function HomePage() {
-  const queryData = Route.useLoaderData();
-  const contentQuery = {
-    movies: {
-      results: queryData?.movies?.results.map((obj) => ({
-        ...obj,
-        ["mediaType"]: "movie",
-      })),
-    },
-    tv: {
-      results: queryData?.tv?.results?.map((obj) => ({
-        ...obj,
-        ["mediaType"]: "tv",
-      })),
-    },
-  };
+  const contentQuery = Route.useLoaderData();
 
   return (
     <>

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { contentItemPropTypes } from "../lib/types";
-import { ContentCard } from "./";
+import { ContentCard } from "./ContentCard";
 
 export function CombinedGrid({ contentQuery }) {
   const [queryType, setQueryType] = useState("movies");

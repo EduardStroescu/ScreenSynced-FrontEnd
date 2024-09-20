@@ -5,7 +5,8 @@ import { useRef } from "react";
 import { backdropPrefixSmall, posterPrefixMedium } from "../lib/const";
 import { placeholderImage } from "../lib/placeholders";
 import { contentItemPropTypes } from "../lib/types";
-import { AddBookmarkButton, Image } from "./";
+import { AddBookmarkButton } from "./AddBookmarkButton";
+import { Image } from "./Image";
 
 export function ContentCard({ content, contentType }) {
   const isInViewRef = useRef();
@@ -15,8 +16,8 @@ export function ContentCard({ content, contentType }) {
     content?.poster_path !== null && content?.poster_path !== undefined
       ? posterPrefixMedium + content.poster_path
       : content?.backdrop_path !== null && content?.backdrop_path !== undefined
-      ? backdropPrefixSmall + content.backdrop_path
-      : placeholderImage;
+        ? backdropPrefixSmall + content.backdrop_path
+        : placeholderImage;
 
   return (
     <motion.section
@@ -30,6 +31,7 @@ export function ContentCard({ content, contentType }) {
     >
       <div className="pointer-events-none absolute left-0 top-0 z-[5] aspect-[2/3] w-full rounded-xl group-hover:bg-gradient-to-t group-hover:from-cyan-500/80 group-hover:via-cyan-500/50" />
       <Link
+        aria-label={`Link to ${content.title || content.name}`}
         to={`/${contentType}/$${contentType}Id`}
         preloadDelay={1000}
         params={{ [`${contentType}Id`]: content?.id }}

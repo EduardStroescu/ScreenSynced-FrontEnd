@@ -168,19 +168,123 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexRoute,
-  SplatRoute,
-  AccountRoute,
-  LoginRoute,
-  SignUpRoute,
-  DiscoverPageNumberRoute,
-  MovieMovieIdRoute,
-  MoviesPageNumberRoute,
-  TvTvIdRoute,
-  TvsPageNumberRoute,
-  SearchSearchTermPageNumberRoute,
-})
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/account': typeof AccountRoute
+  '/login': typeof LoginRoute
+  '/signUp': typeof SignUpRoute
+  '/discover/$pageNumber': typeof DiscoverPageNumberRoute
+  '/movie/$movieId': typeof MovieMovieIdRoute
+  '/movies/$pageNumber': typeof MoviesPageNumberRoute
+  '/tv/$tvId': typeof TvTvIdRoute
+  '/tvs/$pageNumber': typeof TvsPageNumberRoute
+  '/search/$searchTerm/$pageNumber': typeof SearchSearchTermPageNumberRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/account': typeof AccountRoute
+  '/login': typeof LoginRoute
+  '/signUp': typeof SignUpRoute
+  '/discover/$pageNumber': typeof DiscoverPageNumberRoute
+  '/movie/$movieId': typeof MovieMovieIdRoute
+  '/movies/$pageNumber': typeof MoviesPageNumberRoute
+  '/tv/$tvId': typeof TvTvIdRoute
+  '/tvs/$pageNumber': typeof TvsPageNumberRoute
+  '/search/$searchTerm/$pageNumber': typeof SearchSearchTermPageNumberRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/account': typeof AccountRoute
+  '/login': typeof LoginRoute
+  '/signUp': typeof SignUpRoute
+  '/discover/$pageNumber': typeof DiscoverPageNumberRoute
+  '/movie/$movieId': typeof MovieMovieIdRoute
+  '/movies/$pageNumber': typeof MoviesPageNumberRoute
+  '/tv/$tvId': typeof TvTvIdRoute
+  '/tvs/$pageNumber': typeof TvsPageNumberRoute
+  '/search/$searchTerm/$pageNumber': typeof SearchSearchTermPageNumberRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/$'
+    | '/account'
+    | '/login'
+    | '/signUp'
+    | '/discover/$pageNumber'
+    | '/movie/$movieId'
+    | '/movies/$pageNumber'
+    | '/tv/$tvId'
+    | '/tvs/$pageNumber'
+    | '/search/$searchTerm/$pageNumber'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/$'
+    | '/account'
+    | '/login'
+    | '/signUp'
+    | '/discover/$pageNumber'
+    | '/movie/$movieId'
+    | '/movies/$pageNumber'
+    | '/tv/$tvId'
+    | '/tvs/$pageNumber'
+    | '/search/$searchTerm/$pageNumber'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/account'
+    | '/login'
+    | '/signUp'
+    | '/discover/$pageNumber'
+    | '/movie/$movieId'
+    | '/movies/$pageNumber'
+    | '/tv/$tvId'
+    | '/tvs/$pageNumber'
+    | '/search/$searchTerm/$pageNumber'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
+  AccountRoute: typeof AccountRoute
+  LoginRoute: typeof LoginRoute
+  SignUpRoute: typeof SignUpRoute
+  DiscoverPageNumberRoute: typeof DiscoverPageNumberRoute
+  MovieMovieIdRoute: typeof MovieMovieIdRoute
+  MoviesPageNumberRoute: typeof MoviesPageNumberRoute
+  TvTvIdRoute: typeof TvTvIdRoute
+  TvsPageNumberRoute: typeof TvsPageNumberRoute
+  SearchSearchTermPageNumberRoute: typeof SearchSearchTermPageNumberRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
+  AccountRoute: AccountRoute,
+  LoginRoute: LoginRoute,
+  SignUpRoute: SignUpRoute,
+  DiscoverPageNumberRoute: DiscoverPageNumberRoute,
+  MovieMovieIdRoute: MovieMovieIdRoute,
+  MoviesPageNumberRoute: MoviesPageNumberRoute,
+  TvTvIdRoute: TvTvIdRoute,
+  TvsPageNumberRoute: TvsPageNumberRoute,
+  SearchSearchTermPageNumberRoute: SearchSearchTermPageNumberRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /account/
+
+Sitemap: https://screensynced.vercel.app/sitemap.xml

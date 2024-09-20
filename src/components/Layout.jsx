@@ -139,9 +139,7 @@ export function Layout({ children }) {
         theme="dark"
         toastClassName={"bg-[#070B11] border-double border-4 border-cyan-500"}
       />
-      <main role="main" id="mainContent" className="relative text-white">
-        {children}
-      </main>
+      <main className="relative min-h-screen text-white">{children}</main>
       {isOverlay && <Overlay>{renderModalBasedOnActionType()}</Overlay>}
       <Footer />
     </>
@@ -179,6 +177,7 @@ function DesktopHeader({
       <SearchBarDesktop />
       <nav className="flex flex-row items-center justify-center gap-6">
         <Link
+          aria-label="Discover Movies and Series"
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
           className="font-serif text-lg hover:text-cyan-400"
@@ -189,6 +188,7 @@ function DesktopHeader({
           Discover
         </Link>
         <Link
+          aria-label="See All Movies"
           to="/movies/$pageNumber"
           params={{ pageNumber: 1 }}
           className="font-serif text-lg hover:text-cyan-400"
@@ -199,6 +199,7 @@ function DesktopHeader({
           Movies
         </Link>
         <Link
+          aria-label="See All Series"
           to="/tvs/$pageNumber"
           params={{ pageNumber: 1 }}
           className="font-serif text-lg hover:text-cyan-400"
@@ -395,6 +396,7 @@ export function MobileMenuDrawer({ isMenuOpen, setMenuOpen }) {
           Account
         </Link>
         <Link
+          aria-label="Discover Movies and Series"
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
           onClick={setMenuOpen}
@@ -406,6 +408,7 @@ export function MobileMenuDrawer({ isMenuOpen, setMenuOpen }) {
           Discover
         </Link>
         <Link
+          aria-label="See All Movies"
           to="/movies/$pageNumber"
           params={{ pageNumber: 1 }}
           onClick={setMenuOpen}
@@ -417,6 +420,7 @@ export function MobileMenuDrawer({ isMenuOpen, setMenuOpen }) {
           Movies
         </Link>
         <Link
+          aria-label="See All Series"
           to="/tvs/$pageNumber"
           params={{ pageNumber: 1 }}
           onClick={setMenuOpen}
@@ -440,8 +444,12 @@ function Footer() {
           <Link to="/discover/$pageNumber" params={{ pageNumber: 1 }}>
             Discover
           </Link>
-          <Link to="/movies/1">Movies</Link>
-          <Link to="/tvs/1">Series</Link>
+          <Link to="/movies/1" aria-label="See All Movies">
+            Movies
+          </Link>
+          <Link to="/tvs/1" aria-label="See All Series">
+            Series
+          </Link>
           <Link to="/account">Account</Link>
         </nav>
         <section className="flex w-full flex-col text-center">
@@ -454,7 +462,7 @@ function Footer() {
             <a
               rel="noreferrer"
               target="_blank"
-              href="https://eduardstroescu-portofolio.vercel.app/"
+              href="https://eduardstroescu.com"
               className="text-cyan-300"
             >
               &copy; {new Date().getFullYear()} / Eduard Stroescu

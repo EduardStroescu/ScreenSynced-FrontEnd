@@ -8,7 +8,10 @@ import * as Yup from "yup";
 import userApi from "../api/backend/modules/user.api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useUserStoreActions } from "../store";
-import { CloseIcon, DemoAccountLogin, Separator, ThirdPartyLogin } from "./";
+import { DemoAccountLogin } from "./DemoAccountLogin";
+import { CloseIcon } from "./Icons";
+import { Separator } from "./Separator";
+import { ThirdPartyLogin } from "./ThirdPartyLogin";
 
 export function SignInForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);

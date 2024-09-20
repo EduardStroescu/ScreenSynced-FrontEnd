@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+
+<url>
+  <loc>https://screensynced.vercel.app/</loc>
+  <lastmod>2024-09-16T18:43:32+00:00</lastmod>
+</url>
+<url>
+  <loc>https://screensynced.vercel.app/login</loc>
+  <lastmod>2024-09-20T22:00:01+00:00</lastmod>
+</url>
+<url>
+  <loc>https://screensynced.vercel.app/signUp</loc>
+  <lastmod>2024-09-20T22:00:01+00:00</lastmod>
+</url>
+<url>
+  <loc>https://screensynced.vercel.app/movies/1</loc>
+  <lastmod>2024-09-20T22:00:01+00:00</lastmod>
+</url>
+<url>
+  <loc>https://screensynced.vercel.app/tv/1</loc>
+  <lastmod>2024-09-20T22:00:01+00:00</lastmod>
+</url>
+<url>
+  <loc>https://screensynced.vercel.app/discover/1</loc>
+  <lastmod>2024-09-20T22:00:01+00:00</lastmod>
+</url>
+
+
+</urlset>

@@ -6,7 +6,8 @@ import { useRef, useState } from "react";
 import { fetchPopularUpcomingMoviesandSeries } from "../api/tmdb/QueryFunctions";
 import { backdropPrefixSmall, posterPrefixSmall } from "../lib/const";
 import { placeholderImage } from "../lib/placeholders";
-import { AddBookmarkButton, Image } from "./";
+import { AddBookmarkButton } from "./AddBookmarkButton";
+import { Image } from "./Image";
 
 export function Sidebar({ contentType, queryType }) {
   const isInViewRef = useRef();
@@ -73,9 +74,9 @@ export function Sidebar({ contentType, queryType }) {
                 content.poster_path !== undefined
                   ? posterPrefixSmall + content.poster_path
                   : content.backdrop_path !== null &&
-                    content.backdrop_path !== undefined
-                  ? backdropPrefixSmall + content.backdrop_path
-                  : placeholderImage;
+                      content.backdrop_path !== undefined
+                    ? backdropPrefixSmall + content.backdrop_path
+                    : placeholderImage;
 
               const style = [
                 isFirst && "text-red-500",
@@ -115,6 +116,7 @@ export function Sidebar({ contentType, queryType }) {
                     />
                     <div className="flex w-[78%] flex-col p-2">
                       <Link
+                        aria-label={`Link to ${content.title || content.name}`}
                         to={`/${contentType}/$${contentType}Id`}
                         params={{ [`${contentType}Id`]: content.id }}
                         className="w-full truncate font-sans text-lg group-hover:text-cyan-500"

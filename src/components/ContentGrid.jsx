@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import PropTypes from "prop-types";
 import { contentItemPropTypes } from "../lib/types";
-import { ContentCard } from "./";
+import { ContentCard } from "./ContentCard";
 
 export function ContentGrid({
   contentType,
@@ -17,6 +17,7 @@ export function ContentGrid({
         {title && <h2 className="py-1 text-2xl">{title}</h2>}
         {seeMore && (
           <Link
+            aria-label={`See more ${contentType}s`}
             to={`/${contentType}s/$pageNumber`}
             params={{ pageNumber: 1 }}
             className="mr-1 rounded-full bg-cyan-500 px-3 py-1 text-sm"

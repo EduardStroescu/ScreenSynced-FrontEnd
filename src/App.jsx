@@ -4,13 +4,21 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { ErrorComponent } from "./components";
 import { routeTree } from "./routeTree.gen";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+      gcTime: Infinity,
+    },
+  },
+});
 const router = createRouter({
   routeTree,
   context: {
     queryClient,
   },
-  defaultPreload: "intent",
+  defaultPreload: false,
   defaultErrorComponent: () => <ErrorComponent />,
 });
 

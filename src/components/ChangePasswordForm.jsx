@@ -7,7 +7,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
 import userApi from "../api/backend/modules/user.api";
 import { useUserStoreActions } from "../store";
-import { CloseIcon } from "./";
+import { CloseIcon } from "./Icons";
 
 export function ChangePasswordForm() {
   const [isLoading, setIsLoading] = useState(false);

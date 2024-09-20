@@ -27,23 +27,21 @@ function RootComponent() {
   }, [routerState]);
 
   return (
-    <>
-      <Layout>
-        <ReactLenis
-          ref={lenisRef}
-          root
-          options={{
-            orientation: "vertical",
-            gestureOrientataion: "vertical",
-            lerp: 0.08,
-            wheelMultiplier: 1.2,
-          }}
-        >
-          <Outlet />
-        </ReactLenis>
-        <ScrollRestoration />
-        {/* <TanStackRouterDevtools initialIsOpen={false} /> */}
-      </Layout>
-    </>
+    <Layout>
+      <ReactLenis
+        ref={lenisRef}
+        root
+        options={{
+          orientation: "vertical",
+          gestureOrientataion: "vertical",
+          lerp: 0.08,
+          wheelMultiplier: 1.2,
+        }}
+      >
+        <Outlet />
+      </ReactLenis>
+      <ScrollRestoration />
+      {/* <TanStackRouterDevtools initialIsOpen={false} /> */}
+    </Layout>
   );
 }

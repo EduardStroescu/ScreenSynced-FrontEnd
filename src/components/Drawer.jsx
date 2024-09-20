@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 import { mobileVariants } from "../lib/framerMotionVariants";
-import { CloseIcon } from "./";
+import { CloseIcon } from "./Icons";
 
 export function Drawer({ isMenuOpen, setMenuOpen, children }) {
   return (

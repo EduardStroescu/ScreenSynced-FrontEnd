@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useShallow } from "zustand/react/shallow";
 import { bookmarkApi } from "../api/backend/modules/bookmark.api";
 import { useUserStore, useUserStoreActions } from "../store";
-import { BookmarkIcon } from "./";
+import { BookmarkIcon } from "./Icons";
 
 export function AddBookmarkButton({
   children,
@@ -80,7 +80,12 @@ export function AddBookmarkButton({
     : "";
 
   return (
-    <button className={className} onClick={() => onAddBookmark()}>
+    <button
+      title="Add Bookmark"
+      aria-label="Add Bookmark"
+      className={className}
+      onClick={() => onAddBookmark()}
+    >
       <BookmarkIcon className={`${size} ${isBookmarked}`} />
       {children}
     </button>

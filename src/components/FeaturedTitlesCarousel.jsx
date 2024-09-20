@@ -18,7 +18,9 @@ import "swiper/css/navigation";
 import { imagePrefixOriginal } from "../lib/const";
 import { placeholderImage } from "../lib/placeholders";
 import { contentItemPropTypes } from "../lib/types";
-import { AddBookmarkButton, Image, PlayIcon } from "./";
+import { AddBookmarkButton } from "./AddBookmarkButton";
+import { PlayIcon } from "./Icons";
+import { Image } from "./Image";
 
 export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
   const isInViewRef = useRef();
@@ -74,14 +76,14 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
         modules={[Autoplay, Pagination]}
         className="z-[104]"
       >
-        {apiData?.results?.slice(0, 5).map((content, index) => {
+        {apiData?.results?.slice(0, 5).map((content) => {
           const contentImage =
             content.poster_path !== null && content.poster_path !== undefined
               ? imagePrefixOriginal + content.poster_path
               : content.backdrop_path !== null &&
-                content.backdrop_path !== undefined
-              ? imagePrefixOriginal + content.backdrop_path
-              : placeholderImage;
+                  content.backdrop_path !== undefined
+                ? imagePrefixOriginal + content.backdrop_path
+                : placeholderImage;
 
           return (
             <SwiperSlide

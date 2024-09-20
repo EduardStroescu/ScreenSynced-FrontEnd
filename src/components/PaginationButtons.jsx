@@ -17,6 +17,7 @@ export function PaginationButtons({ contentType, context, totalPages }) {
         Go Back
       </Link>
       <Link
+        aria-label={`See more ${contentType}s`}
         disabled={Number(context) === totalPages}
         to={`/${contentType}/$pageNumber`}
         params={{
