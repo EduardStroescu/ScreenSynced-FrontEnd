@@ -9,7 +9,6 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { desktopVariants } from "../lib/framerMotionVariants.js";
 import { useUserStore, useUserStoreActions } from "../store.js";
 import {
-  BookmarkIcon,
   ChangeAccountDetailsForm,
   ChangeAvatarForm,
   ChangePasswordForm,
@@ -162,7 +161,7 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className="fixed top-0 z-[200] hidden h-16 w-full items-center justify-between gap-8 bg-gradient-to-b from-[#070B11] via-[#070B11]/80 to-[#070B11]/0 px-12 py-8 text-white transition duration-300 md:px-10 lg:flex dark:text-white"
+      className="fixed top-0 z-[200] hidden h-16 w-full items-center justify-between gap-8 bg-gradient-to-b from-[#070B11] via-[#070B11]/80 to-[#070B11]/0 px-12 py-10 text-white transition duration-300 md:px-10 lg:flex dark:text-white"
     >
       <nav className="flex items-center justify-center">
         <Link
@@ -269,7 +268,7 @@ function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
                 <motion.img
                   src={user?.avatar || placeholderAvatar}
                   alt={user?.displayName + "picture"}
-                  className="aspect-[1/1] translate-y-1 rounded-full object-cover"
+                  className="aspect-[1/1] rounded-full object-cover"
                 />
               </Link>
             </div>
@@ -326,14 +325,14 @@ export function DesktopMenuDrawer({
             <img
               src={user?.avatar || placeholderAvatar}
               alt={user?.displayName + "picture"}
-              className="aspect-[1/1] translate-y-1 rounded-full object-cover"
+              className="aspect-[1/1] rounded-full object-cover"
             />
           </button>
           <motion.div
             initial={false}
             animate={isMenuOpen ? "open" : "closed"}
             variants={desktopVariants}
-            className="absolute right-0 top-14 flex flex-col justify-around gap-4 rounded-lg border-4 border-double border-cyan-500 bg-[#070B11] px-10 pb-2 font-serif text-lg"
+            className="absolute right-0 top-14 flex flex-col justify-around gap-2 rounded-lg border-4 border-double border-cyan-500 bg-[#070B11] px-10 pb-2 font-serif text-lg"
           >
             <h3 className="w-full border-b-2 border-double border-cyan-500 py-2 text-center font-londrina text-3xl text-white">
               {user?.displayName}
@@ -341,21 +340,20 @@ export function DesktopMenuDrawer({
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="w-full rounded px-2 text-center hover:bg-cyan-500"
+              className="w-full rounded border-[1px] border-transparent px-2 text-center hover:border-cyan-500"
             >
               Account
             </Link>
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="flex w-full flex-row items-center justify-center gap-2 rounded px-2 text-center hover:bg-cyan-500"
+              className="w-full rounded border-[1px] border-transparent px-2 text-center hover:border-cyan-500"
             >
-              <BookmarkIcon className={"w-4"} />
               Bookmarks
             </Link>
             <Link
               to="/"
-              className="w-full rounded px-2 text-center hover:bg-cyan-500"
+              className="w-full rounded border-[1px] border-transparent px-2 text-center hover:border-cyan-500"
               onClick={handleLogout}
             >
               Log Out

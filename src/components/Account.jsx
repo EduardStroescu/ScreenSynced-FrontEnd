@@ -40,8 +40,8 @@ export function Account() {
           Change
         </button>
       </div>
-      <div className="rounded-y-sm relative mt-6 flex w-full flex-row justify-around gap-4 border-y-4 border-y-cyan-500 py-4 text-lg sm:mt-0 sm:justify-between sm:border-none sm:pl-3 sm:pr-2">
-        <header className="absolute w-full -translate-y-16 sm:-translate-x-4 sm:-translate-y-20">
+      <div className="relative mt-6 flex w-full flex-col gap-2 border-y-4 border-y-cyan-500 py-4 text-lg sm:mt-0 sm:items-start sm:border-none sm:pl-3 sm:pr-2">
+        <header className="absolute w-full -translate-y-16 sm:-translate-x-7 sm:-translate-y-20">
           <h1 className="flex justify-center font-londrina text-4xl sm:block sm:text-5xl">
             {user?.displayName}
           </h1>
@@ -68,7 +68,7 @@ export function Account() {
         )}
         <Link
           to="/"
-          className="text-lg hover:text-cyan-500"
+          className="text-center text-lg hover:text-cyan-500"
           onClick={handleLogout}
         >
           Log Out

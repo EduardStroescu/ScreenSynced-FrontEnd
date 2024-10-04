@@ -31,7 +31,7 @@ export function ContentCard({ content, contentType }) {
     >
       <div className="pointer-events-none absolute left-0 top-0 z-[5] aspect-[2/3] w-full rounded-xl group-hover:bg-gradient-to-t group-hover:from-cyan-500/80 group-hover:via-cyan-500/50" />
       <Link
-        aria-label={`Link to ${content.title || content.name}`}
+        aria-label={`Link to ${content?.title || content?.name}`}
         to={`/${contentType}/$${contentType}Id`}
         preloadDelay={1000}
         params={{ [`${contentType}Id`]: content?.id }}

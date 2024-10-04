@@ -12,6 +12,7 @@ export function PlayerSection({ youtubeLink, children }) {
           playing={false}
           controls
           muted={false}
+          stopOnUnmount
           config={{
             youtube: {
               playerVars: {
