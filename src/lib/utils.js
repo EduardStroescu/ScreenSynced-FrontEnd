@@ -10,8 +10,8 @@ export function getYoutubeLink(videoIds) {
 
 export function getYoutubeLinks(videoIds) {
   if (videoIds !== null && videoIds !== undefined) {
-    const youtubeLink = videoIds.map(
-      (id) => "https://www.youtube.com/watch?v=" + id,
+    const youtubeLink = videoIds.map((id) =>
+      id ? "https://www.youtube.com/watch?v=" + id : null,
     );
     return youtubeLink;
   }

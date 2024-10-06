@@ -35,6 +35,7 @@ function MoviesPage() {
   const context = Route.useRouteContext({
     select: (context) => context.context,
   });
+
   return (
     <>
       <FeaturedTitlesCarousel

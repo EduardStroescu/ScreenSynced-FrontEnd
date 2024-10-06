@@ -63,7 +63,7 @@ export const fetchMovieDetailsAndCredits = async (contentId) => {
 
 export const fetchCarouselMovieVideos = async (contentId) => {
   const response = await baseUrl.get(
-    Sections.movies.helpers.fetchMovieVideos?.replace("movie_id", contentId),
+    Sections.movies.helpers.fetchMovieVideos.replace("movie_id", contentId),
   );
   return response.data;
 };
@@ -108,7 +108,7 @@ export const fetchSerieDetailsAndCredits = async (contentId) => {
 
 export const fetchCarouselSeriesVideos = async (contentId) => {
   const response = await baseUrl.get(
-    Sections.series.helpers.fetchTVVideos?.replace("series_id", contentId),
+    Sections.series.helpers.fetchSeriesVideos.replace("series_id", contentId),
   );
   return response.data;
 };
