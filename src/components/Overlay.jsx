@@ -1,5 +1,5 @@
+import { useUserStoreActions } from "@lib/store";
 import PropTypes from "prop-types";
-import { useUserStoreActions } from "../store";
 
 export function Overlay({ children }) {
   const { setOverlay } = useUserStoreActions();

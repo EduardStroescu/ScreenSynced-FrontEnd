@@ -1,11 +1,9 @@
+import { fetchMovies } from "@api/tmdb/QueryFunctions";
+import { ContentGrid } from "@components/ContentGrid";
+import { FeaturedTitlesCarousel } from "@components/FeaturedTitlesCarousel";
+import { PaginationButtons } from "@components/PaginationButtons";
+import { Sidebar } from "@components/Sidebar";
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchMovies } from "../api/tmdb/QueryFunctions";
-import {
-  ContentGrid,
-  FeaturedTitlesCarousel,
-  PaginationButtons,
-  Sidebar,
-} from "../components";
 
 export const Route = createFileRoute("/movies/$pageNumber")({
   beforeLoad: ({ params: { pageNumber } }) => {

@@ -1,3 +1,10 @@
+import userApi from "@api/backend/modules/user.api";
+import { CloseIcon } from "@components/Icons";
+import { Separator } from "@components/Separator";
+import { ThirdPartyLogin } from "@components/ThirdPartyLogin";
+import { useLocalStorage } from "@hooks/useLocalStorage";
+import { placeholderAvatar } from "@lib/placeholders";
+import { useUserStoreActions } from "@lib/store";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
@@ -5,13 +12,6 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import userApi from "../api/backend/modules/user.api";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { placeholderAvatar } from "../lib/placeholders";
-import { useUserStoreActions } from "../store";
-import { CloseIcon } from "./Icons";
-import { Separator } from "./Separator";
-import { ThirdPartyLogin } from "./ThirdPartyLogin";
 
 export function SignUpForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +94,10 @@ export function SignUpForm({ acceptsRedirect = false }) {
             onClick={() => setOverlay(false)}
             className="self-end text-white"
           >
-            <CloseIcon className={"hover:stroke-cyan-500"} />
+            <CloseIcon
+              aria-label="Close panel"
+              className={"hover:stroke-cyan-500"}
+            />
           </button>
         )}
         <h1 className="self-center font-londrina text-5xl text-white">
@@ -193,7 +196,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
           <button
             onClick={() => {
               acceptsRedirect
-                ? navigate({ to: "/account" })
+                ? navigate({ to: "/login" })
                 : setOverlayType("login");
             }}
             className="whitespace-nowrap text-cyan-500 hover:text-cyan-400"

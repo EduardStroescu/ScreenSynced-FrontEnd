@@ -26,7 +26,7 @@ publicClient.interceptors.response.use(
     return response;
   },
   (err) => {
-    throw err.response.data;
+    return Promise.reject(err?.response?.data);
   },
 );
 

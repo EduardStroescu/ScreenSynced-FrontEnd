@@ -1,8 +1,8 @@
+import { ContentCard } from "@components/ContentCard";
+import { contentItemPropTypes } from "@lib/types";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import PropTypes from "prop-types";
-import { contentItemPropTypes } from "../lib/types";
-import { ContentCard } from "./ContentCard";
 
 export function ContentGrid({
   contentType,

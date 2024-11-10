@@ -32,6 +32,7 @@ export function PlayerSection({ youtubeLink, children }) {
           src="/placeholders/placeholder-content.svg"
           className="h-[95%] w-full"
           loading="lazy"
+          alt=""
         />
       )}
       <div className="text-serif flex flex-row gap-4 rounded-b-xl bg-[#131E2E] py-2 pl-4 text-xs sm:px-4 sm:text-sm">

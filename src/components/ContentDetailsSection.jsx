@@ -1,6 +1,6 @@
+import { BookmarkIcon } from "@components/Icons";
+import { placeholderImage } from "@lib/placeholders";
 import PropTypes from "prop-types";
-import { placeholderImage } from "../lib/placeholders";
-import { BookmarkIcon } from "./Icons";
 
 export function ContentDetailsSection({ queryData, contentDetails }) {
   const contentImage =
@@ -28,15 +28,25 @@ export function ContentDetailsSection({ queryData, contentDetails }) {
       />
       <div className="m-1 flex w-[calc(100%-8px)] flex-col items-start gap-4 rounded-xl bg-[#070B11] px-2 py-6 sm:m-1 sm:px-4">
         <div className="flex flex-row gap-1 font-serif">
-          {contentDetails.original_language?.toUpperCase()} |{" "}
-          <BookmarkIcon className="w-[0.7rem]" />
-          {contentDetails.vote_average?.toFixed(1)} |{" "}
-          {contentDetails.release_date?.slice(0, 4) ||
-            contentDetails.first_air_date?.slice(0, 4) ||
-            "unknown"}{" "}
-          |{" "}
-          {contentDetails.runtime || contentDetails.episode_run_time?.[0] || 0}{" "}
-          min
+          <p>
+            <span>{contentDetails.original_language?.toUpperCase()}</span> |{" "}
+            <span>
+              <BookmarkIcon className="w-[0.7rem]" />
+            </span>
+            <span>{contentDetails.vote_average?.toFixed(1)}</span> |{" "}
+            <span>
+              {contentDetails.release_date?.slice(0, 4) ||
+                contentDetails.first_air_date?.slice(0, 4) ||
+                "unknown"}
+            </span>
+            |{" "}
+            <span>
+              {contentDetails.runtime ||
+                contentDetails.episode_run_time?.[0] ||
+                0}{" "}
+              min
+            </span>
+          </p>
         </div>
         <h2 className="font-londrina text-4xl">{contentDetails.title}</h2>
         <div className="font-serif">
@@ -59,7 +69,7 @@ export function ContentDetailsSection({ queryData, contentDetails }) {
               alt="Director Image"
               className="aspect-[1/1] w-[3rem] rounded-full object-cover"
             />
-            <span className="text-white">{director.name} </span>
+            <span className="text-white">{director.name}</span>
           </div>
         )}
       </div>

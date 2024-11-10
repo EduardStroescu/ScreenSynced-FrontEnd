@@ -1,9 +1,9 @@
+import userApi from "@api/backend/modules/user.api";
+import { useLocalStorage } from "@hooks/useLocalStorage";
+import { placeholderAvatar } from "@lib/placeholders";
+import { useUserStore, useUserStoreActions } from "@lib/store";
 import { Link } from "@tanstack/react-router";
 import { toast } from "react-toastify";
-import userApi from "../api/backend/modules/user.api";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { placeholderAvatar } from "../lib/placeholders";
-import { useUserStore, useUserStoreActions } from "../store";
 
 export function Account() {
   const user = useUserStore((state) => state.user);
@@ -27,7 +27,7 @@ export function Account() {
       <div className="group relative -translate-y-14 rounded-full sm:-translate-y-20">
         <img
           src={user?.avatar || placeholderAvatar}
-          alt={user?.displayName + "'s" + "avatar"}
+          alt={user?.displayName + "'s " + "avatar"}
           className="aspect-[1/1] w-[10rem] rounded-full border-t-8 border-t-cyan-500 sm:w-[25rem]"
         />
         <button

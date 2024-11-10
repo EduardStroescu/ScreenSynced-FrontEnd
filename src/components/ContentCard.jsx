@@ -1,12 +1,12 @@
+import { AddBookmarkButton } from "@components/AddBookmarkButton";
+import { Image } from "@components/Image";
+import { backdropPrefixSmall, posterPrefixMedium } from "@lib/const";
+import { placeholderImage } from "@lib/placeholders";
+import { contentItemPropTypes } from "@lib/types";
 import { Link } from "@tanstack/react-router";
 import { motion, useInView } from "framer-motion";
 import PropTypes from "prop-types";
 import { useRef } from "react";
-import { backdropPrefixSmall, posterPrefixMedium } from "../lib/const";
-import { placeholderImage } from "../lib/placeholders";
-import { contentItemPropTypes } from "../lib/types";
-import { AddBookmarkButton } from "./AddBookmarkButton";
-import { Image } from "./Image";
 
 export function ContentCard({ content, contentType }) {
   const isInViewRef = useRef();

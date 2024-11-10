@@ -1,4 +1,4 @@
-import { thirdPartyConfig } from "../lib/const";
+import { thirdPartyConfig } from "@lib/const";
 
 export function ThirdPartyLogin() {
   const providers = thirdPartyConfig;

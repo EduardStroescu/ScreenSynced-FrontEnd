@@ -1,13 +1,13 @@
+import userApi from "@api/backend/modules/user.api";
+import { CloseIcon } from "@components/Icons";
+import { useLocalStorage } from "@hooks/useLocalStorage";
+import { placeholderAvatar } from "@lib/placeholders";
+import { useUserStore, useUserStoreActions } from "@lib/store";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import userApi from "../api/backend/modules/user.api";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { placeholderAvatar } from "../lib/placeholders";
-import { useUserStore, useUserStoreActions } from "../store";
-import { CloseIcon } from "./Icons";
 
 export function ChangeAvatarForm() {
   const user = useUserStore((state) => state.user);
@@ -99,7 +99,7 @@ export function ChangeAvatarForm() {
             type="submit"
             value="Send"
             className="my-4 rounded border-2 border-cyan-500 bg-[#005f70] px-6 py-1 text-white hover:bg-cyan-500"
-            disabled={isLoading}
+            disabled={isLoading || avatar === user?.avatar}
           >
             {isLoading ? "Updating..." : "Update Avatar"}
           </button>

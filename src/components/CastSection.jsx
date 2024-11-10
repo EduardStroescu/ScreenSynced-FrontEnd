@@ -1,5 +1,5 @@
+import { placeholderImage } from "@lib/placeholders";
 import PropTypes from "prop-types";
-import { placeholderImage } from "../lib/placeholders";
 
 export function CastSection({ cast }) {
   const filteredActors = cast?.filter(
@@ -24,7 +24,7 @@ export function CastSection({ cast }) {
             >
               <img
                 src={castImage}
-                alt=""
+                alt={`${cast.name} picture`}
                 className="aspect-[1/1] w-[3rem] rounded-full object-cover"
               />
               <p>

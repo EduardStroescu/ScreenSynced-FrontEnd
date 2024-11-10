@@ -1,3 +1,10 @@
+import userApi from "@api/backend/modules/user.api";
+import { DemoAccountLogin } from "@components/DemoAccountLogin";
+import { CloseIcon } from "@components/Icons";
+import { Separator } from "@components/Separator";
+import { ThirdPartyLogin } from "@components/ThirdPartyLogin";
+import { useLocalStorage } from "@hooks/useLocalStorage";
+import { useUserStoreActions } from "@lib/store";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
@@ -5,13 +12,6 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import userApi from "../api/backend/modules/user.api";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUserStoreActions } from "../store";
-import { DemoAccountLogin } from "./DemoAccountLogin";
-import { CloseIcon } from "./Icons";
-import { Separator } from "./Separator";
-import { ThirdPartyLogin } from "./ThirdPartyLogin";
 
 export function SignInForm({ acceptsRedirect = false }) {
   const [isLoading, setIsLoading] = useState(false);

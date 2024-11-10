@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "vitest --run",
+    "test:watch": "vitest",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -32,20 +34,26 @@
     "@tanstack/router-cli": "^1.58.1",
     "@tanstack/router-devtools": "^1.58.3",
     "@tanstack/router-plugin": "^1.58.4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "autoprefixer": "^10.4.16",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8.45.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "postcss": "^8.4.31",
+    "eslint-plugin-vitest": "^0.5.4",
+    "jsdom": "^25.0.1",
+    "postcss": "^8.4.47",
     "prettier": "^3.0.3",
     "prettier-plugin-organize-imports": "^3.2.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "prop-types": "^15.8.1",
-    "tailwindcss": "^3.4.12",
-    "vite": "^5.4.7"
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.7",
+    "vitest": "^2.1.4"
   }
 }

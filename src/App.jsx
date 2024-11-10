@@ -1,7 +1,6 @@
+import { ErrorComponent } from "@components/ErrorComponent";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-
-import { ErrorComponent } from "./components";
 import { routeTree } from "./routeTree.gen";
 
 const queryClient = new QueryClient({

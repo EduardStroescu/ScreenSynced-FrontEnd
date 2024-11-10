@@ -1,10 +1,7 @@
+import { fetchMovieDetails, fetchSerieDetails } from "@api/tmdb/QueryFunctions";
+import { ContentCard } from "@components/ContentCard";
 import { useQueries } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import {
-  fetchMovieDetails,
-  fetchSerieDetails,
-} from "../api/tmdb/QueryFunctions";
-import { ContentCard } from "./ContentCard";
 
 import PropTypes from "prop-types";
 import { Navigation } from "swiper/modules";
@@ -153,7 +150,7 @@ export function Bookmarks({ bookmarksQuery }) {
 Bookmarks.propTypes = {
   bookmarksQuery: PropTypes.arrayOf(
     PropTypes.shape({
-      if: PropTypes.number,
+      id: PropTypes.number,
       mediaId: PropTypes.number,
       mediaType: PropTypes.oneOf(["tv", "movie"]),
       userId: PropTypes.number,

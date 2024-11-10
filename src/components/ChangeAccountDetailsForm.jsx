@@ -2,11 +2,11 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 
+import userApi from "@api/backend/modules/user.api";
+import { CloseIcon } from "@components/Icons";
+import { useUserStoreActions } from "@lib/store";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { CloseIcon } from ".";
-import userApi from "../api/backend/modules/user.api";
-import { useUserStoreActions } from "../store";
 
 export function ChangeAccountDetailsForm() {
   const [isLoading, setIsLoading] = useState(false);

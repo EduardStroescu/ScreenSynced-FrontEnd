@@ -1,11 +1,9 @@
+import { fetchAllContent } from "@api/tmdb/QueryFunctions";
+import { CombinedGrid } from "@components/CombinedGrid";
+import { ContentGrid } from "@components/ContentGrid";
+import { FeaturedTitlesCarousel } from "@components/FeaturedTitlesCarousel";
+import { Sidebar } from "@components/Sidebar";
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchAllContent } from "../api/tmdb/QueryFunctions";
-import {
-  CombinedGrid,
-  ContentGrid,
-  FeaturedTitlesCarousel,
-  Sidebar,
-} from "../components";
 
 export const Route = createFileRoute("/")({
   beforeLoad: () => {

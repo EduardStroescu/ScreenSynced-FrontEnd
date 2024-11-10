@@ -1,6 +1,7 @@
+import { searchContent } from "@api/tmdb/QueryFunctions";
+import { ContentCard } from "@components/ContentCard";
+import { PaginationButtons } from "@components/PaginationButtons";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { searchContent } from "../api/tmdb/QueryFunctions";
-import { ContentCard, PaginationButtons } from "../components";
 
 export const Route = createFileRoute("/search/$searchTerm/$pageNumber")({
   beforeLoad: ({ params: { searchTerm, pageNumber } }) => {

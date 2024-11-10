@@ -1,3 +1,4 @@
+import { Layout } from "@components/Layout";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import {
   Outlet,
@@ -6,7 +7,6 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import { Layout } from "../components";
 
 export const Route = createRootRouteWithContext()({
   component: RootComponent,

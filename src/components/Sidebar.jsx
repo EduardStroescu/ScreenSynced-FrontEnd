@@ -1,17 +1,19 @@
+import { fetchPopularUpcomingMoviesandSeries } from "@api/tmdb/QueryFunctions";
+import { AddBookmarkButton } from "@components/AddBookmarkButton";
+import { Image } from "@components/Image";
+import { backdropPrefixSmall, posterPrefixSmall } from "@lib/const";
+import { placeholderImage } from "@lib/placeholders";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import PropTypes from "prop-types";
 import { useRef, useState } from "react";
-import { fetchPopularUpcomingMoviesandSeries } from "../api/tmdb/QueryFunctions";
-import { backdropPrefixSmall, posterPrefixSmall } from "../lib/const";
-import { placeholderImage } from "../lib/placeholders";
-import { AddBookmarkButton } from "./AddBookmarkButton";
-import { Image } from "./Image";
+
+export const SELECTABLE_DATES = ["week", "month", "year"];
 
 export function Sidebar({ contentType, queryType }) {
-  const isInViewRef = useRef();
   const [date, setDate] = useState("week");
+  const isInViewRef = useRef();
 
   const isInView = useInView(isInViewRef, { once: true, amount: 0 });
 
@@ -24,6 +26,10 @@ export function Sidebar({ contentType, queryType }) {
       ? upcomingData?.upcomingMovies
       : upcomingData?.upcomingSeries;
 
+  const upcomingList = (
+    queryType ? contentQuery?.[queryType]?.results : contentQuery?.results
+  )?.slice(0, 10);
+
   return (
     <aside className="col-span-1 my-6 hidden px-2 lg:px-4 xl:block">
       <header className="flex flex-col items-center justify-between gap-4 pb-6 lg:flex-row lg:gap-0">
@@ -31,58 +37,42 @@ export function Sidebar({ contentType, queryType }) {
           Upcoming {contentType === "movie" ? "Movies" : "Series"}
         </h2>
         <div className="flex gap-1 lg:flex-row">
-          <button
-            onClick={() => setDate("week")}
-            className={`${
-              date === "week" && "bg-cyan-500"
-            } rounded px-2 py-1 text-sm`}
-          >
-            Week
-          </button>
-          <button
-            onClick={() => setDate("month")}
-            className={`${
-              date === "month" && "bg-cyan-500"
-            } rounded px-2 py-1 text-sm`}
-          >
-            Month
-          </button>
-          <button
-            onClick={() => setDate("year")}
-            className={`${
-              date === "year" && "bg-cyan-500"
-            } rounded px-2 py-1 text-sm`}
-          >
-            Year
-          </button>
+          {SELECTABLE_DATES.map((selectableDate) => {
+            return (
+              <button
+                key={selectableDate}
+                onClick={() => setDate(selectableDate)}
+                className={`${
+                  date === selectableDate && "bg-cyan-500"
+                } rounded px-2 py-1 text-sm capitalize`}
+              >
+                {selectableDate}
+              </button>
+            );
+          })}
         </div>
       </header>
       <AnimatePresence>
         <ul ref={isInViewRef} className="grid grid-cols-1 gap-2">
-          {(queryType
-            ? contentQuery[queryType]?.results
-            : contentQuery?.results
-          )
-            ?.slice(0, 10)
-            .map((content, index) => {
+          {!!upcomingList?.length &&
+            upcomingList.map((content, index) => {
               const isFirst = index === 0;
               const isSecond = index === 1;
               const isThird = index === 2;
 
-              const contentImage =
-                content.poster_path !== null &&
-                content.poster_path !== undefined
-                  ? posterPrefixSmall + content.poster_path
-                  : content.backdrop_path !== null &&
-                      content.backdrop_path !== undefined
-                    ? backdropPrefixSmall + content.backdrop_path
-                    : placeholderImage;
+              const contentImage = content?.poster_path
+                ? posterPrefixSmall + content.poster_path
+                : content?.backdrop_path
+                  ? backdropPrefixSmall + content.backdrop_path
+                  : placeholderImage;
 
-              const style = [
-                isFirst && "text-red-500",
-                isSecond && "text-blue-400",
-                isThird && "text-yellow-500",
-              ].join(" ");
+              const style = isFirst
+                ? "text-red-500"
+                : isSecond
+                  ? "text-blue-400"
+                  : isThird
+                    ? "text-yellow-500"
+                    : "";
 
               return (
                 <motion.li
@@ -108,7 +98,7 @@ export function Sidebar({ contentType, queryType }) {
                     <Image
                       isInView={isInView}
                       src={contentImage}
-                      alt={`${content?.name} poster`}
+                      alt={`${content.title || content?.name} poster`}
                       width={185}
                       height={278}
                       className={"aspect-[2/3] w-1/5 object-cover"}
@@ -138,6 +128,13 @@ export function Sidebar({ contentType, queryType }) {
                 </motion.li>
               );
             })}
+          {!!upcomingList && !upcomingList?.length && (
+            <div className="col-span-1 flex h-[122px] w-full items-center justify-center rounded-xl border-r-2 border-cyan-500 bg-[#131E2E] px-2 py-6 text-center">
+              <p className="font-londrina text-4xl">
+                No releases for the selected period.
+              </p>
+            </div>
+          )}
         </ul>
       </AnimatePresence>
     </aside>

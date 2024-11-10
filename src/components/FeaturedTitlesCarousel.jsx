@@ -1,6 +1,8 @@
 import { useQueries } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
+import { Suspense, useState } from "react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -10,14 +12,11 @@ import {
 } from "../api/tmdb/QueryFunctions";
 import { getYoutubeLinks } from "../lib/utils";
 
-import PropTypes from "prop-types";
-import { Suspense, useState } from "react";
+import { imagePrefixOriginal } from "@lib/const";
+import { placeholderImage } from "@lib/placeholders";
+import { contentItemPropTypes } from "@lib/types";
 import ReactPlayer from "react-player";
-import "swiper/css";
-import "swiper/css/navigation";
-import { imagePrefixOriginal } from "../lib/const";
-import { placeholderImage } from "../lib/placeholders";
-import { contentItemPropTypes } from "../lib/types";
+
 import { AddBookmarkButton } from "./AddBookmarkButton";
 import { PlayIcon } from "./Icons";
 import { Image } from "./Image";
@@ -44,7 +43,7 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
   };
 
   const contentVideos = useQueries(queryContent[queryType]);
-  const videoIds = contentVideos.map(
+  const videoIds = contentVideos?.map(
     (content) =>
       content.data?.results?.find((type) => type.type === "Trailer")?.key,
   );
@@ -54,7 +53,7 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
   return (
     <section className="relative h-[70vh] w-full overflow-hidden sm:h-[45rem]">
       <div className="pointer-events-none absolute z-[100] h-full w-full overflow-hidden">
-        <YoutubePlayer video={youtubeLink[activeVideo]} />
+        <YoutubePlayer video={youtubeLink?.[activeVideo]} />
       </div>
       <Swiper
         onRealIndexChange={(swiper) => setActiveVideo(swiper.realIndex)}
@@ -71,7 +70,7 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
         loop={true}
         navigation={false}
         modules={[Autoplay, Pagination]}
-        className="z-[104]"
+        style={{ zIndex: 104 }}
       >
         {apiData?.results?.slice(0, 5).map((content) => {
           const contentImage =
@@ -91,11 +90,11 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
                 as={motion.img}
                 motionProps={{
                   initial: { opacity: 1 },
-                  animate: { opacity: youtubeLink[activeVideo] ? 0 : 1 },
+                  animate: { opacity: youtubeLink?.[activeVideo] ? 0 : 1 },
                   exit: { opacity: 0 },
                   transition: {
                     duration: 1,
-                    delay: youtubeLink[activeVideo] ? 5 : 0,
+                    delay: youtubeLink?.[activeVideo] ? 5 : 0,
                   },
                 }}
                 isInView={true}
@@ -103,9 +102,11 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
                 alt={content?.title || content?.name}
                 width={2000}
                 height={3000}
-                className={"fixed h-full w-full object-cover lg:h-auto"}
+                className={
+                  "pointer-events-none fixed h-full w-full object-cover lg:h-auto"
+                }
                 placeholderClassName={
-                  "fixed w-full h-full object-cover lg:h-auto"
+                  "fixed w-full h-full object-cover lg:h-auto pointer-events-none"
                 }
               />
               <div className="absolute bottom-0 left-0 z-[100] h-[30rem] w-full bg-gradient-to-t from-[#070B11] via-[#070B11]/80 to-[#070B11]/0" />
@@ -114,7 +115,9 @@ export function FeaturedTitlesCarousel({ contentType, apiData, queryType }) {
                   {content?.title || content?.name}
                 </h1>
                 <h2 className="pointer-events-none px-2 font-serif text-xs font-bold lg:px-32 lg:text-base">
-                  {`${content.overview.slice(0, 250)}...`}
+                  {content.overview.length > 250
+                    ? `${content?.overview?.slice(0, 250)}...`
+                    : `${content?.overview}`}
                 </h2>
                 <div className="flex items-center justify-center gap-4">
                   <Link
@@ -156,7 +159,7 @@ function YoutubePlayer({ video }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 2, delay: 5 }}
-          className="pointer-events-none absolute -left-[18rem] -top-[103%] z-[103] h-[300%] w-[300%] -translate-y-20 cursor-pointer overflow-hidden sm:-left-[40%] sm:-top-[20rem] sm:h-[180%] sm:w-[180%] md:-top-[15rem] lg:-left-[25%] lg:-top-[12rem] lg:h-[150%] lg:w-[150%] xl:-top-[6rem]"
+          className="pointer-events-none absolute -left-[25rem] -top-[103%] z-[103] h-[300%] w-[300%] -translate-y-12 cursor-pointer overflow-hidden sm:-left-[40%] sm:-top-[20rem] sm:h-[180%] sm:w-[180%] md:-top-[15rem] lg:-left-[25%] lg:-top-[12rem] lg:h-[150%] lg:w-[150%] xl:-top-[6rem] 2xl:-left-[50%] 2xl:-top-[18rem] 2xl:h-[200%] 2xl:w-[200%]"
         >
           <ReactPlayer
             url={video}

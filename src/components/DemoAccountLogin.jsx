@@ -1,10 +1,10 @@
+import userApi from "@api/backend/modules/user.api";
+import { useLocalStorage } from "@hooks/useLocalStorage";
+import { useUserStoreActions } from "@lib/store";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
-import userApi from "../api/backend/modules/user.api";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUserStoreActions } from "../store";
 
 export function DemoAccountLogin({
   acceptsRedirect = false,

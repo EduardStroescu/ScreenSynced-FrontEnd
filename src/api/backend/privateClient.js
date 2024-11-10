@@ -9,6 +9,7 @@ const privateClient = axios.create({
   paramsSerializer: {
     encode: (params) => queryString.stringify(params),
   },
+  withCredentials: true,
 });
 
 privateClient.interceptors.request.use(async (config) => {
@@ -17,7 +18,6 @@ privateClient.interceptors.request.use(async (config) => {
     headers: {
       "Content-Type": "application/json",
     },
-    withCredentials: true,
   };
 });
 
@@ -35,9 +35,7 @@ privateClient.interceptors.response.use(
 
       try {
         // Attempt to refresh the access token
-        await axios.get(`${baseURL}/auth/refresh-token`, {
-          withCredentials: true,
-        });
+        await privateClient.post(`${baseURL}/auth/refresh-token`);
 
         // Retry the original request
         return await privateClient(originalRequest);

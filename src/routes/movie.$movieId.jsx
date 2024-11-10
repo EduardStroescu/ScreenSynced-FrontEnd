@@ -1,14 +1,12 @@
+import { fetchMovieDetailsAndCredits } from "@api/tmdb/QueryFunctions";
+import { AddBookmarkButton } from "@components/AddBookmarkButton";
+import { CastSection } from "@components/CastSection";
+import { ContentDetailsSection } from "@components/ContentDetailsSection";
+import { PlayerSection } from "@components/PlayerSection";
+import { SeasonsSection } from "@components/SeasonsSection";
+import { SimilarContentSection } from "@components/SimilarContentSection";
+import { getYoutubeLink } from "@lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchMovieDetailsAndCredits } from "../api/tmdb/QueryFunctions";
-import {
-  AddBookmarkButton,
-  CastSection,
-  ContentDetailsSection,
-  PlayerSection,
-  SeasonsSection,
-  SimilarContentSection,
-} from "../components";
-import { getYoutubeLink } from "../lib/utils";
 
 export const Route = createFileRoute("/movie/$movieId")({
   beforeLoad: ({ params: { movieId } }) => {

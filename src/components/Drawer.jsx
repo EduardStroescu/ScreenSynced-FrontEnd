@@ -1,7 +1,7 @@
+import { CloseIcon } from "@components/Icons";
+import { mobileVariants } from "@lib/framerMotionVariants";
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
-import { mobileVariants } from "../lib/framerMotionVariants";
-import { CloseIcon } from "./Icons";
 
 export function Drawer({ isMenuOpen, setMenuOpen, children }) {
   return (
@@ -20,10 +20,9 @@ export function Drawer({ isMenuOpen, setMenuOpen, children }) {
               type="button"
               className="text-primary hover:text-primary/50 absolute right-2 top-2 p-4 transition"
               onClick={setMenuOpen}
-              data-test="close-menu"
             >
               <CloseIcon
-                aria-label="Close panel"
+                aria-label="Close menu"
                 className="hover:stroke-cyan-500"
               />
             </button>

@@ -1,18 +1,18 @@
+import { bookmarkApi } from "@api/backend/modules/bookmark.api";
+import { BookmarkIcon } from "@components/Icons";
+import { useUserStore, useUserStoreActions } from "@lib/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { useShallow } from "zustand/react/shallow";
-import { bookmarkApi } from "../api/backend/modules/bookmark.api";
-import { useUserStore, useUserStoreActions } from "../store";
-import { BookmarkIcon } from "./Icons";
 
 export function AddBookmarkButton({
   children,
   size,
   className,
-  contentId = 1,
-  mediaType = "movie",
+  contentId,
+  mediaType,
 }) {
   const { user, bookmarkList } = useUserStore(
     useShallow((state) => ({
@@ -34,8 +34,8 @@ export function AddBookmarkButton({
       queryClient.refetchQueries({ queryKey: ["bookmarks"] });
       toast.success("Bookmark Added");
     },
-    onError: (error) => {
-      toast.error(error);
+    onError: (_error) => {
+      toast.error("Failed to add bookmark, please try again later!");
     },
   });
 
@@ -48,18 +48,19 @@ export function AddBookmarkButton({
       setBookmarkList(bookmarkList.filter((e) => e.mediaId !== contentId));
       toast.info("Bookmark Removed");
     },
-    onError: (error) => {
-      toast.error(error);
+    onError: (_error) => {
+      toast.error("Failed to remove bookmark, please try again later!");
     },
   });
 
   const onAddBookmark = async () => {
     if (!user) return setOverlay(true);
+    if (!contentId) return;
 
     if (addBookmarkMutation.isLoading) return;
 
     if (bookmarkList.map((item) => item.mediaId).includes(contentId)) {
-      removeBookmarkMutation.mutateAsync(
+      await removeBookmarkMutation.mutateAsync(
         bookmarkList.find((e) => e.mediaId === contentId).id,
       );
       return;

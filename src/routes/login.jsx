@@ -1,6 +1,6 @@
+import { SignInForm } from "@components/SignInForm";
+import { isAuthenticated } from "@lib/isAuthenticated";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { SignInForm } from "../components";
-import { isAuthenticated } from "../lib/isAuthenticated";
 
 export const Route = createFileRoute("/login")({
   beforeLoad: async () => {

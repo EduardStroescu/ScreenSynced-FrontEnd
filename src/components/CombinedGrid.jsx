@@ -1,10 +1,13 @@
+import { ContentCard } from "@components/ContentCard";
+import { contentItemPropTypes } from "@lib/types";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { contentItemPropTypes } from "../lib/types";
-import { ContentCard } from "./ContentCard";
 
 export function CombinedGrid({ contentQuery }) {
   const [queryType, setQueryType] = useState("movies");
+
+  if (!queryType) return null;
+
   return (
     <article className="col-span-6 my-6 px-1 lg:px-4 xl:col-span-3">
       <header className="flex flex-col items-center justify-start gap-6 pb-6  sm:flex-row">
@@ -30,16 +33,17 @@ export function CombinedGrid({ contentQuery }) {
       </header>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-3 xl:grid-cols-6">
-        {(queryType ? contentQuery[queryType]?.results : contentQuery?.results)
-          ?.slice(0, 18)
-          .map((content, index) => (
-            <ContentCard
-              contentType={queryType === "movies" ? "movie" : "tv"}
-              content={content}
-              index={index}
-              key={content.id}
-            />
-          ))}
+        {queryType &&
+          contentQuery[queryType]?.results
+            ?.slice(0, 18)
+            .map((content, index) => (
+              <ContentCard
+                contentType={queryType === "movies" ? "movie" : "tv"}
+                content={content}
+                index={index}
+                key={content.id}
+              />
+            ))}
       </div>
     </article>
   );
@@ -49,13 +53,11 @@ const resultsPropTypes = PropTypes.arrayOf(contentItemPropTypes).isRequired;
 
 CombinedGrid.propTypes = {
   contentQuery: PropTypes.shape({
-    results: PropTypes.shape({
-      movies: PropTypes.shape({
-        results: resultsPropTypes,
-      }).isRequired,
-      tv: PropTypes.shape({
-        results: resultsPropTypes,
-      }).isRequired,
-    }),
+    movies: PropTypes.shape({
+      results: resultsPropTypes,
+    }).isRequired,
+    tv: PropTypes.shape({
+      results: resultsPropTypes,
+    }).isRequired,
   }).isRequired,
 };

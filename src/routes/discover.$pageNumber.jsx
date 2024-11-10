@@ -1,9 +1,10 @@
+import { fetchContentByGenre } from "@api/tmdb/QueryFunctions";
+import { contentGenres } from "@api/tmdb/movieEndpoints";
+import { ContentGrid } from "@components/ContentGrid";
+import { PaginationButtons } from "@components/PaginationButtons";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { fetchContentByGenre } from "../api/tmdb/QueryFunctions";
-import { contentGenres } from "../api/tmdb/movieEndpoints";
-import { ContentGrid, PaginationButtons } from "../components";
 
 export const Route = createFileRoute("/discover/$pageNumber")({
   beforeLoad: ({ params: { pageNumber = 1 } }) => {

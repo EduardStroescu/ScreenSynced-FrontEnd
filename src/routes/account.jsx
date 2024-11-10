@@ -1,7 +1,8 @@
+import { bookmarkApi } from "@api/backend/modules/bookmark.api";
+import { Account } from "@components/Account";
+import { Bookmarks } from "@components/Bookmarks";
+import { isAuthenticated } from "@lib/isAuthenticated";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { bookmarkApi } from "../api/backend/modules/bookmark.api";
-import { Account, Bookmarks } from "../components";
-import { isAuthenticated } from "../lib/isAuthenticated";
 
 export const Route = createFileRoute("/account")({
   id: "authenticated",

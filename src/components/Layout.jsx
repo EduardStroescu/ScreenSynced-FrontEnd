@@ -1,33 +1,29 @@
+import { bookmarkApi } from "@api/backend/modules/bookmark.api";
+import { useClickOutside } from "@hooks/useClickOutside";
+import { useLocalStorage } from "@hooks/useLocalStorage";
+import { desktopVariants } from "@lib/framerMotionVariants.js";
+import { useUserStore, useUserStoreActions } from "@lib/store.js";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useCycle } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Flip, toast, ToastContainer } from "react-toastify";
-import { bookmarkApi } from "../api/backend/modules/bookmark.api";
-import { useClickOutside } from "../hooks/useClickOutside";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { desktopVariants } from "../lib/framerMotionVariants.js";
-import { useUserStore, useUserStoreActions } from "../store.js";
-import {
-  ChangeAccountDetailsForm,
-  ChangeAvatarForm,
-  ChangePasswordForm,
-  Drawer,
-  HamburgerIcon,
-  Overlay,
-  SearchBarDesktop,
-  SearchBarMobile,
-  SearchIcon,
-  SignInForm,
-  SignUpForm,
-} from "./";
 
+import { placeholderAvatar } from "@lib/placeholders.js";
 import "react-toastify/dist/ReactToastify.css";
 import { useShallow } from "zustand/react/shallow";
-import { placeholderAvatar } from "../lib/placeholders.js";
 
+import userApi from "@api/backend/modules/user.api.js";
+import { ChangeAccountDetailsForm } from "@components/ChangeAccountDetailsForm";
+import { ChangeAvatarForm } from "@components/ChangeAvatarForm";
+import { ChangePasswordForm } from "@components/ChangePasswordForm";
+import { Drawer } from "@components/Drawer";
+import { HamburgerIcon, SearchIcon } from "@components/Icons";
+import { Overlay } from "@components/Overlay";
+import { SearchBarDesktop, SearchBarMobile } from "@components/SearchBar";
+import { SignInForm } from "@components/SignInForm";
+import { SignUpForm } from "@components/SignUpForm";
 import PropTypes from "prop-types";
-import userApi from "../api/backend/modules/user.api.js";
 
 export function Layout({ children }) {
   const { user, loggedIn, isOverlay, overlayType } = useUserStore(
@@ -51,36 +47,44 @@ export function Layout({ children }) {
   });
 
   useEffect(() => {
-    const user = getItem();
-    if (user) {
-      setUser(user);
+    if (user) return;
+
+    const savedUser = getItem();
+    if (savedUser) {
+      setUser(savedUser);
       setLoggedIn(true);
-    } else if (!user && search.success) {
+    } else if (!savedUser && search.success) {
       (async () => {
         const { response } = await userApi.getInfo();
         if (response) {
+          setItem(response);
           setUser(response);
           setLoggedIn(true);
-          setItem(response);
         } else {
           toast.error("Something went wrong, please try again later");
         }
         navigate({ to: "/", replace: true });
       })();
-    } else if (!user && search.error) {
+    } else if (!savedUser && search.error) {
       toast.error("Something went wrong");
       navigate({ to: "/", replace: true });
     }
-  }, []);
+  }, [
+    getItem,
+    user,
+    navigate,
+    setUser,
+    setItem,
+    setLoggedIn,
+    search.success,
+    search.error,
+  ]);
 
   useEffect(() => {
     if (user && bookmarksQuery) {
       setBookmarkList(bookmarksQuery);
     }
-    if (!user) {
-      setBookmarkList([]);
-    }
-  }, [bookmarksQuery, user]);
+  }, [bookmarksQuery, user, setBookmarkList]);
 
   const renderModalBasedOnActionType = () => {
     switch (overlayType) {
