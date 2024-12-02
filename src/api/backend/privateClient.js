@@ -35,7 +35,13 @@ privateClient.interceptors.response.use(
 
       try {
         // Attempt to refresh the access token
-        await privateClient.post(`${baseURL}/auth/refresh-token`);
+        await axios.post(
+          `${baseURL}/auth/refresh-token`,
+          {},
+          {
+            withCredentials: true,
+          },
+        );
 
         // Retry the original request
         return await privateClient(originalRequest);
