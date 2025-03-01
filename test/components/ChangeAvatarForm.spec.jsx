@@ -1,5 +1,5 @@
 import userApi from "@api/backend/modules/user.api";
-import { placeholderAvatar } from "@lib/placeholders";
+import { placeholderAvatar } from "@lib/const";
 import {
   act,
   fireEvent,

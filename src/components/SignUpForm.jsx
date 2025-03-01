@@ -1,75 +1,49 @@
-import userApi from "@api/backend/modules/user.api";
 import { CloseIcon } from "@components/Icons";
 import { Separator } from "@components/Separator";
 import { ThirdPartyLogin } from "@components/ThirdPartyLogin";
-import { useLocalStorage } from "@hooks/useLocalStorage";
-import { placeholderAvatar } from "@lib/placeholders";
-import { useUserStoreActions } from "@lib/store";
-import { useMutation } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { placeholderAvatar } from "@lib/const";
+import { useAuthContext } from "@lib/providers/AuthProvider";
+import { useOverlayContext } from "@lib/providers/OverlayProvider";
+import { signUpFormSchema } from "@lib/types";
 import { useNavigate } from "@tanstack/react-router";
-import { useFormik } from "formik";
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import * as Yup from "yup";
+import { useForm } from "react-hook-form";
 
 export function SignUpForm({ acceptsRedirect = false }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const { setUser, setLoggedIn, setOverlayType, setOverlay } =
-    useUserStoreActions();
-  const { setItem, getItem } = useLocalStorage("user");
   const navigate = useNavigate({ from: "/" });
-  const [avatar, setAvatar] = useState(placeholderAvatar);
+  const { signUp } = useAuthContext();
+  const { setOverlayType } = useOverlayContext();
 
-  const useSignup = useMutation({
-    mutationFn: (values) => userApi.signup(values),
-  });
+  const { mutateAsync: handleSignUpMutation, isPending } = signUp;
 
-  const signUpForm = useFormik({
-    initialValues: {
-      password: "",
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
       email: "",
+      password: "",
       displayName: "",
       confirmPassword: "",
+      avatar: placeholderAvatar,
     },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Invalid Email")
-        .min(8, "The email must have minimum 8 characters")
-        .required("An email is required"),
-      password: Yup.string()
-        .min(8, "A password must have minimum 8 characters")
-        .required("A password is required"),
-      displayName: Yup.string()
-        .min(8, "The Display Name must have minimum 8 characters")
-        .required("A Display Name is required"),
-      confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password")], "Confirm Password does not match")
-        .min(8, "Confirm Password must have minimum 8 characters")
-        .required("Confirm Password is required"),
-    }),
-    onSubmit: async (values) => {
-      setIsLoading(true);
-      const { response, error } = await useSignup.mutateAsync(values);
-
-      if (response) {
-        signUpForm.resetForm();
-        setIsLoading(false);
-        setItem(response);
-        setUser(getItem());
-        setLoggedIn(true);
-        setOverlay(false);
-        setOverlayType("login");
-        acceptsRedirect && navigate({ to: "/account" });
-        toast.success("Sign in successful!");
-      }
-
-      if (error) {
-        toast.error(error.message);
-        setIsLoading(false);
-      }
-    },
+    mode: "onSubmit",
+    resolver: zodResolver(signUpFormSchema),
   });
+  const avatar = watch("avatar");
+  const signUpForm = async (values) => {
+    await handleSignUpMutation(values, {
+      onSuccess: () => {
+        reset();
+        acceptsRedirect && navigate({ to: "/account" });
+      },
+    });
+  };
 
   const uploadFile = (event) => {
     if (!event.target.files?.length) return;
@@ -80,8 +54,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
     fileReader.onloadend = () => {
       const content = fileReader.result;
       if (content) {
-        setAvatar(content);
-        signUpForm.setFieldValue("avatar", content, false);
+        setValue("avatar", content, { shouldDirty: true });
       }
     };
   };
@@ -91,7 +64,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
       <header className="flex flex-col">
         {!acceptsRedirect && (
           <button
-            onClick={() => setOverlay(false)}
+            onClick={() => setOverlayType(null)}
             className="self-end text-white"
           >
             <CloseIcon
@@ -106,7 +79,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
       </header>
       <div className="flex flex-col justify-center">
         <form
-          onSubmit={signUpForm.handleSubmit}
+          onSubmit={handleSubmit(signUpForm)}
           className="flex flex-col items-center justify-center gap-4"
         >
           <img
@@ -121,64 +94,64 @@ export function SignUpForm({ acceptsRedirect = false }) {
             onChange={uploadFile}
             className="w-full rounded-full bg-[#005f70] text-center text-white"
           />
+
           <input
+            {...register("email")}
             type="text"
             placeholder="Email"
             name="email"
-            value={signUpForm.values.email}
-            onChange={signUpForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signUpForm.touched.email && signUpForm.errors.email && (
+          {errors.email && (
             <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-              {signUpForm.errors.email}
+              {errors.email.message}
             </div>
           )}
+
           <input
+            {...register("displayName")}
             type="text"
             placeholder="Display Name"
             name="displayName"
-            value={signUpForm.values.displayName}
-            onChange={signUpForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signUpForm.touched.displayName && signUpForm.errors.displayName && (
+          {errors.displayName && (
             <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-              {signUpForm.errors.displayName}
+              {errors.displayName.message}
             </div>
           )}
+
           <input
+            {...register("password")}
             type="password"
             placeholder="Password"
             name="password"
-            value={signUpForm.values.password}
-            onChange={signUpForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signUpForm.touched.password && signUpForm.errors.password && (
+          {errors.password && (
             <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-              {signUpForm.errors.password}
+              {errors.password.message}
             </div>
           )}
+
           <input
+            {...register("confirmPassword")}
             type="password"
             placeholder="Confirm Password"
             name="confirmPassword"
-            value={signUpForm.values.confirmPassword}
-            onChange={signUpForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
-          {signUpForm.touched.confirmPassword &&
-            signUpForm.errors.confirmPassword && (
-              <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
-                {signUpForm.errors.confirmPassword}
-              </div>
-            )}
+          {errors.confirmPassword && (
+            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+              {errors.confirmPassword.message}
+            </div>
+          )}
+
           <button
             className="mt-2 w-full rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white hover:bg-cyan-500"
             type="submit"
             value="Send"
-            disabled={isLoading}
+            disabled={isPending}
           >
             Sign up
           </button>
@@ -197,7 +170,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
             onClick={() => {
               acceptsRedirect
                 ? navigate({ to: "/login" })
-                : setOverlayType("login");
+                : setOverlayType("sign-in");
             }}
             className="whitespace-nowrap text-cyan-500 hover:text-cyan-400"
           >

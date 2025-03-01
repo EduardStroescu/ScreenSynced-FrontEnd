@@ -1,9 +1,10 @@
 import { ContentCard } from "@components/ContentCard";
+import { CARD_LIMIT } from "@lib/const";
 import { contentItemPropTypes } from "@lib/types";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { memo, useState } from "react";
 
-export function CombinedGrid({ contentQuery }) {
+export const RecommendedGrid = memo(({ apiData }) => {
   const [queryType, setQueryType] = useState("movies");
 
   if (!queryType) return null;
@@ -33,31 +34,26 @@ export function CombinedGrid({ contentQuery }) {
       </header>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-3 xl:grid-cols-6">
-        {queryType &&
-          contentQuery[queryType]?.results
-            ?.slice(0, 18)
-            .map((content, index) => (
-              <ContentCard
-                contentType={queryType === "movies" ? "movie" : "tv"}
-                content={content}
-                index={index}
-                key={content.id}
-              />
-            ))}
+        {apiData?.[queryType]?.slice(0, CARD_LIMIT).map((content, index) => (
+          <ContentCard
+            contentType={queryType === "movies" ? "movie" : "tv"}
+            content={content}
+            index={index}
+            key={content?.id}
+          />
+        ))}
       </div>
     </article>
   );
-}
+});
+
+RecommendedGrid.displayName = "RecommendedGrid";
 
 const resultsPropTypes = PropTypes.arrayOf(contentItemPropTypes).isRequired;
 
-CombinedGrid.propTypes = {
-  contentQuery: PropTypes.shape({
-    movies: PropTypes.shape({
-      results: resultsPropTypes,
-    }).isRequired,
-    tv: PropTypes.shape({
-      results: resultsPropTypes,
-    }).isRequired,
+RecommendedGrid.propTypes = {
+  apiData: PropTypes.shape({
+    movies: resultsPropTypes,
+    tv: resultsPropTypes,
   }).isRequired,
 };

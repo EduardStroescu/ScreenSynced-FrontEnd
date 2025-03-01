@@ -1,165 +1,32 @@
-import { bookmarkApi } from "@api/backend/modules/bookmark.api";
 import { useClickOutside } from "@hooks/useClickOutside";
-import { useLocalStorage } from "@hooks/useLocalStorage";
 import { desktopVariants } from "@lib/framerMotionVariants.js";
-import { useUserStore, useUserStoreActions } from "@lib/store.js";
-import { useQuery } from "@tanstack/react-query";
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useCycle } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { Flip, toast, ToastContainer } from "react-toastify";
+import { useRef, useState } from "react";
 
-import { placeholderAvatar } from "@lib/placeholders.js";
-import "react-toastify/dist/ReactToastify.css";
-import { useShallow } from "zustand/react/shallow";
+import { placeholderAvatar } from "@lib/const";
 
-import userApi from "@api/backend/modules/user.api.js";
-import { ChangeAccountDetailsForm } from "@components/ChangeAccountDetailsForm";
-import { ChangeAvatarForm } from "@components/ChangeAvatarForm";
-import { ChangePasswordForm } from "@components/ChangePasswordForm";
 import { Drawer } from "@components/Drawer";
 import { HamburgerIcon, SearchIcon } from "@components/Icons";
-import { Overlay } from "@components/Overlay";
-import { SearchBarDesktop, SearchBarMobile } from "@components/SearchBar";
-import { SignInForm } from "@components/SignInForm";
-import { SignUpForm } from "@components/SignUpForm";
+import { SearchBarDesktop } from "@components/SearchBar";
+import { useAuthContext } from "@lib/providers/AuthProvider";
+import { useOverlayContext } from "@lib/providers/OverlayProvider";
 import PropTypes from "prop-types";
 
 export function Layout({ children }) {
-  const { user, loggedIn, isOverlay, overlayType } = useUserStore(
-    useShallow((state) => ({
-      user: state.user,
-      loggedIn: state.loggedIn,
-      isOverlay: state.isOverlay,
-      overlayType: state.overlayType,
-    })),
-  );
-  const { setUser, setLoggedIn, setBookmarkList, setOverlay, setOverlayType } =
-    useUserStoreActions();
-  const { setItem, getItem } = useLocalStorage("user");
-  const { search } = useLocation();
-  const navigate = useNavigate();
-
-  const { data: bookmarksQuery } = useQuery({
-    queryKey: ["bookmarks"],
-    queryFn: bookmarkApi.getList,
-    enabled: !!user,
-  });
-
-  useEffect(() => {
-    if (user) return;
-
-    const savedUser = getItem();
-    if (savedUser) {
-      setUser(savedUser);
-      setLoggedIn(true);
-    } else if (!savedUser && search.success) {
-      (async () => {
-        const { response } = await userApi.getInfo();
-        if (response) {
-          setItem(response);
-          setUser(response);
-          setLoggedIn(true);
-        } else {
-          toast.error("Something went wrong, please try again later");
-        }
-        navigate({ to: "/", replace: true });
-      })();
-    } else if (!savedUser && search.error) {
-      toast.error("Something went wrong");
-      navigate({ to: "/", replace: true });
-    }
-  }, [
-    getItem,
-    user,
-    navigate,
-    setUser,
-    setItem,
-    setLoggedIn,
-    search.success,
-    search.error,
-  ]);
-
-  useEffect(() => {
-    if (user && bookmarksQuery) {
-      setBookmarkList(bookmarksQuery);
-    }
-  }, [bookmarksQuery, user, setBookmarkList]);
-
-  const renderModalBasedOnActionType = () => {
-    switch (overlayType) {
-      case "login":
-        return <SignInForm />;
-      case "sign-up":
-        return <SignUpForm />;
-      case "change-avatar":
-        return <ChangeAvatarForm />;
-      case "change-password":
-        return <ChangePasswordForm />;
-      case "change-details":
-        return <ChangeAccountDetailsForm />;
-      default:
-        return null;
-    }
-  };
+  const { user } = useAuthContext();
 
   return (
     <>
-      <DesktopHeader
-        setItem={setItem}
-        getItem={getItem}
-        isOverlay={isOverlay}
-        setOverlay={setOverlay}
-        setOverlayType={setOverlayType}
-        loggedIn={loggedIn}
-        setLoggedIn={setLoggedIn}
-        user={user}
-        setUser={setUser}
-        setBookmarkList={setBookmarkList}
-      />
-      <MobileHeader
-        setItem={setItem}
-        getItem={getItem}
-        isOverlay={isOverlay}
-        setOverlay={setOverlay}
-        setOverlayType={setOverlayType}
-        loggedIn={loggedIn}
-        setLoggedIn={setLoggedIn}
-        user={user}
-        setUser={setUser}
-      />
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        transition={Flip}
-        theme="dark"
-        toastClassName={"bg-[#070B11] border-double border-4 border-cyan-500"}
-      />
+      <DesktopHeader user={user} />
+      <MobileHeader user={user} />
       <main className="relative min-h-screen text-white">{children}</main>
-      {isOverlay && <Overlay>{renderModalBasedOnActionType()}</Overlay>}
       <Footer />
     </>
   );
 }
 
-function DesktopHeader({
-  setOverlayType,
-  setOverlay,
-  loggedIn,
-  setLoggedIn,
-  user,
-  setUser,
-  setBookmarkList,
-  setItem,
-  getItem,
-}) {
+function DesktopHeader({ user }) {
   const [isMenuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -183,6 +50,7 @@ function DesktopHeader({
           aria-label="Discover Movies and Series"
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
+          search={{ genres: "action" }}
           className="font-serif text-lg hover:text-cyan-400"
           activeProps={{
             className: "text-cyan-400",
@@ -213,26 +81,18 @@ function DesktopHeader({
           Series
         </Link>
         <DesktopMenuDrawer
-          loggedIn={loggedIn}
+          user={user}
           isMenuOpen={isMenuOpen}
           setMenuOpen={setMenuOpen}
-          setItem={setItem}
-          getItem={getItem}
-          user={user}
-          setUser={setUser}
-          setBookmarkList={setBookmarkList}
-          setLoggedIn={setLoggedIn}
-          setOverlay={setOverlay}
-          setOverlayType={setOverlayType}
         />
       </nav>
     </header>
   );
 }
 
-function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
+function MobileHeader({ user }) {
   const [isMenuOpen, setMenuOpen] = useCycle(false, true);
-  const [isSearchModalOpen, setSearchModalOpen] = useState(false);
+  const { setOverlayType } = useOverlayContext();
 
   return (
     <>
@@ -257,16 +117,10 @@ function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
           </Link>
         </nav>
         <div className="flex w-full items-center justify-end gap-4">
-          <button onClick={() => setSearchModalOpen(true)}>
+          <button onClick={() => setOverlayType("search")}>
             <SearchIcon className={"w-[1.2rem] stroke-white"} />
           </button>
-          {isSearchModalOpen && (
-            <>
-              <SearchBarMobile setSearchModalOpen={setSearchModalOpen} />
-              <Overlay />
-            </>
-          )}
-          {loggedIn ? (
+          {user ? (
             <div className="relative w-[2.5rem]">
               <Link to="/account">
                 <motion.img
@@ -280,8 +134,7 @@ function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
             <button
               className="text-lg"
               onClick={() => {
-                setOverlay(true);
-                setOverlayType("login");
+                setOverlayType("sign-in");
               }}
             >
               Log In
@@ -294,36 +147,16 @@ function MobileHeader({ setOverlayType, setOverlay, loggedIn, user }) {
   );
 }
 
-export function DesktopMenuDrawer({
-  user,
-  loggedIn,
-  isMenuOpen,
-  setMenuOpen,
-  setItem,
-  getItem,
-  setUser,
-  setBookmarkList,
-  setLoggedIn,
-  setOverlay,
-  setOverlayType,
-}) {
+export function DesktopMenuDrawer({ user, isMenuOpen, setMenuOpen }) {
+  const { logout } = useAuthContext();
+  const { setOverlayType } = useOverlayContext();
   const menuRef = useRef(null);
   useClickOutside(menuRef, () => setMenuOpen(false));
-  const handleLogout = async () => {
-    try {
-      await userApi.logout();
-      setMenuOpen(false);
-      setItem(null);
-      setUser(getItem());
-      setLoggedIn(false);
-      setBookmarkList([]);
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  };
+  const { mutateAsync: handleLogout } = logout;
+
   return (
     <AnimatePresence>
-      {loggedIn ? (
+      {user ? (
         <div ref={menuRef} className="relative w-[2.5rem]">
           <button type="button" onClick={() => setMenuOpen((x) => !x)}>
             <img
@@ -367,8 +200,7 @@ export function DesktopMenuDrawer({
       ) : (
         <button
           onClick={() => {
-            setOverlay(true);
-            setOverlayType("login");
+            setOverlayType("sign-in");
           }}
           className="font-serif text-lg hover:text-cyan-500"
         >
@@ -400,6 +232,7 @@ export function MobileMenuDrawer({ isMenuOpen, setMenuOpen }) {
         <Link
           aria-label="Discover Movies and Series"
           to="/discover/$pageNumber"
+          search={{ genres: "action" }}
           params={{ pageNumber: 1 }}
           onClick={setMenuOpen}
           className="font-serif text-2xl hover:text-cyan-400"
@@ -443,7 +276,11 @@ function Footer() {
     <footer className="flex w-full flex-col items-center justify-center border-t border-cyan-500 px-2 py-6 lg:py-10">
       <div className="flex max-w-full flex-col items-center justify-center gap-2 rounded-xl border-4 border-double border-cyan-500 bg-[#131E2E] px-4 py-6 text-white lg:gap-4">
         <nav className="flex w-full flex-row justify-center gap-4 text-cyan-500">
-          <Link to="/discover/$pageNumber" params={{ pageNumber: 1 }}>
+          <Link
+            to="/discover/$pageNumber"
+            params={{ pageNumber: 1 }}
+            search={{ genres: "action" }}
+          >
             Discover
           </Link>
           <Link to="/movies/1" aria-label="See All Movies">
@@ -477,7 +314,7 @@ function Footer() {
 }
 
 Layout.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
 };
 
 const userPropTypes = PropTypes.shape({
@@ -491,36 +328,17 @@ const userPropTypes = PropTypes.shape({
   facebookId: PropTypes.string,
 });
 DesktopHeader.propTypes = {
-  setOverlayType: PropTypes.func.isRequired,
-  setOverlay: PropTypes.func.isRequired,
-  loggedIn: PropTypes.bool.isRequired,
-  setLoggedIn: PropTypes.func.isRequired,
   user: userPropTypes,
-  setUser: PropTypes.func.isRequired,
-  setBookmarkList: PropTypes.func.isRequired,
-  setItem: PropTypes.func.isRequired,
-  getItem: PropTypes.func.isRequired,
 };
 
 MobileHeader.propTypes = {
-  setOverlayType: PropTypes.func.isRequired,
-  setOverlay: PropTypes.func.isRequired,
-  loggedIn: PropTypes.bool.isRequired,
   user: userPropTypes,
 };
 
 DesktopMenuDrawer.propTypes = {
   user: userPropTypes,
-  loggedIn: PropTypes.bool.isRequired,
   isMenuOpen: PropTypes.bool.isRequired,
   setMenuOpen: PropTypes.func.isRequired,
-  setItem: PropTypes.func.isRequired,
-  getItem: PropTypes.func.isRequired,
-  setUser: PropTypes.func.isRequired,
-  setBookmarkList: PropTypes.func.isRequired,
-  setLoggedIn: PropTypes.func.isRequired,
-  setOverlay: PropTypes.func.isRequired,
-  setOverlayType: PropTypes.func.isRequired,
 };
 
 MobileMenuDrawer.propTypes = {

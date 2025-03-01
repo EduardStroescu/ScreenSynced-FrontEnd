@@ -4,7 +4,7 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 export function SimilarContentSection({ similarContent, mediaType }) {
-  if (!similarContent?.results?.length) return;
+  if (!similarContent?.length) return;
 
   return (
     <section className="col-span-6 overflow-hidden rounded-xl border-4 border-[#131E2E] px-2 py-6 sm:px-4">
@@ -28,10 +28,10 @@ export function SimilarContentSection({ similarContent, mediaType }) {
         modules={[Navigation]}
       >
         <div className="grid lg:grid-cols-6 lg:grid-rows-1 lg:gap-2 lg:px-4">
-          {similarContent?.results.map((content, index) => {
+          {similarContent.map((content, index) => {
             return (
               <SwiperSlide
-                key={content?.id ? content?.id : index}
+                key={content?.id ?? index}
                 className="w-[8rem] overflow-hidden sm:w-[11rem] lg:w-[15rem]"
               >
                 <ContentCard
@@ -49,6 +49,6 @@ export function SimilarContentSection({ similarContent, mediaType }) {
 }
 
 SimilarContentSection.propTypes = {
-  similarContent: PropTypes.object,
+  similarContent: PropTypes.arrayOf(PropTypes.object).isRequired,
   mediaType: PropTypes.oneOf(["tv", "movie"]).isRequired,
 };

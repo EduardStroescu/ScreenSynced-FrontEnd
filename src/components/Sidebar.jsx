@@ -1,34 +1,24 @@
-import { fetchPopularUpcomingMoviesandSeries } from "@api/tmdb/QueryFunctions";
 import { AddBookmarkButton } from "@components/AddBookmarkButton";
 import { Image } from "@components/Image";
-import { backdropPrefixSmall, posterPrefixSmall } from "@lib/const";
-import { placeholderImage } from "@lib/placeholders";
-import { useQuery } from "@tanstack/react-query";
+import { getContentImageUrl } from "@lib/utils";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import PropTypes from "prop-types";
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 
 export const SELECTABLE_DATES = ["week", "month", "year"];
+const RESULTS_LIMIT = 10;
 
-export function Sidebar({ contentType, queryType }) {
+export function Sidebar({ contentType, upcomingData }) {
   const [date, setDate] = useState("week");
   const isInViewRef = useRef();
 
   const isInView = useInView(isInViewRef, { once: true, amount: 0 });
 
-  const { data: upcomingData } = useQuery({
-    queryKey: ["upcomingMovies", "upcomingSeries", date],
-    queryFn: () => fetchPopularUpcomingMoviesandSeries(date),
-  });
   const contentQuery =
-    contentType === "movie"
-      ? upcomingData?.upcomingMovies
-      : upcomingData?.upcomingSeries;
+    contentType === "movie" ? upcomingData?.movies : upcomingData?.tv;
 
-  const upcomingList = (
-    queryType ? contentQuery?.[queryType]?.results : contentQuery?.results
-  )?.slice(0, 10);
+  const upcomingList = contentQuery?.[date]?.results?.slice(0, RESULTS_LIMIT);
 
   return (
     <aside className="col-span-1 my-6 hidden px-2 lg:px-4 xl:block">
@@ -60,12 +50,6 @@ export function Sidebar({ contentType, queryType }) {
               const isSecond = index === 1;
               const isThird = index === 2;
 
-              const contentImage = content?.poster_path
-                ? posterPrefixSmall + content.poster_path
-                : content?.backdrop_path
-                  ? backdropPrefixSmall + content.backdrop_path
-                  : placeholderImage;
-
               const style = isFirst
                 ? "text-red-500"
                 : isSecond
@@ -87,51 +71,48 @@ export function Sidebar({ contentType, queryType }) {
                   }}
                   className="group col-span-1 flex w-full items-center justify-start rounded-xl border-r-2 border-cyan-500 bg-[#131E2E] text-left"
                 >
-                  <div className="flex w-12 items-center justify-center px-8 text-center">
-                    <p
-                      className={`${style} text-center font-londrina text-5xl`}
-                    >
-                      {index + 1}
-                    </p>
-                  </div>
-                  <div className="flex w-full flex-row items-center justify-start gap-2 overflow-hidden">
-                    <Image
+                  {content?.mediaType === "movie" || contentType === "movie" ? (
+                    <Content
+                      style={style}
+                      index={index}
+                      linkTo="/movie/$movieId"
+                      linkParams={{ movieId: content?.id }}
+                      contentId={content?.id}
+                      contentImage={getContentImageUrl(
+                        content,
+                        "small",
+                        "small",
+                      )}
+                      contentTitle={content?.title}
+                      contentReleaseDate={content?.release_date}
+                      contentType={content?.mediaType || contentType}
                       isInView={isInView}
-                      src={contentImage}
-                      alt={`${content.title || content?.name} poster`}
-                      width={185}
-                      height={278}
-                      className={"aspect-[2/3] w-1/5 object-cover"}
-                      placeholderClassName={"aspect-[2/3] w-1/5 object-cover"}
                     />
-                    <div className="flex w-[78%] flex-col p-2">
-                      <Link
-                        aria-label={`Link to ${content.title || content.name}`}
-                        to={`/${contentType}/$${contentType}Id`}
-                        params={{ [`${contentType}Id`]: content.id }}
-                        className="w-full truncate font-sans text-lg group-hover:text-cyan-500"
-                      >
-                        {content.title || content.name}
-                      </Link>
-                      <div className="flex flex-row gap-1 text-xs">
-                        <AddBookmarkButton
-                          className={"w-[0.7rem]"}
-                          contentId={content?.id}
-                          mediaType={
-                            content.mediaType ? content.mediaType : contentType
-                          }
-                        />
-                        <p>{content.release_date || content.first_air_date}</p>
-                      </div>
-                    </div>
-                  </div>
+                  ) : (
+                    <Content
+                      style={style}
+                      index={index}
+                      linkTo="/tv/$tvId"
+                      linkParams={{ tvId: content?.id }}
+                      contentId={content?.id}
+                      contentImage={getContentImageUrl(
+                        content,
+                        "small",
+                        "small",
+                      )}
+                      contentTitle={content?.name}
+                      contentReleaseDate={content?.first_air_date}
+                      contentType={content?.mediaType || contentType}
+                      isInView={isInView}
+                    />
+                  )}
                 </motion.li>
               );
             })}
-          {!!upcomingList && !upcomingList?.length && (
+          {!upcomingList?.length && (
             <div className="col-span-1 flex h-[122px] w-full items-center justify-center rounded-xl border-r-2 border-cyan-500 bg-[#131E2E] px-2 py-6 text-center">
               <p className="font-londrina text-4xl">
-                No releases for the selected period.
+                No new releases at this time.
               </p>
             </div>
           )}
@@ -141,7 +122,83 @@ export function Sidebar({ contentType, queryType }) {
   );
 }
 
+const Content = memo(
+  ({
+    style,
+    index,
+    linkTo,
+    linkParams,
+    contentId,
+    contentImage,
+    contentTitle,
+    contentReleaseDate,
+    contentType,
+    isInView,
+  }) => {
+    return (
+      <>
+        <div className="flex w-12 items-center justify-center px-8 text-center">
+          <p className={`${style} text-center font-londrina text-5xl`}>
+            {index + 1}
+          </p>
+        </div>
+        <div className="flex w-full flex-row items-center justify-start gap-2 overflow-hidden">
+          <Image
+            isInView={isInView}
+            src={contentImage}
+            alt={`${contentTitle} poster`}
+            width={185}
+            height={278}
+            className={"aspect-[2/3] w-1/5 object-cover"}
+            placeholderClassName={"aspect-[2/3] w-1/5 object-cover"}
+          />
+          <div className="flex w-[78%] flex-col p-2">
+            <Link
+              aria-label={`Link to ${contentTitle}`}
+              to={linkTo}
+              params={linkParams}
+              className="w-full truncate font-sans text-lg group-hover:text-cyan-500"
+            >
+              {contentTitle}
+            </Link>
+            <div className="flex flex-row gap-1 text-xs">
+              <AddBookmarkButton
+                className={"w-[0.7rem]"}
+                contentId={contentId}
+                mediaType={contentType}
+              />
+              <p>{contentReleaseDate}</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  },
+);
+
+Content.displayName = "Content";
+
+Content.propTypes = {
+  style: PropTypes.string,
+  index: PropTypes.number.isRequired,
+  linkTo: PropTypes.string.isRequired,
+  linkParams: PropTypes.object.isRequired,
+  contentId: PropTypes.number,
+  contentImage: PropTypes.string.isRequired,
+  contentTitle: PropTypes.string,
+  contentReleaseDate: PropTypes.string,
+  contentType: PropTypes.string.isRequired,
+  isInView: PropTypes.bool.isRequired,
+};
+
 Sidebar.propTypes = {
   contentType: PropTypes.oneOf(["movie", "tv"]).isRequired,
-  queryType: PropTypes.oneOf(["movies", "tv"]),
+  upcomingData: PropTypes.shape({
+    movies: PropTypes.shape({
+      results: PropTypes.array,
+    }),
+    tv: PropTypes.shape({
+      results: PropTypes.array,
+    }),
+  }),
 };

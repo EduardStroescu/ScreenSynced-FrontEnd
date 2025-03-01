@@ -1,7 +1,8 @@
-import { bookmarkApi } from "@api/backend/modules/bookmark.api";
 import { Account } from "@components/Account";
 import { Bookmarks } from "@components/Bookmarks";
 import { isAuthenticated } from "@lib/isAuthenticated";
+import { useAuthContext } from "@lib/providers/AuthProvider";
+import { useBookmarksQuery } from "@lib/queries";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/account")({
@@ -12,25 +13,18 @@ export const Route = createFileRoute("/account")({
         to: "/login",
       });
     }
-    return {
-      queryBookmarks: {
-        queryKey: ["bookmarks"],
-        queryFn: bookmarkApi.getList,
-      },
-    };
-  },
-  loader: async ({ context: { queryClient, queryBookmarks } }) => {
-    return await queryClient.ensureQueryData(queryBookmarks);
   },
   component: AccountPage,
 });
 
 function AccountPage() {
-  const bookmarksQuery = Route.useLoaderData();
+  const { user } = useAuthContext();
+  const { data: bookmarksData } = useBookmarksQuery(user);
+
   return (
     <section className="flex flex-col px-2 py-10 lg:px-12">
       <Account />
-      <Bookmarks bookmarksQuery={bookmarksQuery} />
+      <Bookmarks bookmarksData={bookmarksData} />
     </section>
   );
 }

@@ -1,60 +1,48 @@
 import { BookmarkIcon } from "@components/Icons";
-import { placeholderImage } from "@lib/placeholders";
+import { getContentImageUrl, getCastImageUrl } from "@lib/utils";
 import PropTypes from "prop-types";
 
-export function ContentDetailsSection({ queryData, contentDetails }) {
-  const contentImage =
-    contentDetails?.poster_path !== null ||
-    contentDetails?.backdrop_path !== null
-      ? "https://image.tmdb.org/t/p/w342" + contentDetails.poster_path ||
-        "https://image.tmdb.org/t/p/w300" + contentDetails.backdrop_path
-      : placeholderImage;
-
-  const director = queryData.credits?.crew?.find(
-    (crew) => crew.job === "Director",
+export function ContentDetailsSection({ contentDetails }) {
+  const director = contentDetails?.credits?.crew?.find(
+    (crew) => crew.known_for_department === "Directing",
   );
-
-  const directorImage =
-    director?.profile_path !== null && director?.profile_path !== undefined
-      ? "https://image.tmdb.org/t/p/w185" + director?.profile_path
-      : placeholderImage;
 
   return (
     <article className="flex flex-col rounded-xl bg-[#131E2E] sm:flex-row">
       <img
-        src={contentImage}
-        alt=""
+        src={getContentImageUrl(contentDetails, "medium", "small")}
+        alt={`${contentDetails?.title || contentDetails?.name} poster`}
         className="m-1 rounded-xl object-cover sm:w-[17rem]"
       />
       <div className="m-1 flex w-[calc(100%-8px)] flex-col items-start gap-4 rounded-xl bg-[#070B11] px-2 py-6 sm:m-1 sm:px-4">
-        <div className="flex flex-row gap-1 font-serif">
-          <span>{contentDetails.original_language?.toUpperCase()}</span> |{" "}
-          <span className="self-center">
-            <BookmarkIcon className="w-[0.7rem]" />
-          </span>
-          <span>{contentDetails.vote_average?.toFixed(1)}</span> |{" "}
-          <span>
-            {contentDetails.release_date?.slice(0, 4) ||
-              contentDetails.first_air_date?.slice(0, 4) ||
-              "unknown"}
-          </span>
-          |{" "}
-          <span>
-            {contentDetails.runtime ||
-              contentDetails.episode_run_time?.[0] ||
-              0}{" "}
-            min
-          </span>
-        </div>
-        <h2 className="font-londrina text-4xl">{contentDetails.title}</h2>
+        {contentDetails?.contentType === "movie" ? (
+          <Details
+            contentLanguage={contentDetails?.original_language?.toUpperCase()}
+            contentVoteAvg={contentDetails?.vote_average.toFixed(1)}
+            contentReleaseDate={contentDetails?.release_date?.slice(0, 4)}
+            contentDuration={contentDetails?.runtime}
+            contentTitle={contentDetails?.title}
+          />
+        ) : (
+          <Details
+            contentLanguage={contentDetails?.original_language?.toUpperCase()}
+            contentVoteAvg={contentDetails?.vote_average.toFixed(1)}
+            contentReleaseDate={contentDetails?.first_air_date?.slice(0, 4)}
+            contentDuration={
+              contentDetails?.episode_run_time?.[0] ||
+              contentDetails?.last_episode_to_air?.runtime
+            }
+            contentTitle={contentDetails?.name}
+          />
+        )}
         <div className="font-serif">
           <p className="pb-2 text-cyan-500">Description:</p>
           <p>{contentDetails.overview}</p>
         </div>
-        {!!contentDetails.genres.length && (
+        {!!contentDetails?.genres?.length && (
           <div className="flex flex-row gap-2">
             <p className="text-cyan-500">Genres:</p>
-            {contentDetails.genres.map((genre, index) => {
+            {contentDetails?.genres?.map((genre, index) => {
               return <p key={index}>{genre.name}</p>;
             })}
           </div>
@@ -63,11 +51,11 @@ export function ContentDetailsSection({ queryData, contentDetails }) {
           <div className="flex flex-row items-center gap-2">
             <p className="text-cyan-500">Director:</p>
             <img
-              src={directorImage}
+              src={getCastImageUrl(director)}
               alt="Director Image"
               className="aspect-[1/1] w-[3rem] rounded-full object-cover"
             />
-            <span className="text-white">{director.name}</span>
+            <span className="text-white">{director?.name}</span>
           </div>
         )}
       </div>
@@ -75,22 +63,38 @@ export function ContentDetailsSection({ queryData, contentDetails }) {
   );
 }
 
+function Details({
+  contentLanguage,
+  contentVoteAvg,
+  contentReleaseDate,
+  contentDuration,
+  contentTitle,
+}) {
+  return (
+    <>
+      <div className="flex flex-row gap-1 font-serif">
+        <span>{contentLanguage}</span> |{" "}
+        <span className="self-center">
+          <BookmarkIcon className="w-[0.7rem]" />
+        </span>
+        <span>{contentVoteAvg}</span> |{" "}
+        <span>{contentReleaseDate || "N/A"}</span>|{" "}
+        <span>{contentDuration ? contentDuration + " min" : "N/A"}</span>
+      </div>
+      <h2 className="font-londrina text-4xl">{contentTitle}</h2>
+    </>
+  );
+}
+
+Details.propTypes = {
+  contentLanguage: PropTypes.string,
+  contentVoteAvg: PropTypes.string,
+  contentReleaseDate: PropTypes.string,
+  contentDuration: PropTypes.number,
+  contentTitle: PropTypes.string,
+};
+
 ContentDetailsSection.propTypes = {
-  queryData: PropTypes.shape({
-    credits: PropTypes.shape({
-      crew: PropTypes.arrayOf(
-        PropTypes.shape({
-          credit_id: PropTypes.string,
-          gender: PropTypes.number,
-          id: PropTypes.number,
-          job: PropTypes.string,
-          name: PropTypes.string,
-          original_name: PropTypes.string,
-          profile_path: PropTypes.string,
-        }),
-      ),
-    }),
-  }),
   contentDetails: PropTypes.shape({
     adult: PropTypes.bool,
     backdrop_path: PropTypes.string,
@@ -172,6 +176,7 @@ ContentDetailsSection.propTypes = {
       still_path: PropTypes.string,
       vote_average: PropTypes.number,
       vote_count: PropTypes.number,
+      runtime: PropTypes.number,
     }),
     name: PropTypes.string,
     spoken_languages: PropTypes.arrayOf(
@@ -231,5 +236,19 @@ ContentDetailsSection.propTypes = {
     }),
     vote_average: PropTypes.number,
     vote_count: PropTypes.number,
+    credits: PropTypes.shape({
+      crew: PropTypes.arrayOf(
+        PropTypes.shape({
+          credit_id: PropTypes.string,
+          gender: PropTypes.number,
+          id: PropTypes.number,
+          job: PropTypes.string,
+          name: PropTypes.string,
+          original_name: PropTypes.string,
+          profile_path: PropTypes.string,
+        }),
+      ),
+    }),
+    contentType: PropTypes.string.isRequired,
   }).isRequired,
 };

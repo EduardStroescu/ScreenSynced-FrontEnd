@@ -1,7 +1,19 @@
-export const imagePrefixOriginal = "https://image.tmdb.org/t/p/original";
-export const posterPrefixSmall = "https://image.tmdb.org/t/p/w185";
-export const posterPrefixMedium = "https://image.tmdb.org/t/p/w342";
-export const backdropPrefixSmall = "https://image.tmdb.org/t/p/w300";
+export const imagePrefixes = {
+  poster: {
+    small: "https://image.tmdb.org/t/p/w185",
+    medium: "https://image.tmdb.org/t/p/w342",
+    original: "https://image.tmdb.org/t/p/original",
+  },
+  backdrop: {
+    small: "https://image.tmdb.org/t/p/w300",
+    original: "https://image.tmdb.org/t/p/original",
+  },
+};
+
+export const placeholderImage =
+  "https://placehold.co/2000x3000/070B11/06b6d4?text=A+picture+is+worth\\na+thousand+words,\\nbut+not+today.&font=sans";
+export const placeholderAvatar =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png";
 
 export const thirdPartyConfig = [
   {
@@ -13,3 +25,5 @@ export const thirdPartyConfig = [
     icon: "https://www.svgrepo.com/show/475647/facebook-color.svg",
   },
 ];
+
+export const CARD_LIMIT = 18;
