@@ -15,7 +15,7 @@ export function SeasonsSection({ seasons }) {
 
   const { data: seasonsData } = useSeasonsQuery(
     tvId,
-    selectedSeason.season_number,
+    selectedSeason?.season_number,
   );
 
   if (!seasons || !seasons?.length) return null;
@@ -28,6 +28,8 @@ export function SeasonsSection({ seasons }) {
       <div className="border-rounded-sm relative flex w-full flex-col gap-4">
         <button
           onClick={() => setIsDropdownOpen((x) => !x)}
+          aria-expanded={isDropdownOpen}
+          aria-label={`Select season. Current selected season: ${selectedSeason.name}`}
           className="border-rounded-sm flex flex-row items-center justify-center gap-2 rounded-xl border-b-2 border-cyan-500 bg-[#070B11] py-1"
         >
           {selectedSeason.name}

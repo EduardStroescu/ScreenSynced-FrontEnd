@@ -15,7 +15,7 @@ export function Account() {
         <img
           src={user?.avatar || placeholderAvatar}
           alt={user?.displayName + "'s " + "avatar"}
-          className="aspect-[1/1] w-[10rem] rounded-full border-t-8 border-t-cyan-500 sm:w-[25rem]"
+          className="aspect-[1/1] w-[10rem] rounded-full border-t-8 border-t-cyan-500 bg-[#070B11] sm:w-[25rem]"
         />
         <button
           onClick={() => setOverlayType("change-avatar")}

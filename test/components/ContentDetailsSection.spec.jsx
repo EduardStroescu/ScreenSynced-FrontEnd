@@ -1,5 +1,6 @@
 import { ContentDetailsSection } from "@components/ContentDetailsSection";
 import { render, screen } from "@testing-library/react";
+import { getCastImageUrl, getContentImageUrl } from "@lib/utils";
 import { beforeEach, describe, expect, it } from "vitest";
 
 const mockContentDetails = {
@@ -24,9 +25,6 @@ const mockContentDetails = {
   origin_country: ["United States"],
   vote_average: 8.5,
   runtime: 120,
-};
-
-const mockQueryData = {
   credits: {
     crew: [
       {
@@ -37,28 +35,30 @@ const mockQueryData = {
         name: "Director Name",
         original_name: "Director Original Name",
         profile_path: "/path/to/director/profile.jpg",
+        known_for_department: "Directing",
       },
     ],
   },
+  contentType: "movie",
 };
 
 describe("ContentDetailsSection Component", () => {
   beforeEach(() => {
-    render(
-      <ContentDetailsSection
-        contentDetails={mockContentDetails}
-        queryData={mockQueryData}
-      />,
-    );
+    render(<ContentDetailsSection contentDetails={mockContentDetails} />);
   });
+
   it("renders the component", () => {
     expect(screen.getByText(mockContentDetails.title)).toBeInTheDocument();
   });
 
   it("renders the content image", () => {
-    expect(
-      screen.getByRole("img", { src: mockContentDetails.backdrop_path }),
-    ).toBeInTheDocument();
+    const image = screen.getByAltText(
+      new RegExp(mockContentDetails.title, "i"),
+    );
+    expect(image).toHaveAttribute(
+      "src",
+      getContentImageUrl(mockContentDetails, "medium", "small"),
+    );
   });
 
   it("renders the content metadata", () => {
@@ -78,20 +78,23 @@ describe("ContentDetailsSection Component", () => {
     it("renders director's details", () => {
       expect(
         screen.getByText(
-          mockQueryData.credits.crew.find((member) => member.job === "Director")
-            .name,
+          mockContentDetails.credits.crew.find(
+            (member) => member.known_for_department === "Directing",
+          ).name,
         ),
       ).toBeInTheDocument();
     });
 
     it("renders the director image", () => {
-      expect(
-        screen.getByRole("img", {
-          src: mockQueryData.credits.crew.find(
-            (member) => member.job === "Director",
-          ).profile_path,
-        }),
-      ).toBeInTheDocument();
+      const directorImage = screen.getByAltText(/director image/i);
+      expect(directorImage).toHaveAttribute(
+        "src",
+        getCastImageUrl(
+          mockContentDetails.credits.crew.find(
+            (member) => member.known_for_department === "Directing",
+          ),
+        ),
+      );
     });
   });
 

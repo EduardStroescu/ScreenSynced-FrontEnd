@@ -26,4 +26,5 @@ export const thirdPartyConfig = [
   },
 ];
 
+export const SELECTABLE_DATES = ["week", "month", "year"];
 export const CARD_LIMIT = 18;

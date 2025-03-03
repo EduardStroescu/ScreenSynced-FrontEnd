@@ -1,12 +1,13 @@
-import { SELECTABLE_DATES, Sidebar } from "@components/Sidebar";
-import { useQuery } from "@tanstack/react-query";
+import { Sidebar } from "@components/Sidebar";
+import { SELECTABLE_DATES } from "@lib/const";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { useInView } from "framer-motion";
 import { beforeEach, describe, expect, it } from "vitest";
+import { TestProviders } from "../TestProviders";
 
-const mockMovieData = {
-  upcomingMovies: {
-    movies: {
+const mockData = {
+  movies: {
+    week: {
       results: [
         {
           id: 1,
@@ -26,35 +27,113 @@ const mockMovieData = {
         },
       ],
     },
+    month: {
+      results: [
+        {
+          id: 3,
+          title: "Movie 3",
+          poster_path: "/path/to/poster3.jpg",
+          backdrop_path: "/path/to/backdrop3.jpg",
+          overview: "Overview for Movie 3.",
+          mediaType: "movie",
+        },
+        {
+          id: 4,
+          title: "Movie 4",
+          poster_path: "/path/to/poster4.jpg",
+          backdrop_path: "/path/to/backdrop4.jpg",
+          overview: "Overview for Movie 4.",
+          mediaType: "movie",
+        },
+      ],
+    },
+    year: {
+      results: [
+        {
+          id: 5,
+          title: "Movie 5",
+          poster_path: "/path/to/poster5.jpg",
+          backdrop_path: "/path/to/backdrop5.jpg",
+          overview: "Overview for Movie 5.",
+          mediaType: "movie",
+        },
+        {
+          id: 6,
+          title: "Movie 6",
+          poster_path: "/path/to/poster6.jpg",
+        },
+      ],
+    },
+  },
+  tv: {
+    week: {
+      results: [
+        {
+          id: 7,
+          name: "Series 1",
+          poster_path: "/path/to/poster7.jpg",
+          backdrop_path: "/path/to/backdrop7.jpg",
+          overview: "Overview for Series 1.",
+          mediaType: "tv",
+          first_air_date: "2023-01-01",
+          vote_average: 8.5,
+        },
+        {
+          id: 8,
+          name: "Series 2",
+          poster_path: "/path/to/poster8.jpg",
+          backdrop_path: "/path/to/backdrop8.jpg",
+          overview: "Overview for Series 2.",
+          mediaType: "tv",
+          first_air_date: "2023-01-01",
+          vote_average: 8.5,
+        },
+      ],
+    },
+    month: { results: [] },
+    year: { results: [] },
   },
 };
 
 describe("Sidebar component", () => {
   beforeEach(() => {
     useInView.mockReturnValue(true);
-    // Update mock to directly return an object with `data`
-    useQuery.mockReturnValue({
-      data: mockMovieData,
-      isLoading: false,
-      isError: false,
-    });
   });
 
-  it("renders the component", async () => {
+  it("renders the component for movies", async () => {
     act(() => {
-      render(<Sidebar contentType="movie" queryType="movies" />);
+      render(<Sidebar contentType="movie" upcomingData={mockData} />, {
+        wrapper: TestProviders,
+      });
     });
 
     await waitFor(() => {
-      mockMovieData.upcomingMovies.movies.results.forEach((movie) => {
+      mockData.movies.week.results.forEach((movie) => {
         expect(screen.getByText(movie.title)).toBeInTheDocument();
       });
     });
     expect(screen.getByText(/upcoming movies/i)).toBeInTheDocument();
   });
 
+  it("renders the component for series", async () => {
+    act(() => {
+      render(<Sidebar contentType="tv" upcomingData={mockData} />, {
+        wrapper: TestProviders,
+      });
+    });
+
+    await waitFor(() => {
+      mockData.tv.week.results.forEach((serie) => {
+        expect(screen.getByText(serie.name)).toBeInTheDocument();
+      });
+    });
+    expect(screen.getByText(/upcoming series/i)).toBeInTheDocument();
+  });
+
   it("renders all sort buttons", () => {
-    render(<Sidebar contentType="movie" queryType="movies" />);
+    render(<Sidebar contentType="movie" queryType="movies" />, {
+      wrapper: TestProviders,
+    });
     const buttons = [];
     SELECTABLE_DATES.forEach((date) => {
       expect(
@@ -65,14 +144,25 @@ describe("Sidebar component", () => {
     expect(buttons).toHaveLength(SELECTABLE_DATES.length);
   });
 
-  //   Uncomment and adjust this test case to check for empty data handling
   it("renders empty content when no upcoming content is available", () => {
-    useQuery.mockReturnValueOnce({
-      data: { upcomingMovies: { movies: { results: [] } } },
-      isLoading: false,
-      isError: false,
-    });
-    render(<Sidebar contentType="movie" queryType="movies" />);
-    expect(screen.queryByText(/no releases/i)).toBeInTheDocument();
+    render(
+      <Sidebar
+        contentType="movie"
+        upcomingData={{
+          movies: {
+            week: { results: [] },
+            month: { results: [] },
+            year: { results: [] },
+          },
+          tv: {
+            week: { results: [] },
+            month: { results: [] },
+            year: { results: [] },
+          },
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    expect(screen.queryByText(/no new releases/i)).toBeInTheDocument();
   });
 });

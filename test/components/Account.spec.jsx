@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react";
 import { toast } from "react-toastify";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { TestProviders } from "../TestProviders";
 
 beforeAll(async () => {
   vi.mock("@api/backend/modules/user.api", () => ({
@@ -19,20 +20,19 @@ beforeAll(async () => {
 
 describe("Account Component", () => {
   let Account;
+  let container;
 
   beforeAll(async () => {
     // Dynamically import the component after mocks are set up
     ({ Account } = await import("@components/Account"));
   });
-
   beforeEach(() => {
     act(() => {
-      render(<Account />);
+      container = render(<Account />, { wrapper: TestProviders }).container;
     });
   });
 
   it("renders the component", () => {
-    const { container } = render(<Account />);
     expect(container.firstChild).toBeInTheDocument();
   });
 
@@ -58,15 +58,14 @@ describe("Account Component", () => {
 
   it("shows an error toast if logout API fails", async () => {
     // Simulate an API failure
-    userApi.logout.mockRejectedValue(new Error("Logout failed"));
+    const errorMessage = "Logout failed";
+    userApi.logout.mockRejectedValueOnce({ message: errorMessage });
 
     const logoutButton = screen.getByText("Log Out");
     await act(async () => {
       fireEvent.click(logoutButton);
     });
 
-    await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith("Something went wrong"),
-    );
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(errorMessage));
   });
 });

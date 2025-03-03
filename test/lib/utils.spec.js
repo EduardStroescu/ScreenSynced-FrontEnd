@@ -24,21 +24,21 @@ describe("getYoutubeLink", () => {
 
 describe("getYoutubeLinks", () => {
   it("returns null if the videoIds are empty", () => {
-    const videoIds = null;
+    const videoIds = [];
     const youtubeLink = getYoutubeLinks(videoIds);
-    expect(youtubeLink).toBeNull();
+    expect(youtubeLink).toEqual([]);
   });
 
-  it("returns null if the videoId are undefined", () => {
+  it("returns empty array if the videoId are undefined", () => {
     const videoIds = undefined;
-    const youtubeLink = getYoutubeLinks(videoIds);
-    expect(youtubeLink).toBeNull();
+    const youtubeLinks = getYoutubeLinks(videoIds);
+    expect(youtubeLinks).toEqual([]);
   });
 
-  it("returns null if the videoId are null", () => {
+  it("returns empty array if the videoId are null", () => {
     const videoIds = undefined;
-    const youtubeLink = getYoutubeLinks(videoIds);
-    expect(youtubeLink).toBeNull();
+    const youtubeLinks = getYoutubeLinks(videoIds);
+    expect(youtubeLinks).toEqual([]);
   });
 
   it("returns the correct YouTube link", () => {

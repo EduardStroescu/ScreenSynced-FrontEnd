@@ -38,7 +38,9 @@ export const signUpFormSchema = z
       .min(8, { message: "The password must be at least 8 characters" }),
     confirmPassword: z
       .string()
-      .min(8, { message: "The new password must be at least 8 characters" }),
+      .min(8, {
+        message: "The confirmation password must be at least 8 characters",
+      }),
     email: z.string().email({ message: "The email is invalid" }).nonempty({
       message: "An email is required",
     }),

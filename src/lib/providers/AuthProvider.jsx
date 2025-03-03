@@ -1,9 +1,9 @@
 import userApi from "@api/backend/modules/user.api";
 import { useLocalStorage } from "@hooks/useLocalStorage";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import PropTypes from "prop-types";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useOverlayContext } from "./OverlayProvider";
 import { useBookmarksQuery } from "@lib/queries";
@@ -12,6 +12,7 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { search } = useLocation();
   const { setOverlayType } = useOverlayContext();
   const { getItem, setItem, removeItem } = useLocalStorage("user");
@@ -81,23 +82,20 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useMutation({
     mutationFn: userApi.logout,
-    onSuccess: () => {
+    onSettled: () => {
       removeItem();
       setUser(null);
       setOverlayType(null);
+      queryClient.removeQueries({ queryKey: ["bookmarks"] });
       toast.success("Logged Out");
-    },
-    onError: (error) => {
-      toast.error(
-        error?.message ??
-          "Could not establish a server connection. Please try again later.",
-      );
     },
   });
 
   const updateAccount = useMutation({
     mutationFn: (body) => userApi.accountUpdate(body),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      setUser(response);
+      setItem(response);
       setOverlayType(null);
       toast.success("Account updated successfully!");
     },
@@ -111,7 +109,9 @@ export const AuthProvider = ({ children }) => {
 
   const changeAvatar = useMutation({
     mutationFn: (body) => userApi.avatarUpdate(body),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      setUser(response);
+      setItem(response);
       setOverlayType(null);
       toast.success("Avatar updated successfully!");
     },
@@ -137,22 +137,20 @@ export const AuthProvider = ({ children }) => {
     },
   });
 
-  const values = useMemo(
-    () => ({
-      user,
-      logout,
-      signIn,
-      signUp,
-      updateAccount,
-      changeAvatar,
-      changePassword,
-    }),
-    [user, logout, signIn, signUp, updateAccount, changeAvatar, changePassword],
-  );
+  const values = {
+    user,
+    logout,
+    signIn,
+    signUp,
+    updateAccount,
+    changeAvatar,
+    changePassword,
+  };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {

@@ -78,9 +78,9 @@ export function SignInForm({ acceptsRedirect = false }) {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.email && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.email.message}
-            </div>
+            </p>
           )}
 
           <input
@@ -88,13 +88,12 @@ export function SignInForm({ acceptsRedirect = false }) {
             type="password"
             placeholder="Password"
             name="password"
-            onChange={signInForm.handleChange}
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.password && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.password.message}
-            </div>
+            </p>
           )}
 
           <button

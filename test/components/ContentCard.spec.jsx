@@ -2,6 +2,7 @@ import { ContentCard } from "@components/ContentCard";
 import { render, screen } from "@testing-library/react";
 import { useInView } from "framer-motion";
 import { describe, expect, it } from "vitest";
+import { TestProviders } from "../TestProviders";
 
 const mockContentMovies = {
   id: 1,
@@ -16,7 +17,7 @@ const mockContentSeries = {
   id: 1,
   name: "Series 1",
   overview: "This is a placeholder description for a sample series.",
-  release_date: "2023-01-01",
+  first_air_date: "2023-01-01",
   vote_average: 8.5,
   poster_path: "/path/to/poster.jpg",
 };
@@ -24,19 +25,25 @@ const mockContentSeries = {
 describe("ContentCard Component", () => {
   useInView.mockReturnValue(true);
   it("renders the component for movies", () => {
-    render(<ContentCard content={mockContentMovies} contentType="movie" />);
+    render(<ContentCard content={mockContentMovies} contentType="movie" />, {
+      wrapper: TestProviders,
+    });
 
     expect(screen.getByText(mockContentMovies.title)).toBeInTheDocument();
   });
 
   it("renders the component for series", () => {
-    render(<ContentCard content={mockContentSeries} contentType="tv" />);
+    render(<ContentCard content={mockContentSeries} contentType="tv" />, {
+      wrapper: TestProviders,
+    });
 
     expect(screen.getByText(mockContentSeries.name)).toBeInTheDocument();
   });
 
   it("renders the content image", () => {
-    render(<ContentCard content={mockContentMovies} contentType="movie" />);
+    render(<ContentCard content={mockContentMovies} contentType="movie" />, {
+      wrapper: TestProviders,
+    });
     const contentImage = screen.getByAltText(
       `${mockContentMovies.title} poster`,
     );
@@ -48,7 +55,9 @@ describe("ContentCard Component", () => {
   });
 
   it("renders the add bookmark button", () => {
-    render(<ContentCard content={mockContentMovies} contentType="movie" />);
+    render(<ContentCard content={mockContentMovies} contentType="movie" />, {
+      wrapper: TestProviders,
+    });
     expect(screen.getByLabelText(/add bookmark/i)).toBeInTheDocument();
   });
 });

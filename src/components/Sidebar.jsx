@@ -1,12 +1,12 @@
 import { AddBookmarkButton } from "@components/AddBookmarkButton";
 import { Image } from "@components/Image";
+import { SELECTABLE_DATES } from "@lib/const";
 import { getContentImageUrl } from "@lib/utils";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import PropTypes from "prop-types";
 import { memo, useRef, useState } from "react";
 
-export const SELECTABLE_DATES = ["week", "month", "year"];
 const RESULTS_LIMIT = 10;
 
 export function Sidebar({ contentType, upcomingData }) {

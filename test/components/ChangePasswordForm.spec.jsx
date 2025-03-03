@@ -7,9 +7,17 @@ import {
   waitFor,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-
-import { useUserStore } from "@lib/store";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
+import { TestProviders } from "../TestProviders";
+import { ChangePasswordForm } from "@components/ChangePasswordForm";
 
 import userApi from "@api/backend/modules/user.api";
 import { toast } from "react-toastify";
@@ -23,7 +31,19 @@ const mockFormData = {
   },
 };
 
+const mockSetOverlayType = vi.fn();
+
 beforeAll(() => {
+  vi.mock("@lib/providers/OverlayProvider", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useOverlayContext: vi.fn(() => ({
+        setOverlayType: mockSetOverlayType,
+        overlayType: "random",
+      })),
+    };
+  });
   vi.mock("@api/backend/modules/user.api", () => ({
     default: {
       passwordUpdate: vi.fn(),
@@ -32,13 +52,14 @@ beforeAll(() => {
 });
 
 describe("ChangePasswordForm Component", () => {
-  let ChangePasswordForm;
   const mockNavigate = vi.fn();
 
   beforeAll(async () => {
     useNavigate.mockReturnValue(mockNavigate);
-    // Dynamically import the component after mocks are set up
-    ({ ChangePasswordForm } = await import("@components/ChangePasswordForm"));
+  });
+
+  beforeEach(() => {
+    render(<ChangePasswordForm />, { wrapper: TestProviders });
   });
 
   afterEach(() => {
@@ -46,7 +67,6 @@ describe("ChangePasswordForm Component", () => {
   });
 
   it("renders the component", () => {
-    render(<ChangePasswordForm />);
     expect(
       screen.getByRole("heading", { name: /change password/i }),
     ).toBeInTheDocument();
@@ -56,8 +76,6 @@ describe("ChangePasswordForm Component", () => {
     userApi.passwordUpdate.mockResolvedValueOnce({
       response: { id: 1, name: "Test User" },
     });
-
-    render(<ChangePasswordForm />);
 
     // Sequentially fill in the form inputs
     await act(async () => {
@@ -88,11 +106,9 @@ describe("ChangePasswordForm Component", () => {
 
   it("handles form submission error", async () => {
     const errorMessage = "Invalid credentials";
-    userApi.passwordUpdate.mockResolvedValueOnce({
-      error: { message: errorMessage },
+    userApi.passwordUpdate.mockRejectedValueOnce({
+      message: errorMessage,
     });
-
-    render(<ChangePasswordForm />);
 
     // Fill in the form inputs
     await act(async () => {
@@ -117,32 +133,28 @@ describe("ChangePasswordForm Component", () => {
   });
 
   it("displays validation errors when inputs are invalid", async () => {
-    render(<ChangePasswordForm />);
-
     userEvent.click(screen.getByRole("button", { name: /change password/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/a password is required/i)).toBeInTheDocument();
       expect(
-        screen.getByText(/a new password is required/i),
+        screen.getByText(/the password must be at least 8 characters/i),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/the confirmation password is required/i),
+        screen.getByText(/new password must be at least 8 characters/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /confirmation password must be at least 8 characters/i,
+        ),
       ).toBeInTheDocument();
     });
   });
 
   it("closes the overlay when the close icon is clicked", async () => {
-    const mockSetOverlay = vi.spyOn(
-      useUserStore.getState().actions,
-      "setOverlay",
-    );
-    render(<ChangePasswordForm />);
-
     userEvent.click(screen.getByRole("button", { name: /close panel/i }));
 
     await waitFor(() => {
-      expect(mockSetOverlay).toHaveBeenCalledWith(false);
+      expect(mockSetOverlayType).toHaveBeenCalledWith(null);
     });
   });
 });
