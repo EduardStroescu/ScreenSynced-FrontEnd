@@ -1,10 +1,11 @@
 import { bookmarkApi } from "@api/backend/modules/bookmark.api";
 import { AddBookmarkButton } from "@components/AddBookmarkButton";
-import { useUserStore } from "@lib/store";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { toast } from "react-toastify";
 import { beforeAll, describe, expect, it, vi } from "vitest";
+import { TestProviders } from "../TestProviders";
+import { useQuery } from "@tanstack/react-query";
 
 beforeAll(async () => {
   vi.mock("@api/backend/modules/bookmark.api", () => ({
@@ -13,33 +14,77 @@ beforeAll(async () => {
       remove: vi.fn(),
     },
   }));
+  vi.mock("@lib/providers/AuthProvider", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useAuthContext: vi.fn(() => ({
+        user: { id: 1 },
+      })),
+    };
+  });
 });
 
 describe("AddBookmarkButton Component", () => {
   it("renders the component", () => {
-    render(<AddBookmarkButton mediaType="movie" />);
+    render(
+      <AddBookmarkButton
+        mediaType="movie"
+        contentId={1}
+        className="w-full bg-black"
+      />,
+      { wrapper: TestProviders },
+    );
+
     expect(screen.getByLabelText(/add bookmark/i)).toBeInTheDocument();
   });
 
   it("applies the passed styles", () => {
-    render(<AddBookmarkButton mediaType="movie" className="w-full bg-black" />);
+    render(
+      <AddBookmarkButton
+        mediaType="movie"
+        contentId={1}
+        className="w-full bg-black"
+      />,
+      { wrapper: TestProviders },
+    );
+
     const bookmarkButton = screen.getByLabelText(/add bookmark/i);
     expect(bookmarkButton).toHaveClass("bg-black w-full");
   });
 
   it("renders the button as an active bookmark when it is already added", async () => {
-    useUserStore.setState({
-      bookmarkList: [{ id: 1, mediaId: 1, mediaType: "movie" }],
+    useQuery.mockReturnValue({
+      data: [{ id: 1, mediaId: 1, mediaType: "movie" }],
     });
+
     const { container } = render(
-      <AddBookmarkButton mediaType="movie" contentId={1} />,
+      <AddBookmarkButton
+        mediaType="movie"
+        contentId={1}
+        className="w-full bg-black"
+      />,
+      { wrapper: TestProviders },
     );
 
-    const starSvg = container.querySelector("svg");
-    expect(starSvg).toHaveClass("fill-cyan-500");
+    await waitFor(() => {
+      const starSvg = container.querySelector("svg");
+      expect(starSvg).toHaveClass("fill-cyan-500");
+    });
   });
 
   it("adds a bookmark when the button is clicked", async () => {
+    useQuery.mockReturnValue({ data: [] });
+
+    render(
+      <AddBookmarkButton
+        mediaType="movie"
+        contentId={1}
+        className="w-full bg-black"
+      />,
+      { wrapper: TestProviders },
+    );
+
     bookmarkApi.add.mockResolvedValueOnce({
       response: {
         id: 1,
@@ -47,9 +92,6 @@ describe("AddBookmarkButton Component", () => {
         userId: 1,
       },
     });
-    useUserStore.setState({ bookmarkList: [] });
-    useUserStore.setState({ user: { id: 1 } });
-    render(<AddBookmarkButton mediaType="movie" contentId={1} />);
 
     await userEvent.click(screen.getByLabelText(/add bookmark/i));
 
@@ -61,11 +103,26 @@ describe("AddBookmarkButton Component", () => {
   });
 
   it("removes a bookmark when it was already added", async () => {
-    useUserStore.setState({
-      bookmarkList: [{ id: 1, mediaId: 1, mediaType: "movie" }],
+    useQuery.mockReturnValue({
+      data: [{ id: 1, mediaId: 1, mediaType: "movie" }],
     });
-    useUserStore.setState({ user: { id: 1 } });
-    render(<AddBookmarkButton mediaType="movie" contentId={1} />);
+
+    render(
+      <AddBookmarkButton
+        mediaType="movie"
+        contentId={1}
+        className="w-full bg-black"
+      />,
+      { wrapper: TestProviders },
+    );
+
+    bookmarkApi.remove.mockResolvedValueOnce({
+      response: {
+        id: 1,
+        mediaId: 1,
+        userId: 1,
+      },
+    });
 
     await userEvent.click(screen.getByLabelText(/add bookmark/i));
 
@@ -75,19 +132,24 @@ describe("AddBookmarkButton Component", () => {
   });
 
   it("shows an error toast if the bookmark API fails", async () => {
-    bookmarkApi.add.mockRejectedValue("Failed to add bookmark");
-    useUserStore.setState({
-      bookmarkList: [],
+    useQuery.mockReturnValue({ data: [] });
+    render(
+      <AddBookmarkButton
+        mediaType="movie"
+        contentId={1}
+        className="w-full bg-black"
+      />,
+      { wrapper: TestProviders },
+    );
+
+    bookmarkApi.add.mockRejectedValueOnce({
+      message: "Failed to add bookmark",
     });
-    useUserStore.setState({ user: { id: 1 } });
-    render(<AddBookmarkButton mediaType="movie" contentId={1} />);
 
     await userEvent.click(screen.getByLabelText(/add bookmark/i));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Failed to add bookmark, please try again later!",
-      );
+      expect(toast.error).toHaveBeenCalledWith("Failed to add bookmark");
     });
   });
 });

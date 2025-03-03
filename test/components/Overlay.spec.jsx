@@ -1,18 +1,31 @@
 import { Overlay } from "@components/Overlay";
-import { useUserStore } from "@lib/store";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { TestProviders } from "../TestProviders";
+
+const mockSetOverlayType = vi.fn();
+beforeAll(() => {
+  vi.mock("@lib/providers/OverlayProvider", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useOverlayContext: vi.fn(() => ({
+        setOverlayType: mockSetOverlayType,
+        overlayType: "random",
+      })),
+    };
+  });
+});
 
 describe("Overlay Component", () => {
   let overlay;
-  let setOverlay;
 
   beforeEach(() => {
-    setOverlay = vi.spyOn(useUserStore.getState().actions, "setOverlay");
     overlay = render(
-      <Overlay>
+      <Overlay modalTypes={{ random: <p>Test</p> }}>
         <p>Test</p>
       </Overlay>,
+      { wrapper: TestProviders },
     );
   });
 
@@ -39,7 +52,7 @@ describe("Overlay Component", () => {
     );
     fireEvent.click(overlayBackground);
 
-    // Check if setOverlay was called with false
-    expect(setOverlay).toHaveBeenCalledWith(false);
+    // Check if setOverlay was called with null
+    expect(mockSetOverlayType).toHaveBeenCalledWith(null);
   });
 });

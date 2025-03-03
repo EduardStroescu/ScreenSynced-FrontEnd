@@ -55,7 +55,7 @@ export function ChangeAvatarForm() {
   };
 
   return (
-    <section className="flex w-[30%] flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] p-4 text-black">
+    <section className="flex w-fit flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black">
       <header className="flex flex-col pb-6">
         <button
           onClick={() => setOverlayType(null)}
@@ -66,7 +66,7 @@ export function ChangeAvatarForm() {
             className={"hover:stroke-cyan-500"}
           />
         </button>
-        <h1 className="self-center font-londrina text-5xl text-white">
+        <h1 className="self-center text-center font-londrina text-5xl text-white">
           Change Avatar
         </h1>
       </header>
@@ -85,12 +85,12 @@ export function ChangeAvatarForm() {
             name="avatar"
             accept="image/*"
             onChange={uploadFile}
-            className="rounded-full bg-[#005f70] text-center text-white"
+            className="w-full rounded-full bg-[#005f70] text-center text-white"
           />
           {errors.avatar && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.avatar.message}
-            </div>
+            </p>
           )}
 
           <button

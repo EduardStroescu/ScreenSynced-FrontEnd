@@ -35,7 +35,7 @@ export function ChangeAccountDetailsForm() {
     });
   };
   return (
-    <section className="flex w-[30%] flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black">
+    <section className="flex w-fit flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black">
       <header className="flex flex-col pb-6">
         <button
           onClick={() => setOverlayType(null)}
@@ -46,7 +46,7 @@ export function ChangeAccountDetailsForm() {
             className={"hover:stroke-cyan-500"}
           />
         </button>
-        <h1 className="self-center font-londrina text-5xl text-white">
+        <h1 className="self-center text-center font-londrina text-5xl text-white">
           Update Account Details
         </h1>
       </header>
@@ -63,9 +63,9 @@ export function ChangeAccountDetailsForm() {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.displayName && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.displayName.message}
-            </div>
+            </p>
           )}
 
           <button

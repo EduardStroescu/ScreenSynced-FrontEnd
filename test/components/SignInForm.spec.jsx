@@ -1,13 +1,23 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import userApi from "@api/backend/modules/user.api";
-import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { TestProviders } from "../TestProviders";
+import { useNavigate } from "@tanstack/react-router";
 
-import { useUserStore } from "@lib/store";
+const mockSetOverlayType = vi.fn();
 
 beforeAll(async () => {
+  vi.mock("@lib/providers/OverlayProvider", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useOverlayContext: vi.fn(() => ({
+        setOverlayType: mockSetOverlayType,
+      })),
+    };
+  });
   vi.mock("@api/backend/modules/user.api", () => ({
     default: {
       signin: vi.fn(),
@@ -31,14 +41,14 @@ describe("SignInForm Component", () => {
   });
 
   it("renders the component", () => {
-    render(<SignInForm />);
+    render(<SignInForm />, { wrapper: TestProviders });
     expect(
       screen.getByRole("heading", { name: /log in/i }),
     ).toBeInTheDocument();
   });
 
   it("renders all the inputs", () => {
-    render(<SignInForm />);
+    render(<SignInForm />, { wrapper: TestProviders });
     const inputNames = ["email", "password"];
     inputNames.forEach((name) => {
       expect(
@@ -48,7 +58,7 @@ describe("SignInForm Component", () => {
   });
 
   it("renders the sign in button", () => {
-    render(<SignInForm />);
+    render(<SignInForm />, { wrapper: TestProviders });
     const signInButton = screen.getByRole("button", { name: /log in/i });
     expect(signInButton).toBeInTheDocument();
   });
@@ -56,7 +66,7 @@ describe("SignInForm Component", () => {
   it("submits the form successfully", async () => {
     userApi.signin.mockResolvedValueOnce({ response: mockSignInResponse });
 
-    render(<SignInForm acceptsRedirect={true} />);
+    render(<SignInForm acceptsRedirect={true} />, { wrapper: TestProviders });
 
     // Fill in form fields
     fireEvent.change(screen.getByPlaceholderText(/email/i), {
@@ -82,9 +92,9 @@ describe("SignInForm Component", () => {
 
   it("handles form submission error", async () => {
     const errorMessage = "Invalid credentials";
-    userApi.signin.mockResolvedValueOnce({ error: { message: errorMessage } });
+    userApi.signin.mockRejectedValueOnce({ message: errorMessage });
 
-    render(<SignInForm />);
+    render(<SignInForm />, { wrapper: TestProviders });
 
     fireEvent.change(screen.getByPlaceholderText(/email/i), {
       target: { value: "wrong@example.com" },
@@ -103,7 +113,7 @@ describe("SignInForm Component", () => {
   });
 
   it("navigates to the signup page when the Sign Up button is clicked and acceptsRedirect is true", async () => {
-    render(<SignInForm acceptsRedirect={true} />);
+    render(<SignInForm acceptsRedirect={true} />, { wrapper: TestProviders });
 
     fireEvent.click(screen.getByRole("button", { name: /sign up/i }));
 
@@ -113,11 +123,7 @@ describe("SignInForm Component", () => {
   });
 
   it("calls setOverlayType with 'sign-up' when Sign Up button is clicked and acceptsRedirect is false", async () => {
-    const mockSetOverlayType = vi.spyOn(
-      useUserStore.getState().actions,
-      "setOverlayType",
-    );
-    render(<SignInForm acceptsRedirect={false} />);
+    render(<SignInForm acceptsRedirect={false} />, { wrapper: TestProviders });
 
     fireEvent.click(screen.getByRole("button", { name: /sign up/i }));
 
@@ -127,26 +133,24 @@ describe("SignInForm Component", () => {
   });
 
   it("closes the overlay when the close icon is clicked and acceptsRedirect is false", async () => {
-    const mockSetOverlay = vi.spyOn(
-      useUserStore.getState().actions,
-      "setOverlay",
-    );
-    render(<SignInForm acceptsRedirect={false} />);
+    render(<SignInForm acceptsRedirect={false} />, { wrapper: TestProviders });
 
     fireEvent.click(screen.getByRole("button", { name: /close panel/i }));
 
     await waitFor(() => {
-      expect(mockSetOverlay).toHaveBeenCalledWith(false);
+      expect(mockSetOverlayType).toHaveBeenCalledWith(null);
     });
   });
 
   it("displays validation errors when inputs are invalid", async () => {
-    render(<SignInForm />);
+    render(<SignInForm />, { wrapper: TestProviders });
     fireEvent.click(screen.getByRole("button", { name: /log in/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/an email is required/i)).toBeInTheDocument();
-      expect(screen.getByText(/a password is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/email is invalid/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/password must be at least 8 characters/i),
+      ).toBeInTheDocument();
     });
   });
 });

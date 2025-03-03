@@ -22,6 +22,17 @@ export const contentItemPropTypes = PropTypes.shape({
   vote_count: PropTypes.number,
 });
 
+export const userSchema = z.object({
+  id: z.number(),
+  email: z.string().email({ message: "The email is invalid" }).nonempty({
+    message: "An email is required",
+  }),
+  displayName: z.string(),
+  avatar: z.string().nullish(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
 export const signInFormSchema = z.object({
   email: z.string().email({ message: "The email is invalid" }).nonempty({
     message: "An email is required",
@@ -36,9 +47,9 @@ export const signUpFormSchema = z
     password: z
       .string()
       .min(8, { message: "The password must be at least 8 characters" }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: "The new password must be at least 8 characters" }),
+    confirmPassword: z.string().min(8, {
+      message: "The confirmation password must be at least 8 characters",
+    }),
     email: z.string().email({ message: "The email is invalid" }).nonempty({
       message: "An email is required",
     }),

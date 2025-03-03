@@ -41,7 +41,7 @@ export function ChangePasswordForm() {
   };
 
   return (
-    <section className="flex w-[30%] flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black">
+    <section className="flex w-fit flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black">
       <header className="flex flex-col pb-6">
         <button
           onClick={() => setOverlayType(null)}
@@ -52,7 +52,7 @@ export function ChangePasswordForm() {
             className={"hover:stroke-cyan-500"}
           />
         </button>
-        <h1 className="self-center font-londrina text-5xl text-white">
+        <h1 className="self-center text-center font-londrina text-5xl text-white">
           Change Password
         </h1>
       </header>
@@ -69,9 +69,9 @@ export function ChangePasswordForm() {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.password && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.password.message}
-            </div>
+            </p>
           )}
 
           <input
@@ -82,9 +82,9 @@ export function ChangePasswordForm() {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.newPassword && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.newPassword.message}
-            </div>
+            </p>
           )}
 
           <input
@@ -95,9 +95,9 @@ export function ChangePasswordForm() {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.confirmNewPassword && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.confirmNewPassword.message}
-            </div>
+            </p>
           )}
 
           <button

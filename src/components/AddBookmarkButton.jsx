@@ -26,7 +26,9 @@ export const AddBookmarkButton = memo(
         toast.success("Bookmark Added");
       },
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(
+          error?.message ?? "Failed to add bookmark. Please try again later!",
+        );
       },
     });
 
@@ -39,7 +41,10 @@ export const AddBookmarkButton = memo(
         toast.info("Bookmark Removed");
       },
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(
+          error?.message ??
+            "Failed to remove bookmark. Please try again later!",
+        );
       },
     });
 
@@ -49,7 +54,7 @@ export const AddBookmarkButton = memo(
 
       if (addBookmarkMutation.isLoading) return;
 
-      if (bookmarkList.map((item) => item.mediaId).includes(contentId)) {
+      if (bookmarkList?.map((item) => item.mediaId).includes(contentId)) {
         await removeBookmarkMutation.mutateAsync(
           bookmarkList.find((e) => e.mediaId === contentId).id,
         );
@@ -77,7 +82,9 @@ export const AddBookmarkButton = memo(
         className={className}
         onClick={onAddBookmark}
       >
-        <BookmarkIcon className={`${iconSize} ${isBookmarked}`} />
+        <BookmarkIcon
+          className={`${iconSize ? iconSize : ""} ${isBookmarked}`}
+        />
         {children}
       </button>
     );

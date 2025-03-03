@@ -1,36 +1,32 @@
 import userApi from "@api/backend/modules/user.api";
-import { useLocalStorage } from "@hooks/useLocalStorage";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import PropTypes from "prop-types";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useOverlayContext } from "./OverlayProvider";
 import { useBookmarksQuery } from "@lib/queries";
+import { useLocalStorageSync } from "@hooks/useLocalStorageSync";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { search } = useLocation();
   const { setOverlayType } = useOverlayContext();
-  const { getItem, setItem, removeItem } = useLocalStorage("user");
 
-  const [user, setUser] = useState(() => getItem());
+  const [user, setUser, removeUser] = useLocalStorageSync("user");
 
   useEffect(() => {
     if (user) return;
 
-    const savedUser = getItem();
-    if (savedUser) {
-      setUser(savedUser);
-    } else if (!savedUser && search.success) {
+    if (!user && search.success) {
       (async () => {
         try {
           const { response } = await userApi.getInfo();
           if (response) {
             setUser(response);
-            setItem(response);
           } else {
             throw new Error();
           }
@@ -39,11 +35,11 @@ export const AuthProvider = ({ children }) => {
         }
         navigate({ to: "/", replace: true });
       })();
-    } else if (!savedUser && search.error) {
+    } else if (!user && search.error) {
       toast.error("Something went wrong");
       navigate({ to: "/", replace: true });
     }
-  }, [getItem, user, navigate, setUser, setItem, search.success, search.error]);
+  }, [user, navigate, setUser, search.success, search.error]);
 
   useBookmarksQuery(user);
 
@@ -51,7 +47,6 @@ export const AuthProvider = ({ children }) => {
     mutationFn: (body) => userApi.signin(body),
     onSuccess: (response) => {
       setUser(response);
-      setItem(response);
       setOverlayType(null);
       toast.success("Logged In");
     },
@@ -67,7 +62,6 @@ export const AuthProvider = ({ children }) => {
     mutationFn: (body) => userApi.signup(body),
     onSuccess: (response) => {
       setUser(response);
-      setItem(response);
       setOverlayType(null);
       toast.success("Account created successfully!");
     },
@@ -81,23 +75,18 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useMutation({
     mutationFn: userApi.logout,
-    onSuccess: () => {
-      removeItem();
-      setUser(null);
+    onSettled: () => {
+      removeUser();
       setOverlayType(null);
+      queryClient.removeQueries({ queryKey: ["bookmarks"] });
       toast.success("Logged Out");
-    },
-    onError: (error) => {
-      toast.error(
-        error?.message ??
-          "Could not establish a server connection. Please try again later.",
-      );
     },
   });
 
   const updateAccount = useMutation({
     mutationFn: (body) => userApi.accountUpdate(body),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      setUser(response);
       setOverlayType(null);
       toast.success("Account updated successfully!");
     },
@@ -111,7 +100,8 @@ export const AuthProvider = ({ children }) => {
 
   const changeAvatar = useMutation({
     mutationFn: (body) => userApi.avatarUpdate(body),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      setUser(response);
       setOverlayType(null);
       toast.success("Avatar updated successfully!");
     },
@@ -126,6 +116,7 @@ export const AuthProvider = ({ children }) => {
   const changePassword = useMutation({
     mutationFn: (body) => userApi.passwordUpdate(body),
     onSuccess: () => {
+      removeUser();
       setOverlayType("sign-in");
       toast.success("Password Updated! Please re-login");
     },
@@ -137,22 +128,20 @@ export const AuthProvider = ({ children }) => {
     },
   });
 
-  const values = useMemo(
-    () => ({
-      user,
-      logout,
-      signIn,
-      signUp,
-      updateAccount,
-      changeAvatar,
-      changePassword,
-    }),
-    [user, logout, signIn, signUp, updateAccount, changeAvatar, changePassword],
-  );
+  const values = {
+    user,
+    logout,
+    signIn,
+    signUp,
+    updateAccount,
+    changeAvatar,
+    changePassword,
+  };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {

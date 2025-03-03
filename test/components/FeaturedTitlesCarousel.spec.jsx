@@ -2,28 +2,26 @@ import { FeaturedTitlesCarousel } from "@components/FeaturedTitlesCarousel";
 import { useQueries } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { TestProviders } from "../TestProviders";
 
-const mockApiData = {
-  results: [
-    {
-      id: 1,
-      title: "Movie 1",
-      poster_path: "/path/to/poster1.jpg",
-      backdrop_path: "/path/to/backdrop1.jpg",
-      overview: "Overview for Movie 1.",
-      mediaType: "movie",
-    },
-    {
-      id: 2,
-      title: "Movie 2",
-      poster_path: "/path/to/poster2.jpg",
-      backdrop_path: "/path/to/backdrop2.jpg",
-      overview: "Overview for Movie 2.",
-      mediaType: "movie",
-    },
-  ],
-};
-
+const mockApiData = [
+  {
+    id: 1,
+    title: "Movie 1",
+    poster_path: "/path/to/poster1.jpg",
+    backdrop_path: "/path/to/backdrop1.jpg",
+    overview: "Overview for Movie 1.",
+    mediaType: "movie",
+  },
+  {
+    id: 2,
+    title: "Movie 2",
+    poster_path: "/path/to/poster2.jpg",
+    backdrop_path: "/path/to/backdrop2.jpg",
+    overview: "Overview for Movie 2.",
+    mediaType: "movie",
+  },
+];
 const mockVideoData = [
   {
     data: { results: [{ type: "Trailer", key: "trailerKey1" }] },
@@ -49,11 +47,12 @@ describe("FeaturedTitlesCarousel Component", () => {
         apiData={mockApiData}
         queryType="movies"
       />,
+      { wrapper: TestProviders },
     );
   });
 
   it("renders movie titles and images from apiData", async () => {
-    mockApiData.results.forEach((movie) => {
+    mockApiData.forEach((movie) => {
       expect(screen.getByText(movie.title)).toBeInTheDocument();
       expect(screen.getByText(movie.overview)).toBeInTheDocument();
       const imageElement = screen.getByAltText(movie.title);
@@ -67,7 +66,7 @@ describe("FeaturedTitlesCarousel Component", () => {
 
   it("renders all the Watch Now buttons", () => {
     const watchNowButtons = screen.getAllByText(/watch now/i);
-    expect(watchNowButtons).toHaveLength(mockApiData.results.length); // Expect the number of buttons to match the number of movies
+    expect(watchNowButtons).toHaveLength(mockApiData.length); // Expect the number of buttons to match the number of movies
 
     watchNowButtons.forEach((button) => {
       expect(button).toBeInTheDocument(); // Each button should be present
@@ -76,7 +75,7 @@ describe("FeaturedTitlesCarousel Component", () => {
 
   it("renders all the Add Bookmark buttons", () => {
     const addBookmarkButtons = screen.getAllByText(/add bookmark/i);
-    expect(addBookmarkButtons).toHaveLength(mockApiData.results.length); // Expect the number of buttons to match the number of movies
+    expect(addBookmarkButtons).toHaveLength(mockApiData.length); // Expect the number of buttons to match the number of movies
 
     addBookmarkButtons.forEach((button) => {
       expect(button).toBeInTheDocument(); // Each button should be present

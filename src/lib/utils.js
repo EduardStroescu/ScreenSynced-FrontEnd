@@ -44,7 +44,8 @@ export function getYoutubeLinks(videoIds) {
 }
 
 export const findGenreIdByName = (contentType, genreName) => {
-  if (genreName === null || genreName === undefined || genreName === "") return;
+  if (genreName === null || genreName === undefined || genreName === "")
+    return null;
 
   const genreList = contentGenres[contentType];
   if (!genreList) return;

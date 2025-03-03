@@ -36,6 +36,7 @@ export function SignUpForm({ acceptsRedirect = false }) {
     resolver: zodResolver(signUpFormSchema),
   });
   const avatar = watch("avatar");
+
   const signUpForm = async (values) => {
     await handleSignUpMutation(values, {
       onSuccess: () => {
@@ -103,9 +104,9 @@ export function SignUpForm({ acceptsRedirect = false }) {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.email && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.email.message}
-            </div>
+            </p>
           )}
 
           <input
@@ -116,9 +117,9 @@ export function SignUpForm({ acceptsRedirect = false }) {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.displayName && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.displayName.message}
-            </div>
+            </p>
           )}
 
           <input
@@ -129,9 +130,9 @@ export function SignUpForm({ acceptsRedirect = false }) {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.password && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.password.message}
-            </div>
+            </p>
           )}
 
           <input
@@ -142,9 +143,9 @@ export function SignUpForm({ acceptsRedirect = false }) {
             className="w-full rounded bg-[#005f70] py-1 text-center text-white"
           />
           {errors.confirmPassword && (
-            <div className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
               {errors.confirmPassword.message}
-            </div>
+            </p>
           )}
 
           <button

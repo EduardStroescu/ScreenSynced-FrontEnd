@@ -3,7 +3,7 @@ import { Bookmarks } from "@components/Bookmarks";
 import { isAuthenticated } from "@lib/isAuthenticated";
 import { useAuthContext } from "@lib/providers/AuthProvider";
 import { useBookmarksQuery } from "@lib/queries";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Navigate, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/account")({
   id: "authenticated",
@@ -20,6 +20,10 @@ export const Route = createFileRoute("/account")({
 function AccountPage() {
   const { user } = useAuthContext();
   const { data: bookmarksData } = useBookmarksQuery(user);
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <section className="flex flex-col px-2 py-10 lg:px-12">

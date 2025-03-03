@@ -11,7 +11,13 @@ describe("isAuthenticated", () => {
     // Set a valid user object in localStorage
     window.localStorage.setItem(
       "user",
-      JSON.stringify({ id: 1, name: "John Doe" }),
+      JSON.stringify({
+        id: 1,
+        displayName: "John Doe",
+        email: "john.doe@example.com",
+        createdAt: "01-01-2025",
+        updatedAt: "01-01-2025",
+      }),
     );
 
     // Check that the function returns true
