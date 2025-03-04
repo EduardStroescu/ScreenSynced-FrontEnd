@@ -2,8 +2,8 @@ import { contentGenres } from "@api/tmdb/movieEndpoints";
 import { ContentGrid } from "@components/ContentGrid";
 import { PaginationButtons } from "@components/PaginationButtons";
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
 import { useDiscoverQuery } from "@lib/queries";
+import { jaroWinkler } from "string-similarity-alg";
 
 export const Route = createFileRoute("/discover/$pageNumber")({
   beforeLoad: ({ params: { pageNumber = 1 } }) => {
@@ -14,9 +14,8 @@ export const Route = createFileRoute("/discover/$pageNumber")({
 });
 
 function DiscoverPage() {
-  const [contentType, setContentType] = useState("movies");
   const router = useRouter();
-  const { genres } = Route.useSearch();
+  const { contentType = "movies", genres } = Route.useSearch();
   const parsedGenres = genres ? genres.split(",") : [];
   const pageNumber = Route.useRouteContext({
     select: (context) => context.pageNumber,
@@ -34,6 +33,7 @@ function DiscoverPage() {
         to: "/discover/$pageNumber",
         params: { pageNumber: 1 },
         search: {
+          contentType,
           genres: parsedGenres.filter((g) => g !== genreName).join(","),
         },
       });
@@ -41,9 +41,32 @@ function DiscoverPage() {
       router.navigate({
         to: "/discover/$pageNumber",
         params: { pageNumber: 1 },
-        search: { genres: [...parsedGenres, genreName].join(",") },
+        search: { contentType, genres: [...parsedGenres, genreName].join(",") },
       });
     }
+  };
+
+  const findEquivalentGenres = (genres, returnType) => {
+    const targetGenres =
+      returnType === "movies" ? contentGenres.movies : contentGenres.series;
+    const lowerCaseTargetNames = targetGenres.map((genre) =>
+      genre.name.toLowerCase(),
+    );
+
+    const genresSet = new Set();
+
+    for (const genreName of genres) {
+      const lowerCaseGenreName = genreName.toLowerCase();
+      const result = jaroWinkler
+        .compareOneToMany(lowerCaseGenreName, lowerCaseTargetNames)
+        .bestMatch()?.[lowerCaseGenreName];
+
+      if (result?.value) {
+        genresSet.add(result.value);
+      }
+    }
+
+    return Array.from(genresSet).join(",");
   };
 
   return (
@@ -52,9 +75,9 @@ function DiscoverPage() {
         <Link
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
-          search={{ genres: parsedGenres.join(",") }}
-          onClick={() => {
-            setContentType("movies");
+          search={{
+            contentType: "movies",
+            genres: findEquivalentGenres(parsedGenres, "movies"),
           }}
           className={`${
             contentType === "movies"
@@ -67,9 +90,9 @@ function DiscoverPage() {
         <Link
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
-          search={{ genres: parsedGenres.join(",") }}
-          onClick={() => {
-            setContentType("series");
+          search={{
+            contentType: "series",
+            genres: findEquivalentGenres(parsedGenres, "series"),
           }}
           className={`${
             contentType === "series"
@@ -82,6 +105,7 @@ function DiscoverPage() {
         <Link
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
+          search={{ contentType }}
           className="border-4 border-double border-cyan-500 px-2 py-1 hover:text-red-500"
         >
           Clear Filters
@@ -111,7 +135,7 @@ function DiscoverPage() {
         <PaginationButtons
           contentType={"discover"}
           context={pageNumber}
-          search={{ genres: parsedGenres.join(",") }}
+          search={{ contentType, genres: parsedGenres.join(",") }}
           totalPages={500}
         />
       )}
@@ -121,8 +145,8 @@ function DiscoverPage() {
         </p>
       )}
       {apiData?.results &&
-        !!apiData?.results?.length &&
-        !parsedGenres?.length && (
+        !apiData?.results?.length &&
+        !!parsedGenres?.length && (
           <p className="mx-auto w-fit animate-pulse text-center font-londrina text-5xl text-red-500">
             NO RESULTS FOUND
           </p>

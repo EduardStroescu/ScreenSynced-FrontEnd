@@ -39,7 +39,7 @@ export function Bookmarks({ bookmarksData = [] }) {
           <p className="text-red-500">None added yet</p>
           <Link
             to="/discover/1"
-            search={{ genres: "action" }}
+            search={{ contentType: "movies", genres: "action" }}
             className="rounded bg-cyan-500 px-2 py-1 hover:bg-cyan-600"
           >
             Discover Now

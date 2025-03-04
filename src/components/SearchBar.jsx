@@ -39,7 +39,7 @@ export function SearchBarDesktop() {
         {...register("searchTerm")}
         type="search"
         name="searchTerm"
-        className="w-96 rounded-md border border-cyan-500 bg-black/60 py-0.5 pl-6 text-center backdrop-blur-sm focus:rounded-md focus:border focus:border-cyan-300 focus:outline-0"
+        className="w-96 rounded-md border border-cyan-500 bg-black/60 py-0.5 pl-6 text-center text-white backdrop-blur-sm focus:rounded-md focus:border focus:border-cyan-300 focus:outline-0"
         placeholder="Search"
       />
       <button
@@ -94,7 +94,7 @@ export function SearchBarMobile() {
           type="search"
           name="searchTerm"
           placeholder="Search"
-          className="w-full rounded-md border border-cyan-500 bg-black/60 py-1 pl-8 text-center backdrop-blur-sm focus:rounded-md focus:border focus:border-cyan-300 focus:outline-0"
+          className="w-full rounded-md border border-cyan-500 bg-black/60 py-1 pl-8 text-center text-white backdrop-blur-sm focus:rounded-md focus:border focus:border-cyan-300 focus:outline-0"
         />
         <button
           type="submit"

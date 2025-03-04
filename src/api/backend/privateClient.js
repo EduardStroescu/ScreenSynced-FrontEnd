@@ -55,11 +55,18 @@ privateClient.interceptors.response.use(
           },
         });
         window.dispatchEvent(event);
-        toast.error(refreshError?.message);
-        return Promise.reject(refreshError?.response?.data?.message);
+        toast.error(
+          refreshError?.response?.data?.message || "Token refresh failed.",
+        );
+        return Promise.reject(
+          refreshError?.response?.data?.message || "Token refresh failed.",
+        );
       }
     }
-    return Promise.reject(error?.response?.data?.message);
+    return Promise.reject(
+      error?.response?.data?.message ||
+        "Something went wrong. Please try again later!",
+    );
   },
 );
 

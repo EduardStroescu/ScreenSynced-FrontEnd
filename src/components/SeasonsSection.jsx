@@ -58,7 +58,7 @@ export function SeasonsSection({ seasons }) {
                     season.id === selectedSeason.id
                       ? "bg-cyan-500"
                       : "bg-[#070B11] hover:bg-cyan-500"
-                  } w-full rounded-xl py-1`}
+                  } w-full rounded-xl px-2 py-1`}
                 >
                   {season.name}
                 </button>
@@ -75,7 +75,7 @@ export function SeasonsSection({ seasons }) {
                 key={episode?.id}
                 className="rounded-xl bg-[#070B11] py-1 hover:bg-cyan-500"
               >
-                <button className="w-full">
+                <button className="w-full px-2">
                   {episode?.episode_number}: {episode?.name}
                 </button>
               </li>

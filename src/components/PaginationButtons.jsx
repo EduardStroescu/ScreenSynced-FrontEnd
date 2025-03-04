@@ -11,6 +11,7 @@ export function PaginationButtons({
     <nav className="col-span-6 flex flex-row items-center justify-around gap-4 p-6 lg:col-span-3">
       <Link
         to={`/${contentType}/$pageNumber`}
+        aria-label={`Go back`}
         params={{
           pageNumber:
             Number(context) > 1 ? Number(context) - 1 : Number(context),
@@ -23,7 +24,7 @@ export function PaginationButtons({
         Go Back
       </Link>
       <Link
-        aria-label={`See more ${contentType}s`}
+        aria-label={`See more`}
         disabled={Number(context) === totalPages}
         to={`/${contentType}/$pageNumber`}
         params={{

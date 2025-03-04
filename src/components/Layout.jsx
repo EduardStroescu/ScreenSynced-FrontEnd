@@ -50,7 +50,7 @@ function DesktopHeader({ user }) {
           aria-label="Discover Movies and Series"
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
-          search={{ genres: "action" }}
+          search={{ contentType: "movies", genres: "action" }}
           className="font-serif text-lg hover:text-cyan-400"
           activeProps={{
             className: "text-cyan-400",
@@ -232,7 +232,7 @@ export function MobileMenuDrawer({ isMenuOpen, setMenuOpen }) {
         <Link
           aria-label="Discover Movies and Series"
           to="/discover/$pageNumber"
-          search={{ genres: "action" }}
+          search={{ contentType: "movies", genres: "action" }}
           params={{ pageNumber: 1 }}
           onClick={setMenuOpen}
           className="font-serif text-2xl hover:text-cyan-400"
@@ -279,7 +279,7 @@ function Footer() {
           <Link
             to="/discover/$pageNumber"
             params={{ pageNumber: 1 }}
-            search={{ genres: "action" }}
+            search={{ contentType: "movies", genres: "action" }}
           >
             Discover
           </Link>
