@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "react-toastify";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { TestProviders } from "../TestProviders";
 
 describe("SearchBar Component", () => {
   const mockNavigate = vi.fn();
@@ -21,24 +22,24 @@ describe("SearchBar Component", () => {
     });
 
     it("renders the component", () => {
-      render(<SearchBarDesktop />);
+      render(<SearchBarDesktop />, { wrapper: TestProviders });
       expect(screen.getByRole("searchbox")).toBeInTheDocument();
     });
 
     it("renders the search input", () => {
-      render(<SearchBarDesktop />);
+      render(<SearchBarDesktop />, { wrapper: TestProviders });
       expect(screen.getByRole("searchbox")).toBeInTheDocument();
     });
 
     it("renders the search button", () => {
-      render(<SearchBarDesktop />);
+      render(<SearchBarDesktop />, { wrapper: TestProviders });
       expect(
         screen.getByRole("button", { name: /search/i }),
       ).toBeInTheDocument();
     });
 
     it("navigates to the search page when the search button is clicked", async () => {
-      render(<SearchBarDesktop />);
+      render(<SearchBarDesktop />, { wrapper: TestProviders });
       fireEvent.change(screen.getByRole("searchbox"), {
         target: { value: "test" },
       });
@@ -52,7 +53,7 @@ describe("SearchBar Component", () => {
     });
 
     it("fires a validation error toast when the search input is empty", async () => {
-      render(<SearchBarDesktop />);
+      render(<SearchBarDesktop />, { wrapper: TestProviders });
       fireEvent.change(screen.getByRole("searchbox"), {
         target: { value: "" },
       });
@@ -72,24 +73,32 @@ describe("SearchBar Component", () => {
       ({ SearchBarMobile } = await import("@components/SearchBar"));
     });
     it("renders the component", () => {
-      render(<SearchBarMobile setSearchModalOpen={vi.fn} />);
+      render(<SearchBarMobile setSearchModalOpen={vi.fn} />, {
+        wrapper: TestProviders,
+      });
       expect(screen.getByRole("searchbox")).toBeInTheDocument();
     });
 
     it("renders the search input", () => {
-      render(<SearchBarMobile setSearchModalOpen={vi.fn} />);
+      render(<SearchBarMobile setSearchModalOpen={vi.fn} />, {
+        wrapper: TestProviders,
+      });
       expect(screen.getByRole("searchbox")).toBeInTheDocument();
     });
 
     it("renders the search button", () => {
-      render(<SearchBarMobile setSearchModalOpen={vi.fn} />);
+      render(<SearchBarMobile setSearchModalOpen={vi.fn} />, {
+        wrapper: TestProviders,
+      });
       expect(
         screen.getByRole("button", { name: /search/i }),
       ).toBeInTheDocument();
     });
 
     it("navigates to the search page when the search button is clicked", async () => {
-      render(<SearchBarMobile setSearchModalOpen={vi.fn} />);
+      render(<SearchBarMobile setSearchModalOpen={vi.fn} />, {
+        wrapper: TestProviders,
+      });
       fireEvent.change(screen.getByRole("searchbox"), {
         target: { value: "test" },
       });
@@ -103,7 +112,9 @@ describe("SearchBar Component", () => {
     });
 
     it("fires a validation error toast when the search input is empty", async () => {
-      render(<SearchBarMobile setSearchModalOpen={vi.fn} />);
+      render(<SearchBarMobile setSearchModalOpen={vi.fn} />, {
+        wrapper: TestProviders,
+      });
       fireEvent.change(screen.getByRole("searchbox"), {
         target: { value: "" },
       });

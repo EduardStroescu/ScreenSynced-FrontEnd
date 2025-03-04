@@ -1,12 +1,10 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import userApi from "@api/backend/modules/user.api";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-
-import { useUserStore } from "@lib/store";
+import { TestProviders } from "../TestProviders";
 
 const inputData = {
   email: { placeholder: "Email", input: "test@example.com" },
@@ -19,7 +17,18 @@ const outputData = Object.fromEntries(
   Object.entries(inputData).map(([key, value]) => [key, value.input]),
 );
 
+const mockSetOverlayType = vi.fn();
+
 beforeAll(async () => {
+  vi.mock("@lib/providers/OverlayProvider", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useOverlayContext: vi.fn(() => ({
+        setOverlayType: mockSetOverlayType,
+      })),
+    };
+  });
   vi.mock("@api/backend/modules/user.api", () => ({
     default: {
       signup: vi.fn(),
@@ -29,14 +38,11 @@ beforeAll(async () => {
 
 describe("SignUpForm Component", () => {
   let SignUpForm;
-  const mockNavigate = vi.fn();
   const mockSignUpResponse = { data: { id: 1, name: "Test User" } };
+  const mockNavigate = vi.fn();
 
   beforeAll(async () => {
     useNavigate.mockReturnValue(mockNavigate);
-    useMutation.mockImplementation(({ mutationFn }) => ({
-      mutateAsync: mutationFn,
-    }));
     // Dynamically import the component after mocks are set up
     ({ SignUpForm } = await import("@components/SignUpForm"));
   });
@@ -46,14 +52,14 @@ describe("SignUpForm Component", () => {
   });
 
   it("renders the component", () => {
-    render(<SignUpForm />);
+    render(<SignUpForm />, { wrapper: TestProviders });
     expect(
       screen.getByRole("heading", { name: /register/i }),
     ).toBeInTheDocument();
   });
 
   it("renders all the inputs", () => {
-    render(<SignUpForm />);
+    render(<SignUpForm />, { wrapper: TestProviders });
 
     Object.keys(inputData).forEach((key) => {
       expect(
@@ -63,15 +69,15 @@ describe("SignUpForm Component", () => {
   });
 
   it("renders the sign up button", () => {
-    render(<SignUpForm />);
+    render(<SignUpForm />, { wrapper: TestProviders });
     const signUpButton = screen.getByRole("button", { name: /sign up/i });
     expect(signUpButton).toBeInTheDocument();
   });
 
   it("submits the form successfully", async () => {
-    userApi.signup.mockResolvedValueOnce({ response: mockSignUpResponse });
+    userApi.signup.mockResolvedValueOnce(mockSignUpResponse);
 
-    render(<SignUpForm acceptsRedirect={true} />);
+    render(<SignUpForm acceptsRedirect={true} />, { wrapper: TestProviders });
 
     // Fill in form fields
     Object.keys(inputData).forEach((key) => {
@@ -89,16 +95,18 @@ describe("SignUpForm Component", () => {
     // Wait for form submission and response handling
     await waitFor(() => {
       expect(userApi.signup).toHaveBeenCalledWith(outputData);
-      expect(toast.success).toHaveBeenCalledWith("Sign in successful!");
+      expect(toast.success).toHaveBeenCalledWith(
+        "Account created successfully!",
+      );
       expect(mockNavigate).toHaveBeenCalledWith({ to: "/account" });
     });
   });
 
   it("handles form submission error", async () => {
     const errorMessage = "Invalid credentials";
-    userApi.signup.mockResolvedValueOnce({ error: { message: errorMessage } });
+    userApi.signup.mockRejectedValueOnce({ message: errorMessage });
 
-    render(<SignUpForm />);
+    render(<SignUpForm />, { wrapper: TestProviders });
 
     // Fill in form fields
     Object.keys(inputData).forEach((key) => {
@@ -121,7 +129,7 @@ describe("SignUpForm Component", () => {
   });
 
   it("navigates to the login page when the Log In button is clicked and acceptsRedirect is true", async () => {
-    render(<SignUpForm acceptsRedirect={true} />);
+    render(<SignUpForm acceptsRedirect={true} />, { wrapper: TestProviders });
 
     fireEvent.click(screen.getByRole("button", { name: /log in/i }));
 
@@ -129,42 +137,38 @@ describe("SignUpForm Component", () => {
   });
 
   it("calls setOverlayType with 'login' when Log In button is clicked and acceptsRedirect is false", async () => {
-    const mockSetOverlayType = vi.spyOn(
-      useUserStore.getState().actions,
-      "setOverlayType",
-    );
-    render(<SignUpForm acceptsRedirect={false} />);
+    render(<SignUpForm acceptsRedirect={false} />, { wrapper: TestProviders });
 
     fireEvent.click(screen.getByRole("button", { name: /log in/i }));
 
-    expect(mockSetOverlayType).toHaveBeenCalledWith("login");
+    expect(mockSetOverlayType).toHaveBeenCalledWith("sign-in");
   });
 
   it("closes the overlay when the close icon is clicked and acceptsRedirect is false", async () => {
-    const mockSetOverlay = vi.spyOn(
-      useUserStore.getState().actions,
-      "setOverlay",
-    );
-    render(<SignUpForm acceptsRedirect={false} />);
+    render(<SignUpForm acceptsRedirect={false} />, { wrapper: TestProviders });
 
     fireEvent.click(screen.getByRole("button", { name: /close panel/i }));
 
-    expect(mockSetOverlay).toHaveBeenCalledWith(false);
+    expect(mockSetOverlayType).toHaveBeenCalledWith(null);
   });
 
   it("displays validation errors when inputs are invalid", async () => {
-    render(<SignUpForm />);
+    render(<SignUpForm />, { wrapper: TestProviders });
 
     fireEvent.click(screen.getByRole("button", { name: /sign up/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/an email is required/i)).toBeInTheDocument();
-      expect(screen.getByText(/a password is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/email is invalid/i)).toBeInTheDocument();
       expect(
-        screen.getByText(/confirm password is required/i),
+        screen.getByText(/the password must be at least 8 characters/i),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/a display name is required/i),
+        screen.getByText(
+          /the confirmation password must be at least 8 characters/i,
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/display name must be at least 8 characters/i),
       ).toBeInTheDocument();
     });
   });

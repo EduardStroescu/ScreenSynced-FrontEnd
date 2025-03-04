@@ -36,6 +36,21 @@ function getLastDayofMonth(date) {
   return `${formattedYear}-${formattedMonth}-${formattedDay}`;
 }
 
+function getPrevYearFirstDay(date) {
+  const year = date.getFullYear();
+  const prevYear = new Date(year - 1, 0, 1); // Changed month from 1 to 0 since months are 0-based
+
+  const formattedYear = prevYear.getFullYear();
+  const formattedMonth = String(prevYear.getMonth() + 1).padStart(2, "0");
+  const formattedDay = String(prevYear.getDate()).padStart(2, "0");
+
+  return `${formattedYear}-${formattedMonth}-${formattedDay}`;
+}
+
+function getRandomPage(limit) {
+  return Math.floor(Math.random() * limit) + 1;
+}
+
 export const contentGenres = {
   movies: [
     {
@@ -185,79 +200,53 @@ export const contentGenres = {
 
 export const Sections = {
   movies: {
-    sections: [
-      {
-        title: "Popular Movies",
-        endpoint: `/discover/movie?api_key=${API_KEY}&include_adult=true&include_video=false&language=en-US&page=page_number&sort_by=popularity.desc&with_original_language=en`,
-      },
-      {
-        title: "DiscoverByGenre",
-        endpoint: `/discover/movie?api_key=${API_KEY}&include_adult=false&include_video=false&language=en-US&page=page_number&sort_by=popularity.desc&with_genres=genre_tags`,
-      },
-    ],
-    helpers: {
-      popularUpcomingMovies: {
-        week: `/discover/movie?api_key=${API_KEY}&include_adult=true&include_video=true&language=en-US&page=1&primary_release_date.gte=${currentDate(
-          date,
-        )}&primary_release_date.lte=${addWeekToCurrentDate(
-          date,
-        )}&sort_by=popularity.desc`,
-        month: `/discover/movie?api_key=${API_KEY}&include_adult=true&include_video=true&language=en-US&page=1&primary_release_date.gte=${currentDate(
-          date,
-        )}&primary_release_date.lte=${getLastDayofMonth(
-          date,
-        )}&sort_by=popularity.desc`,
-        year: `/discover/movie?api_key=${API_KEY}&include_adult=true&include_video=true&language=en-US&page=1&primary_release_date.gte=${currentDate(
-          date,
-        )}&primary_release_date.lte=${date.getFullYear()}-12-31&sort_by=popularity.desc`,
-      },
-      searchMovie: `/search/movie?api_key=${API_KEY}&query={{query}}`,
-      fetchMovieGenres: `genre/movie/list?api_key=${API_KEY}`,
-      fetchMovieVideos: `/movie/movie_id/videos?api_key=${API_KEY}`,
-      fetchMovieDetails: `/movie/movie_id?api_key=${API_KEY}&append_to_response=videos`,
-      fetchSimilarMovies: `/movie/movie_id/similar?api_key=${API_KEY}&language=en-US&page=1`,
-      fetchMovieCredits: `/movie/movie_id/credits?api_key=${API_KEY}`,
+    popularMovies: `/discover/movie?api_key=${API_KEY}&include_adult=false&include_video=false&language=en-US&page=page_number&sort_by=primary_release_date.desc&vote_average.gte=0&vote_count.gte=100&with_original_language=en`,
+    recommendedMovies: `/discover/movie?api_key=${API_KEY}&include_adult=false&include_video=false&language=en-US&page=${getRandomPage(2)}&primary_release_date.gte=${getPrevYearFirstDay(date)}&sort_by=vote_average.desc&vote_average.gte=7&vote_count.gte=800`,
+    discoverByGenre: `/discover/movie?api_key=${API_KEY}&include_adult=false&include_video=false&language=en-US&page=page_number&sort_by=vote_average.desc&vote_average.gte=0&vote_count.gte=100&with_genres=genre_tags`,
+    popularUpcomingMovies: {
+      week: `/discover/movie?api_key=${API_KEY}&include_adult=false&include_video=true&language=en-US&page=1&primary_release_date.gte=${currentDate(
+        date,
+      )}&primary_release_date.lte=${addWeekToCurrentDate(
+        date,
+      )}&sort_by=popularity.desc&with_original_language=en`,
+      month: `/discover/movie?api_key=${API_KEY}&include_adult=false&include_video=true&language=en-US&page=1&primary_release_date.gte=${currentDate(
+        date,
+      )}&primary_release_date.lte=${getLastDayofMonth(
+        date,
+      )}&sort_by=popularity.desc`,
+      year: `/discover/movie?api_key=${API_KEY}&include_adult=false&include_video=true&language=en-US&page=1&primary_release_date.gte=${currentDate(
+        date,
+      )}&primary_release_date.lte=${date.getFullYear()}-12-31&sort_by=popularity.desc`,
     },
+    fetchMovieVideos: `/movie/movie_id/videos?api_key=${API_KEY}`,
+    fetchMovieDetails: `/movie/movie_id?api_key=${API_KEY}&append_to_response=videos,credits`,
+    fetchSimilarMovies: `/movie/movie_id/recommendations?api_key=${API_KEY}&language=en-US&page=1`,
+    fetchMovieCredits: `/movie/movie_id/credits?api_key=${API_KEY}`,
   },
   series: {
-    sections: [
-      {
-        title: "Popular Series",
-        endpoint: `/discover/tv?api_key=${API_KEY}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=page_number&sort_by=popularity.desc&with_original_language=en&without_genres=10763%2C%2010764%2C%2010766%2C%2010767`,
-      },
-      {
-        title: "DiscoverByGenre",
-        endpoint: `/discover/tv?api_key=${API_KEY}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=genre_tags`,
-      },
-    ],
-    helpers: {
-      popularUpcomingSeries: {
-        week: `/discover/tv?api_key=${API_KEY}&air_date.gte=${currentDate(
-          date,
-        )}&air_date.lte=${addWeekToCurrentDate(
-          date,
-        )}&first_air_date.gte=${currentDate(
-          date,
-        )}&first_air_date.lte=${addWeekToCurrentDate(
-          date,
-        )}&include_adult=true&include_null_first_air_dates=false&language=en-US&page=1&with_original_language=en&without_genres=10763%2C%2010764%2C%2010766%2C%2010767&sort_by=popularity.desc`,
-        month: `/discover/tv?api_key=${API_KEY}&air_date.gte=${currentDate(
-          date,
-        )}&air_date.lte=${getLastDayofMonth(
-          date,
-        )}&include_adult=true&include_null_first_air_dates=false&language=en-US&page=1&without_genres=10763%2C%2010764%2C%2010766%2C%2010767&sort_by=popularity.desc`,
-        year: `/discover/tv?api_key=${API_KEY}&air_date.gte=${currentDate(
-          date,
-        )}&air_date.lte=${date.getFullYear()}-12-31&first_air_date.gte=${currentDate(
-          date,
-        )}&first_air_date.lte=${date.getFullYear()}-12-31&include_adult=true&include_null_first_air_dates=false&language=en-US&page=1&without_genres=10763%2C%2010764%2C%2010766%2C%2010767&sort_by=popularity.desc`,
-      },
-      fetchSeriesGenres: `genre/tv/list?api_key=${API_KEY}`,
-      fetchSeriesVideos: `/tv/series_id/videos?api_key=${API_KEY}`,
-      fetchSerieDetails: `/tv/series_id?api_key=${API_KEY}&append_to_response=videos`,
-      fetchSeriesCredits: `/tv/series_id/credits?api_key=${API_KEY}&language=en-US`,
-      fetchSimilarSeries: `/tv/series_id/similar?api_key=${API_KEY}&language=en-US&page=1`,
+    popularSeries: `/discover/tv?api_key=${API_KEY}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=page_number&sort_by=first_air_date.desc&vote_average.gte=0&vote_count.gte=100&with_original_language=en&without_genres=10763%2C%2010764%2C%2010766%2C%2010767`,
+    recommendedSeries: `/discover/tv?api_key=${API_KEY}&air_date.gte=2023-01-01&include_adult=false&include_null_first_air_dates=false&language=en-US&page=${getRandomPage(2)}&sort_by=vote_average.desc&vote_average.gte=7&vote_count.gte=800&without_genres=10763%2C%2010764%2C%2010766%2C%2010767`,
+    discoverByGenre: `/discover/tv?api_key=${API_KEY}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=vote_average.desc&with_genres=genre_tags`,
+    popularUpcomingSeries: {
+      week: `/discover/tv?api_key=${API_KEY}&air_date.gte=${currentDate(
+        date,
+      )}&air_date.lte=${addWeekToCurrentDate(
+        date,
+      )}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&with_original_language=en&sort_by=popularity.desc&vote_average.gte=0&vote_count.gte=100&without_genres=10763%2C%2010764%2C%2010766%2C%2010767`,
+      month: `/discover/tv?api_key=${API_KEY}&air_date.gte=${currentDate(
+        date,
+      )}&air_date.lte=${getLastDayofMonth(
+        date,
+      )}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&without_genres=10763%2C%2010764%2C%2010766%2C%2010767&&sort_by=popularity.desc&vote_average.gte=0&vote_count.gte=100`,
+      year: `/discover/tv?api_key=${API_KEY}&air_date.gte=${currentDate(
+        date,
+      )}&air_date.lte=${date.getFullYear()}-12-31&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&without_genres=10763%2C%2010764%2C%2010766%2C%2010767&sort_by=popularity.desc&vote_average.gte=0&vote_count.gte=100`,
     },
+    fetchSeriesVideos: `/tv/series_id/videos?api_key=${API_KEY}`,
+    fetchSerieDetails: `/tv/series_id?api_key=${API_KEY}&append_to_response=videos,credits`,
+    fetchSeriesCredits: `/tv/series_id/credits?api_key=${API_KEY}&language=en-US`,
+    fetchSimilarSeries: `/tv/series_id/recommendations?api_key=${API_KEY}&language=en-US&page=1`,
+    fetchSeasons: `/tv/series_id/season/season_number?api_key=${API_KEY}&language=en-US`,
   },
   search: `search/multi?api_key=${API_KEY}&query=search_term&include_adult=false&language=en-US&page=page_number`,
 };

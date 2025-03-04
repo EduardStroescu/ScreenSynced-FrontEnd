@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import { Bookmarks } from "@components/Bookmarks";
 import { useQueries } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { useInView } from "framer-motion";
 import { describe, expect, it } from "vitest";
+import { TestProviders } from "../TestProviders";
 
 const mockBookmarksData = [
   {
@@ -40,14 +40,18 @@ const mockBookmarksApiReponse = [
         mediaId: 101,
         title: "Movie 1",
         posterPath: "posterPath",
+        release_date: "2023-01-01",
+        vote_average: 8.5,
       },
     },
     {
       data: {
         id: 2,
         mediaId: 102,
-        title: "Movie 1",
+        title: "Movie 2",
         posterPath: "posterPath",
+        release_date: "2023-01-01",
+        vote_average: 8.5,
       },
     },
   ],
@@ -56,16 +60,20 @@ const mockBookmarksApiReponse = [
       data: {
         id: 3,
         mediaId: 103,
-        title: "TV 1",
+        name: "TV 1",
         posterPath: "posterPath",
+        first_air_date: "2023-01-01",
+        vote_average: 8.5,
       },
     },
     {
       data: {
         id: 4,
         mediaId: 104,
-        title: "TV 2",
+        name: "TV 2",
         posterPath: "posterPath",
+        first_air_date: "2023-01-01",
+        vote_average: 8.5,
       },
     },
   ],
@@ -73,12 +81,12 @@ const mockBookmarksApiReponse = [
 
 describe("Bookmarks Component", () => {
   it("renders the component", () => {
-    render(<Bookmarks bookmarksQuery={[]} />);
+    render(<Bookmarks bookmarksData={[]} />, { wrapper: TestProviders });
     expect(screen.getByText(/bookmarks/i)).toBeInTheDocument();
   });
 
   it("renders no bookmarks when bookmarksQuery is empty", () => {
-    render(<Bookmarks bookmarksQuery={[]} />);
+    render(<Bookmarks bookmarksData={[]} />, { wrapper: TestProviders });
     expect(screen.queryByText(/None added yet/i)).toBeInTheDocument();
 
     const discoverNowButton = screen.queryByText(/discover now/i);
@@ -91,12 +99,14 @@ describe("Bookmarks Component", () => {
     useQueries
       .mockImplementationOnce(() => mockBookmarksApiReponse[0])
       .mockImplementationOnce(() => mockBookmarksApiReponse[1]);
-    render(<Bookmarks bookmarksQuery={mockBookmarksData} />);
+    render(<Bookmarks bookmarksData={mockBookmarksData} />, {
+      wrapper: TestProviders,
+    });
 
-    const movieBookmarks = screen.getAllByText(/^movie$/i);
+    const movieBookmarks = screen.getAllByText(/movie \d+/i);
     expect(movieBookmarks).toHaveLength(2);
 
-    const tvBookmarks = screen.getAllByText(/^tv$/i);
+    const tvBookmarks = screen.getAllByText(/tv \d+/i);
     expect(tvBookmarks).toHaveLength(2);
   });
 });

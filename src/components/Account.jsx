@@ -1,26 +1,13 @@
-import userApi from "@api/backend/modules/user.api";
-import { useLocalStorage } from "@hooks/useLocalStorage";
-import { placeholderAvatar } from "@lib/placeholders";
-import { useUserStore, useUserStoreActions } from "@lib/store";
+import { placeholderAvatar } from "@lib/const";
+import { useAuthContext } from "@lib/providers/AuthProvider";
+import { useOverlayContext } from "@lib/providers/OverlayProvider";
 import { Link } from "@tanstack/react-router";
-import { toast } from "react-toastify";
 
 export function Account() {
-  const user = useUserStore((state) => state.user);
-  useUserStore();
-  const { setLoggedIn, setOverlayType, setOverlay, setBookmarkList } =
-    useUserStoreActions();
-  const { setItem } = useLocalStorage("user");
-  const handleLogout = async () => {
-    try {
-      await userApi.logout();
-      setItem(null);
-      setLoggedIn(false);
-      setBookmarkList([]);
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  };
+  const { user, logout } = useAuthContext();
+  const { setOverlayType } = useOverlayContext();
+
+  const { mutateAsync: handleLogout } = logout;
 
   return (
     <section className="mt-20 flex w-full flex-col items-center rounded-t-sm border-t-4 border-t-cyan-500 sm:mt-28 sm:flex-row sm:items-start">
@@ -28,13 +15,10 @@ export function Account() {
         <img
           src={user?.avatar || placeholderAvatar}
           alt={user?.displayName + "'s " + "avatar"}
-          className="aspect-[1/1] w-[10rem] rounded-full border-t-8 border-t-cyan-500 sm:w-[25rem]"
+          className="aspect-[1/1] w-[10rem] rounded-full border-t-8 border-t-cyan-500 bg-[#070B11] sm:w-[25rem]"
         />
         <button
-          onClick={() => {
-            setOverlayType("change-avatar");
-            setOverlay(true);
-          }}
+          onClick={() => setOverlayType("change-avatar")}
           className="absolute left-0 top-14 hidden h-[101%] w-[10rem] -translate-y-14 rounded-full bg-gradient-to-t from-[#070B11] via-[#070B11]/40 to-[#070B11]/0 text-2xl group-hover:block sm:-left-0 sm:top-20 sm:w-full sm:-translate-y-20"
         >
           Change
@@ -47,20 +31,14 @@ export function Account() {
           </h1>
         </header>
         <button
-          onClick={() => {
-            setOverlayType("change-details");
-            setOverlay(true);
-          }}
+          onClick={() => setOverlayType("change-details")}
           className="text-lg hover:text-cyan-500"
         >
           Change Account Details
         </button>
         {!user?.facebookId && !user?.googleId && (
           <button
-            onClick={() => {
-              setOverlayType("change-password");
-              setOverlay(true);
-            }}
+            onClick={() => setOverlayType("change-password")}
             className="text-lg hover:text-cyan-500"
           >
             Change Password
@@ -69,7 +47,7 @@ export function Account() {
         <Link
           to="/"
           className="text-center text-lg hover:text-cyan-500"
-          onClick={handleLogout}
+          onClick={() => handleLogout()}
         >
           Log Out
         </Link>

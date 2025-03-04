@@ -14,91 +14,48 @@ const userEndpoints = {
 };
 
 const userApi = {
-  signin: async ({ password, email }) => {
-    try {
-      const response = await publicClient.post(userEndpoints.login, {
-        password,
-        email,
-      });
+  signin: async ({ password, email }) =>
+    await publicClient.post(userEndpoints.login, {
+      password,
+      email,
+    }),
 
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
-
-  signup: async ({ avatar, email, password, confirmPassword, displayName }) => {
-    try {
-      const response = await publicClient.post(userEndpoints.register, {
-        avatar,
-        email,
-        password,
-        confirmPassword,
-        displayName,
-      });
-
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
+  signup: async ({ avatar, email, password, confirmPassword, displayName }) =>
+    await publicClient.post(userEndpoints.register, {
+      avatar,
+      email,
+      password,
+      confirmPassword,
+      displayName,
+    }),
 
   getInfo: async () => {
     try {
       const response = await privateClient.get(userEndpoints.getUserInfo);
       return { response };
     } catch (error) {
-      return { error };
+      return error.message;
     }
   },
 
-  passwordUpdate: async ({ password, newPassword, confirmNewPassword }) => {
-    try {
-      const response = await privateClient.put(userEndpoints.passwordUpdate, {
-        password,
-        newPassword,
-        confirmNewPassword,
-      });
+  passwordUpdate: async ({ password, newPassword, confirmNewPassword }) =>
+    await privateClient.put(userEndpoints.passwordUpdate, {
+      password,
+      newPassword,
+      confirmNewPassword,
+    }),
 
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
+  avatarUpdate: async ({ avatar }) =>
+    await privateClient.patch(userEndpoints.avatarUpdate, {
+      avatar,
+    }),
 
-  avatarUpdate: async ({ avatar }) => {
-    try {
-      const response = await privateClient.patch(userEndpoints.avatarUpdate, {
-        avatar,
-      });
+  accountUpdate: async ({ displayName }) =>
+    await privateClient.patch(userEndpoints.accountUpdate, {
+      displayName,
+    }),
 
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
-
-  accountUpdate: async ({ displayName }) => {
-    try {
-      const response = await privateClient.patch(userEndpoints.accountUpdate, {
-        displayName,
-      });
-
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
-
-  logout: async () => {
-    try {
-      const response = await privateClient.get(userEndpoints.logout);
-
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  },
+  logout: async () => await privateClient.get(userEndpoints.logout),
 };
 
 export default userApi;

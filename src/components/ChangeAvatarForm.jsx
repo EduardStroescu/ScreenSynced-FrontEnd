@@ -1,52 +1,44 @@
-import userApi from "@api/backend/modules/user.api";
 import { CloseIcon } from "@components/Icons";
-import { useLocalStorage } from "@hooks/useLocalStorage";
-import { placeholderAvatar } from "@lib/placeholders";
-import { useUserStore, useUserStoreActions } from "@lib/store";
-import { useMutation } from "@tanstack/react-query";
-import { useFormik } from "formik";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import * as Yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { placeholderAvatar } from "@lib/const";
+import { useAuthContext } from "@lib/providers/AuthProvider";
+import { useOverlayContext } from "@lib/providers/OverlayProvider";
+import { updateAvatarFormSchema } from "@lib/types";
+import { useForm } from "react-hook-form";
 
 export function ChangeAvatarForm() {
-  const user = useUserStore((state) => state.user);
-  const { setUser, setOverlay } = useUserStoreActions();
-  const [avatar, setAvatar] = useState(user?.avatar);
-  const [isLoading, setIsLoading] = useState(false);
-  const { setItem, getItem } = useLocalStorage("user");
+  const { user, changeAvatar } = useAuthContext();
+  const { setOverlayType } = useOverlayContext();
 
-  const updateAvatarMutation = useMutation({
-    mutationFn: (values) => userApi.avatarUpdate(values),
-  });
+  const { mutateAsync: changeAvatarMutation, isPending } = changeAvatar;
 
-  const changeAvatarForm = useFormik({
-    initialValues: {
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
       avatar: "",
     },
-    validationSchema: Yup.object({}),
-    onSubmit: async (values) => {
-      if (isLoading) return;
-      setIsLoading(true);
-
-      const { response, error } =
-        await updateAvatarMutation.mutateAsync(values);
-
-      if (response) {
-        changeAvatarForm.resetForm();
-        setIsLoading(false);
-        setItem(response);
-        setUser(getItem());
-        setOverlay(false);
-        toast.success("Avatar Updated Successfully");
-      }
-
-      if (error) {
-        toast.error(error.message);
-        setIsLoading(false);
-      }
+    values: {
+      avatar: user?.avatar,
     },
+    mode: "onSubmit",
+    resolver: zodResolver(updateAvatarFormSchema),
   });
+  const avatar = watch("avatar");
+
+  const changeAvatarForm = async (values) => {
+    if (isPending) return;
+
+    await changeAvatarMutation(values, {
+      onSuccess: () => {
+        reset();
+      },
+    });
+  };
 
   const uploadFile = (event) => {
     if (!event.target.files?.length) return;
@@ -57,16 +49,16 @@ export function ChangeAvatarForm() {
     fileReader.onloadend = () => {
       const content = fileReader.result;
       if (content) {
-        setAvatar(content);
-        changeAvatarForm.setFieldValue("avatar", content, false);
+        setValue("avatar", content, { shouldDirty: true });
       }
     };
   };
+
   return (
-    <section className="flex w-[30%] flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] p-4 text-black">
+    <section className="flex w-fit flex-col justify-center gap-6 rounded-xl border-4 border-double border-cyan-500 bg-[#070B11] px-6 py-4 text-black">
       <header className="flex flex-col pb-6">
         <button
-          onClick={() => setOverlay(false)}
+          onClick={() => setOverlayType(null)}
           className="self-end text-white"
         >
           <CloseIcon
@@ -74,7 +66,7 @@ export function ChangeAvatarForm() {
             className={"hover:stroke-cyan-500"}
           />
         </button>
-        <h1 className="self-center font-londrina text-5xl text-white">
+        <h1 className="self-center text-center font-londrina text-5xl text-white">
           Change Avatar
         </h1>
       </header>
@@ -85,7 +77,7 @@ export function ChangeAvatarForm() {
           className="aspect-[1/1] w-[20rem] rounded-full border-t-8 border-t-cyan-500"
         />
         <form
-          onSubmit={changeAvatarForm.handleSubmit}
+          onSubmit={handleSubmit(changeAvatarForm)}
           className="flex flex-col justify-center gap-4 text-white"
         >
           <input
@@ -93,15 +85,21 @@ export function ChangeAvatarForm() {
             name="avatar"
             accept="image/*"
             onChange={uploadFile}
-            className="rounded-full bg-[#005f70] text-center text-white"
+            className="w-full rounded-full bg-[#005f70] text-center text-white"
           />
+          {errors.avatar && (
+            <p className="w-full rounded bg-red-600 py-1 text-center text-[0.8rem] text-white">
+              {errors.avatar.message}
+            </p>
+          )}
+
           <button
             type="submit"
             value="Send"
             className="my-4 rounded border-2 border-cyan-500 bg-[#005f70] px-6 py-1 text-white hover:bg-cyan-500"
-            disabled={isLoading || avatar === user?.avatar}
+            disabled={isPending || avatar === user?.avatar}
           >
-            {isLoading ? "Updating..." : "Update Avatar"}
+            {isPending ? "Updating..." : "Update Avatar"}
           </button>
         </form>
       </div>

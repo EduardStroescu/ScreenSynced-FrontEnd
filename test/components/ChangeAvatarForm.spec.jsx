@@ -1,5 +1,5 @@
 import userApi from "@api/backend/modules/user.api";
-import { placeholderAvatar } from "@lib/placeholders";
+import { placeholderAvatar } from "@lib/const";
 import {
   act,
   fireEvent,
@@ -8,7 +8,16 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { toast } from "react-toastify";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
+import { TestProviders } from "../TestProviders";
 
 beforeAll(async () => {
   vi.mock("@api/backend/modules/user.api", () => ({
@@ -31,10 +40,19 @@ global.FileReader = vi.fn().mockImplementation(function () {
 
 describe("ChangeAvatarForm Component", () => {
   let ChangeAvatarForm;
+  let container;
 
   beforeAll(async () => {
     // Dynamically import the component after mocks are set up
     ({ ChangeAvatarForm } = await import("@components/ChangeAvatarForm"));
+  });
+
+  beforeEach(() => {
+    act(() => {
+      container = render(<ChangeAvatarForm />, {
+        wrapper: TestProviders,
+      }).container;
+    });
   });
 
   afterEach(() => {
@@ -42,14 +60,11 @@ describe("ChangeAvatarForm Component", () => {
   });
 
   it("renders the component", () => {
-    render(<ChangeAvatarForm />);
     const image = screen.getByRole("img", { name: /avatar/i });
     expect(image).toHaveAttribute("src", placeholderAvatar);
   });
 
   it("should update the avatar image preview when a new file is selected", async () => {
-    // Render the ChangeAvatarForm component
-    const { container } = render(<ChangeAvatarForm />);
     const image = screen.getByRole("img", { name: /avatar/i });
 
     // Find the file input element
@@ -71,10 +86,7 @@ describe("ChangeAvatarForm Component", () => {
     userApi.avatarUpdate.mockResolvedValueOnce({
       response: mockSuccessResponse,
     });
-    let container;
-    await act(async () => {
-      ({ container } = render(<ChangeAvatarForm />));
-    });
+
     // Find the file input element
     const fileInput = container.querySelector('input[name="avatar"]');
 
@@ -94,30 +106,32 @@ describe("ChangeAvatarForm Component", () => {
       expect(button).not.toBeDisabled();
     });
 
+    await waitFor(() => {
+      expect(image).toHaveAttribute("src", "data:image/png;base64,avatar");
+    });
+
     // Simulate button click
     await act(async () => {
       fireEvent.click(button);
     });
 
     await waitFor(() => {
-      expect(image).toHaveAttribute("src", "data:image/png;base64,avatar");
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
       expect(userApi.avatarUpdate).toHaveBeenCalledWith({
         avatar: "data:image/png;base64,avatar",
       });
-      expect(toast.success).toHaveBeenCalledWith("Avatar Updated Successfully");
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+      expect(toast.success).toHaveBeenCalledWith(
+        "Avatar updated successfully!",
+      );
     });
   });
 
   it("should handle form submission error", async () => {
     const errorMessage = "Failed to update avatar";
-    userApi.avatarUpdate.mockResolvedValueOnce({
-      error: { message: errorMessage },
+    userApi.avatarUpdate.mockRejectedValueOnce({
+      message: errorMessage,
     });
-    let container;
-    await act(async () => {
-      ({ container } = render(<ChangeAvatarForm />));
-    });
+
     // Find the file input element
     const fileInput = container.querySelector('input[name="avatar"]');
 
@@ -137,16 +151,21 @@ describe("ChangeAvatarForm Component", () => {
       expect(button).not.toBeDisabled();
     });
 
+    await waitFor(() => {
+      expect(image).toHaveAttribute("src", "data:image/png;base64,avatar");
+    });
+
     // Simulate button click
     await act(async () => {
       fireEvent.click(button);
     });
 
     await waitFor(() => {
-      expect(image).toHaveAttribute("src", "data:image/png;base64,avatar");
-      expect(userApi.avatarUpdate).toHaveBeenCalled();
-      expect(toast.error).toHaveBeenCalledWith(errorMessage);
+      expect(userApi.avatarUpdate).toHaveBeenCalledWith({
+        avatar: "data:image/png;base64,avatar",
+      });
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+      expect(toast.error).toHaveBeenCalledWith(errorMessage);
     });
   });
 
@@ -155,9 +174,8 @@ describe("ChangeAvatarForm Component", () => {
     userApi.avatarUpdate.mockResolvedValueOnce({
       error: { message: errorMessage },
     });
-    render(<ChangeAvatarForm />);
 
-    const button = screen.getByRole("button", { name: /update/i });
+    const button = screen.getByRole("button", { name: /update avatar/i });
     await act(async () => {
       fireEvent.click(button);
     });

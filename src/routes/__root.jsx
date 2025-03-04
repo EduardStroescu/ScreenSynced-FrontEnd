@@ -1,47 +1,65 @@
+import { ChangeAccountDetailsForm } from "@components/ChangeAccountDetailsForm";
+import { ChangeAvatarForm } from "@components/ChangeAvatarForm";
+import { ChangePasswordForm } from "@components/ChangePasswordForm";
 import { Layout } from "@components/Layout";
-import { ReactLenis } from "@studio-freight/react-lenis";
+import { LenisWrapper } from "@components/LenisWrapper";
+import { Overlay } from "@components/Overlay";
+import { SearchBarMobile } from "@components/SearchBar";
+import { SignInForm } from "@components/SignInForm";
+import { SignUpForm } from "@components/SignUpForm";
+import { AuthProvider } from "@lib/providers/AuthProvider";
+import { OverlayProvider } from "@lib/providers/OverlayProvider";
 import {
   Outlet,
   ScrollRestoration,
   createRootRouteWithContext,
-  useRouterState,
 } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
+import { Flip, ToastContainer } from "react-toastify";
 
 export const Route = createRootRouteWithContext()({
   component: RootComponent,
 });
 
 function RootComponent() {
-  const lenisRef = useRef(null);
-  const routerState = useRouterState();
-
-  // Make Scroll Restoration work with Lenis
-  useEffect(() => {
-    if (lenisRef?.current && routerState.isLoading) {
-      lenisRef.current.stop();
-    }
-    if (lenisRef?.current && !routerState.isLoading) {
-      lenisRef.current.start();
-    }
-  }, [routerState]);
+  const modalTypes = useMemo(
+    () => ({
+      "sign-in": <SignInForm />,
+      "sign-up": <SignUpForm />,
+      "change-avatar": <ChangeAvatarForm />,
+      "change-password": <ChangePasswordForm />,
+      "change-details": <ChangeAccountDetailsForm />,
+      search: <SearchBarMobile />,
+    }),
+    [],
+  );
 
   return (
-    <Layout>
-      <ReactLenis
-        ref={lenisRef}
-        root
-        options={{
-          orientation: "vertical",
-          gestureOrientataion: "vertical",
-          lerp: 0.08,
-          wheelMultiplier: 1.2,
-        }}
-      >
-        <Outlet />
-      </ReactLenis>
+    <LenisWrapper>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        transition={Flip}
+        theme="dark"
+        toastClassName={"bg-[#070B11] border-double border-4 border-cyan-500"}
+      />
+      <OverlayProvider>
+        <AuthProvider>
+          <Overlay modalTypes={modalTypes} />
+          <Layout>
+            <Outlet />
+            {/* <TanStackRouterDevtools initialIsOpen={false} /> */}
+          </Layout>
+        </AuthProvider>
+      </OverlayProvider>
       <ScrollRestoration />
-      {/* <TanStackRouterDevtools initialIsOpen={false} /> */}
-    </Layout>
+    </LenisWrapper>
   );
 }

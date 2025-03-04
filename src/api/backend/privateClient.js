@@ -1,4 +1,3 @@
-import { useUserStore } from "@lib/store";
 import axios from "axios";
 import queryString from "query-string";
 import { toast } from "react-toastify";
@@ -49,8 +48,13 @@ privateClient.interceptors.response.use(
       } catch (refreshError) {
         // The refresh token is invalid or expired
         // Removing the user from local storage will trigger a redirect to the login page
-        localStorage.removeItem("user");
-        useUserStore.setState({ user: null });
+        window.localStorage.removeItem("user");
+        const event = new CustomEvent("localStorageChange", {
+          detail: {
+            key: "user",
+          },
+        });
+        window.dispatchEvent(event);
         toast.error(refreshError?.message);
         return Promise.reject(refreshError?.response?.data?.message);
       }

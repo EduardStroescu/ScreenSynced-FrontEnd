@@ -28,14 +28,13 @@ In order not to keep asking the user to log in for every visit I've used the bro
 - Vite-React
 - [tanstack/react-query](https://github.com/TanStack/query)
 - [tanstack/react-router](https://github.com/TanStack/router)
-- [zustand](https://github.com/pmndrs/zustand)
 - [axios](https://github.com/axios/axios)
 - [react-player](https://github.com/cookpete/react-player)
 - [react-toastify](https://github.com/fkhadra/react-toastify)
 - [swiper](https://github.com/nolimits4web/Swiper)
 - [framer-motion](https://github.com/framer/motion)
-- [formik](https://github.com/jaredpalmer/formik)
-- [yup](https://github.com/jquense/yup)
+- [react-hook-form](https://github.com/react-hook-form/react-hook-form)
+- [zod](https://github.com/colinhacks/zod)
 - [studio-freight/lenis](https://github.com/studio-freight/lenis)
 - [Tailwind](https://tailwindcss.com/)
 

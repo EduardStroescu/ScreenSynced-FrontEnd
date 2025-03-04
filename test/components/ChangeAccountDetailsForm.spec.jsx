@@ -1,8 +1,8 @@
 import userApi from "@api/backend/modules/user.api";
-import { useMutation } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "react-toastify";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { TestProviders } from "../TestProviders";
 
 const inputData = {
   displayName: { placeholder: "New Display Name", input: "Test1234" },
@@ -21,16 +21,13 @@ describe("ChangeAccountDetailsForm Component", () => {
   const mockAccountUpdateResponse = { data: { id: 1, name: "Test User" } };
 
   beforeAll(async () => {
-    useMutation.mockImplementation(({ mutationFn }) => ({
-      mutateAsync: mutationFn,
-    }));
     ({ ChangeAccountDetailsForm } = await import(
       "@components/ChangeAccountDetailsForm"
     ));
   });
 
   beforeEach(() => {
-    render(<ChangeAccountDetailsForm />);
+    render(<ChangeAccountDetailsForm />, { wrapper: TestProviders });
   });
 
   it("renders the component", () => {
@@ -38,9 +35,7 @@ describe("ChangeAccountDetailsForm Component", () => {
   });
 
   it("submits the form successfully", async () => {
-    userApi.accountUpdate.mockResolvedValueOnce({
-      response: mockAccountUpdateResponse,
-    });
+    userApi.accountUpdate.mockResolvedValueOnce(mockAccountUpdateResponse);
 
     Object.keys(inputData).forEach((key) => {
       fireEvent.change(
@@ -54,19 +49,17 @@ describe("ChangeAccountDetailsForm Component", () => {
     fireEvent.click(screen.getByRole("button", { name: /update/i }));
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith("Display Name Updated!");
+      expect(toast.success).toHaveBeenCalledWith(
+        expect.stringMatching(/updated/i),
+      );
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
   });
 
   it("handles form submission error", async () => {
-    userApi.accountUpdate.mockResolvedValueOnce({
-      error: { message: "Failed to update account details" },
-    });
     // Mock an error response from the accountUpdate API
-    userApi.accountUpdate.mockRejectedValueOnce(
-      new Error("Failed to update account details"),
-    );
+    const errorMessage = "Failed to update account details";
+    userApi.accountUpdate.mockRejectedValueOnce({ message: errorMessage });
 
     // Fill in the form fields
     Object.keys(inputData).forEach((key) => {
@@ -83,9 +76,7 @@ describe("ChangeAccountDetailsForm Component", () => {
 
     // Wait for the error handling to complete
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Failed to update account details",
-      );
+      expect(toast.error).toHaveBeenCalledWith(errorMessage);
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
   });

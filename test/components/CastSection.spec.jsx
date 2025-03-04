@@ -1,6 +1,7 @@
 import { CastSection } from "@components/CastSection";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { getCastImageUrl } from "@lib/utils";
 
 const mockCast = [
   {
@@ -52,10 +53,7 @@ describe("CastSection Component", () => {
 
     // Check that each image has the correct src attribute
     mockCast.forEach((member, index) => {
-      expect(castImages[index]).toHaveAttribute(
-        "src",
-        `https://image.tmdb.org/t/p/w185${member.profile_path}`,
-      );
+      expect(castImages[index]).toHaveAttribute("src", getCastImageUrl(member));
     });
   });
 });
