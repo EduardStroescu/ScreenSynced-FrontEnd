@@ -1,6 +1,5 @@
 import axios from "axios";
 import queryString from "query-string";
-import { toast } from "react-toastify";
 
 const baseURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -55,9 +54,9 @@ privateClient.interceptors.response.use(
           },
         });
         window.dispatchEvent(event);
-        toast.error(
-          refreshError?.response?.data?.message || "Token refresh failed.",
-        );
+        // toast.error(
+        //   refreshError?.response?.data?.message || "Token refresh failed.",
+        // );
         return Promise.reject(
           refreshError?.response?.data?.message || "Token refresh failed.",
         );

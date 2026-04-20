@@ -34,19 +34,18 @@ export function SearchBarDesktop() {
   }, [errors.searchTerm]);
 
   return (
-    <form className="relative" onSubmit={handleSubmit(search)}>
+    <form
+      className="relative flex items-center"
+      onSubmit={handleSubmit(search)}
+    >
       <input
         {...register("searchTerm")}
         type="search"
         name="searchTerm"
-        className="w-96 rounded-md border border-cyan-500 bg-black/60 py-0.5 pl-6 text-center text-white backdrop-blur-sm focus:rounded-md focus:border focus:border-cyan-300 focus:outline-0"
+        className="w-96 rounded-md border border-cyan-500 bg-black/60 py-0.5 pl-6 text-center text-white backdrop-blur-sm transition-colors duration-300 ease-in-out focus:rounded-md focus:border focus:border-cyan-300 focus:outline-0"
         placeholder="Search"
       />
-      <button
-        type="submit"
-        value="Search"
-        className="absolute left-1 top-1.5 w-4"
-      >
+      <button type="submit" value="Search" className="absolute left-1 w-4">
         <SearchIcon className="stroke-cyan-500" />
       </button>
     </form>
@@ -88,7 +87,10 @@ export function SearchBarMobile() {
       >
         <CloseIcon aria-label="Close Panel" />
       </button>
-      <form onSubmit={handleSubmit(search)} className="relative">
+      <form
+        onSubmit={handleSubmit(search)}
+        className="relative flex items-center"
+      >
         <input
           {...register("searchTerm")}
           type="search"
@@ -96,11 +98,7 @@ export function SearchBarMobile() {
           placeholder="Search"
           className="w-full rounded-md border border-cyan-500 bg-black/60 py-1 pl-8 text-center text-white backdrop-blur-sm focus:rounded-md focus:border focus:border-cyan-300 focus:outline-0"
         />
-        <button
-          type="submit"
-          value="Search"
-          className="absolute left-2 top-2 w-4"
-        >
+        <button type="submit" value="Search" className="absolute left-2 w-4">
           <SearchIcon className="stroke-cyan-500" />
         </button>
       </form>

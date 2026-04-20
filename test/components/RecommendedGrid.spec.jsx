@@ -84,23 +84,27 @@ describe("CombinedGrid Component", () => {
   describe("Constructs the correct hrefs", () => {
     it("for movies", async () => {
       mockContentQuery.movies.forEach((movie) => {
-        const movieCard = screen.getByRole("link", {
+        const movieCards = screen.getAllByRole("link", {
           name: `Link to ${movie.title}`,
         });
 
-        expect(movieCard).toHaveAttribute("href", `/movie/${movie.id}`);
-        expect(movieCard).toBeInTheDocument();
+        movieCards.forEach((movieCard) => {
+          expect(movieCard).toHaveAttribute("href", `/movie/${movie.id}`);
+          expect(movieCard).toBeInTheDocument();
+        });
       });
     });
 
     it("for series", () => {
       mockContentQuery.movies.forEach((series) => {
-        const seriesCard = screen.getByRole("link", {
+        const seriesCards = screen.getAllByRole("link", {
           name: `Link to ${series.title}`,
         });
 
-        expect(seriesCard).toHaveAttribute("href", `/movie/${series.id}`);
-        expect(seriesCard).toBeInTheDocument();
+        seriesCards.forEach((seriesCard) => {
+          expect(seriesCard).toHaveAttribute("href", `/movie/${series.id}`);
+          expect(seriesCard).toBeInTheDocument();
+        });
       });
     });
   });

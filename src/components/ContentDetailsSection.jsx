@@ -1,6 +1,8 @@
 import { BookmarkIcon } from "@components/Icons";
 import { getContentImageUrl, getCastImageUrl } from "@lib/utils";
 import PropTypes from "prop-types";
+import { Image } from "./Image";
+import { Link } from "@tanstack/react-router";
 
 export function ContentDetailsSection({ contentDetails }) {
   const director = contentDetails?.credits?.crew?.find(
@@ -9,53 +11,91 @@ export function ContentDetailsSection({ contentDetails }) {
 
   return (
     <article className="flex flex-col rounded-xl bg-[#131E2E] sm:flex-row">
-      <img
+      <Image
+        isInView
         src={getContentImageUrl(contentDetails, "medium", "small")}
-        alt={`${contentDetails?.title || contentDetails?.name} poster`}
-        className="m-1 rounded-xl object-cover sm:w-[17rem]"
+        alt={`${contentDetails?.title || contentDetails?.name || "N/A"} poster`}
+        width={272}
+        height={408}
+        imageClassName="rounded-xl m-1 rounded-xl w-[calc(100%-(0.25rem*2))] sm:w-[17rem]"
+        placeholderClassName="min-w-[272px]"
       />
       <div className="m-1 flex w-[calc(100%-8px)] flex-col items-start gap-4 rounded-xl bg-[#070B11] px-2 py-6 sm:m-1 sm:px-4">
         {contentDetails?.contentType === "movie" ? (
           <Details
-            contentLanguage={contentDetails?.original_language?.toUpperCase()}
-            contentVoteAvg={contentDetails?.vote_average.toFixed(1)}
-            contentReleaseDate={contentDetails?.release_date?.slice(0, 4)}
-            contentDuration={contentDetails?.runtime}
-            contentTitle={contentDetails?.title}
+            contentLanguage={
+              contentDetails?.original_language?.toUpperCase() || "N/A"
+            }
+            contentVoteAvg={contentDetails?.vote_average.toFixed(1) || "N/A"}
+            contentReleaseDate={
+              contentDetails?.release_date?.slice(0, 4) || "N/A"
+            }
+            contentDuration={
+              contentDetails?.runtime ? contentDetails.runtime + " min" : "N/A"
+            }
+            contentTitle={contentDetails?.title || "N/A"}
           />
         ) : (
           <Details
-            contentLanguage={contentDetails?.original_language?.toUpperCase()}
-            contentVoteAvg={contentDetails?.vote_average.toFixed(1)}
-            contentReleaseDate={contentDetails?.first_air_date?.slice(0, 4)}
+            contentLanguage={
+              contentDetails?.original_language?.toUpperCase() || "N/A"
+            }
+            contentVoteAvg={contentDetails?.vote_average.toFixed(1) || "N/A"}
+            contentReleaseDate={
+              contentDetails?.first_air_date?.slice(0, 4) || "N/A"
+            }
             contentDuration={
-              contentDetails?.episode_run_time?.[0] ||
-              contentDetails?.last_episode_to_air?.runtime
+              contentDetails?.episode_run_time?.[0]
+                ? contentDetails.episode_run_time[0] + " min"
+                : contentDetails?.last_episode_to_air?.runtime
+                  ? contentDetails.last_episode_to_air.runtime + " min"
+                  : "N/A"
             }
             contentTitle={contentDetails?.name}
           />
         )}
-        <div className="font-serif">
-          <p className="pb-2 text-cyan-500">Description:</p>
-          <p>{contentDetails.overview}</p>
+        <div className="flex flex-row gap-2 font-serif">
+          <p className="text-cyan-500">Description:</p>
+          <p>{contentDetails.overview || "N/A"}</p>
         </div>
         {!!contentDetails?.genres?.length && (
           <div className="flex flex-row gap-2">
             <p className="text-cyan-500">Genres:</p>
-            {contentDetails?.genres?.map((genre, index) => {
-              return <p key={index}>{genre.name}</p>;
-            })}
+            {contentDetails?.genres?.map(
+              (genre) =>
+                genre?.name && (
+                  <Link
+                    key={genre.name}
+                    to="/discover/1"
+                    params={{ pageNumber: 1 }}
+                    search={{
+                      contentType:
+                        contentDetails?.contentType === "movie"
+                          ? "movies"
+                          : "series",
+                      genres: genre.name.toLowerCase(),
+                    }}
+                    aria-label={`Search for ${genre.name}`}
+                    className="transition-colors duration-300 ease-in-out hover:text-cyan-500"
+                  >
+                    {genre.name}
+                  </Link>
+                ),
+            )}
           </div>
         )}
         {director && (
           <div className="flex flex-row items-center gap-2">
             <p className="text-cyan-500">Director:</p>
-            <img
+            <Image
+              isInView
+              width={48}
+              height={48}
               src={getCastImageUrl(director)}
               alt="Director Image"
-              className="aspect-[1/1] w-[3rem] rounded-full object-cover"
+              imageClassName="aspect-[1/1] w-[3rem] rounded-full object-cover"
             />
-            <span className="text-white">{director?.name}</span>
+            <span className="text-white">{director?.name || "N/A"}</span>
           </div>
         )}
       </div>
@@ -77,22 +117,13 @@ function Details({
         <span className="self-center">
           <BookmarkIcon className="w-[0.7rem]" />
         </span>
-        <span>{contentVoteAvg}</span> |{" "}
-        <span>{contentReleaseDate || "N/A"}</span>|{" "}
-        <span>{contentDuration ? contentDuration + " min" : "N/A"}</span>
+        <span>{contentVoteAvg}</span> | <span>{contentReleaseDate}</span>|{" "}
+        <span>{contentDuration}</span>
       </div>
       <h2 className="font-londrina text-4xl">{contentTitle}</h2>
     </>
   );
 }
-
-Details.propTypes = {
-  contentLanguage: PropTypes.string,
-  contentVoteAvg: PropTypes.string,
-  contentReleaseDate: PropTypes.string,
-  contentDuration: PropTypes.number,
-  contentTitle: PropTypes.string,
-};
 
 ContentDetailsSection.propTypes = {
   contentDetails: PropTypes.shape({
@@ -249,6 +280,14 @@ ContentDetailsSection.propTypes = {
         }),
       ),
     }),
-    contentType: PropTypes.string.isRequired,
+    contentType: PropTypes.oneOf(["movie", "tv"]).isRequired,
   }).isRequired,
+};
+
+Details.propTypes = {
+  contentLanguage: PropTypes.string,
+  contentVoteAvg: PropTypes.string,
+  contentReleaseDate: PropTypes.string,
+  contentDuration: PropTypes.string,
+  contentTitle: PropTypes.string,
 };

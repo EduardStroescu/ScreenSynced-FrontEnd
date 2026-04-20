@@ -1,5 +1,6 @@
+import { memo, useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { memo, useState } from "react";
+import { cn } from "@lib/cn";
 
 export const Image = memo(
   ({
@@ -9,75 +10,80 @@ export const Image = memo(
     alt,
     width,
     height,
-    className,
+    imageClassName,
     placeholderClassName,
     motionProps,
   }) => {
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const prevSrcRef = useRef(src);
+
+    useEffect(() => {
+      if (src !== prevSrcRef.current) {
+        setIsLoaded(false);
+      }
+    }, [src]);
 
     return (
       <>
-        {isInView ? (
-          <>
-            <Element
-              {...motionProps}
-              src={src}
-              alt={alt}
-              width={width}
-              height={height}
-              className={`${!isImageLoaded ? "hidden" : "block"} ${className}`}
-              onLoad={() => setIsImageLoaded(true)}
-            />
-            <ImagePlaceholder
-              width={width}
-              height={height}
-              className={`${
-                isImageLoaded ? "hidden" : "block"
-              } ${placeholderClassName}`}
-            />
-          </>
-        ) : (
-          <ImagePlaceholder
+        {isInView && src && (
+          <Element
+            {...motionProps}
+            src={src}
+            alt={alt}
             width={width}
             height={height}
-            className={`${
-              isImageLoaded ? "hidden" : "block"
-            } ${placeholderClassName}`}
+            className={cn(
+              "select-none object-cover",
+              !isLoaded ? "hidden" : "block",
+              imageClassName,
+            )}
+            onLoad={() => setIsLoaded(true)}
           />
         )}
+        <ImagePlaceholder
+          width={width}
+          height={height}
+          isVisible={!isLoaded || !src}
+          className={cn(imageClassName, placeholderClassName)}
+        />
       </>
     );
   },
 );
 
-Image.displayName = "Image";
-
-const ImagePlaceholder = ({ className, width, height }) => {
+export function ImagePlaceholder({ isVisible, width, height, className }) {
   return (
     <img
       src="/placeholders/placeholder-content.svg"
       alt=""
       width={width}
       height={height}
-      className={`${className} animate-pulse border-2 border-cyan-500`}
+      className={cn(
+        "pointer-events-none animate-pulse select-none border-2 border-cyan-500 object-cover text-cyan-500",
+        isVisible ? "block" : "hidden",
+        className,
+      )}
     />
   );
-};
+}
+
+Image.displayName = "Image";
 
 Image.propTypes = {
   as: PropTypes.elementType,
   isInView: PropTypes.bool.isRequired,
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   alt: PropTypes.string.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  className: PropTypes.string,
+  imageClassName: PropTypes.string,
   placeholderClassName: PropTypes.string,
   motionProps: PropTypes.object,
 };
 
 ImagePlaceholder.propTypes = {
+  isVisible: PropTypes.bool.isRequired,
+  width: PropTypes.number,
+  height: PropTypes.number,
   className: PropTypes.string,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
 };

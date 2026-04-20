@@ -51,7 +51,7 @@ function DesktopHeader({ user }) {
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
           search={{ contentType: "movies", genres: "action" }}
-          className="font-serif text-lg hover:text-cyan-400"
+          className="font-serif text-lg transition-colors duration-300 ease-in-out hover:text-cyan-400"
           activeProps={{
             className: "text-cyan-400",
           }}
@@ -62,7 +62,7 @@ function DesktopHeader({ user }) {
           aria-label="See All Movies"
           to="/movies/$pageNumber"
           params={{ pageNumber: 1 }}
-          className="font-serif text-lg hover:text-cyan-400"
+          className="font-serif text-lg transition-colors duration-300 ease-in-out hover:text-cyan-400"
           activeProps={{
             className: "text-cyan-400",
           }}
@@ -73,7 +73,7 @@ function DesktopHeader({ user }) {
           aria-label="See All Series"
           to="/tvs/$pageNumber"
           params={{ pageNumber: 1 }}
-          className="font-serif text-lg hover:text-cyan-400"
+          className="font-serif text-lg transition-colors duration-300 ease-in-out hover:text-cyan-400"
           activeProps={{
             className: "text-cyan-400 ",
           }}
@@ -177,20 +177,20 @@ export function DesktopMenuDrawer({ user, isMenuOpen, setMenuOpen }) {
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="w-full rounded border-[1px] border-transparent px-2 text-center hover:border-cyan-500"
+              className="w-full rounded border-[1px] border-transparent px-2 text-center transition-colors duration-300 ease-in-out hover:border-cyan-500"
             >
               Account
             </Link>
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="w-full rounded border-[1px] border-transparent px-2 text-center hover:border-cyan-500"
+              className="w-full rounded border-[1px] border-transparent px-2 text-center transition-colors duration-300 ease-in-out hover:border-cyan-500"
             >
               Bookmarks
             </Link>
             <Link
               to="/"
-              className="w-full rounded border-[1px] border-transparent px-2 text-center hover:border-cyan-500"
+              className="w-full rounded border-[1px] border-transparent px-2 text-center transition-colors duration-300 ease-in-out hover:border-cyan-500"
               onClick={handleLogout}
             >
               Log Out
@@ -202,7 +202,7 @@ export function DesktopMenuDrawer({ user, isMenuOpen, setMenuOpen }) {
           onClick={() => {
             setOverlayType("sign-in");
           }}
-          className="font-serif text-lg hover:text-cyan-500"
+          className="font-serif text-lg transition-colors duration-300 ease-in-out hover:text-cyan-500"
         >
           Log In
         </button>

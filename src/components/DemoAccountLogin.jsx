@@ -28,7 +28,7 @@ export function DemoAccountLogin({ acceptsRedirect = false, isLoading }) {
     <div className="mb-2 flex flex-col items-center justify-center gap-2">
       <p className="text-white">For presentation purposes:</p>
       <button
-        className="w-full rounded border-2 border-cyan-500  py-1 text-[#fe391f] hover:bg-[#bb1e09] hover:text-white"
+        className="w-full rounded border-2 border-cyan-500 py-1 text-[#fe391f] transition-colors duration-300 ease-in-out hover:bg-[#bb1e09] hover:text-white"
         onClick={handleDemoLogin}
         disabled={isLoading}
       >

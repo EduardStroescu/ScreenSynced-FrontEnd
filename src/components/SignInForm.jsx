@@ -51,7 +51,7 @@ export function SignInForm({ acceptsRedirect = false }) {
           >
             <CloseIcon
               aria-label="Close panel"
-              className={"hover:stroke-cyan-500"}
+              className="transition-colors duration-300 ease-in-out hover:stroke-cyan-500"
             />
           </button>
         )}
@@ -97,7 +97,7 @@ export function SignInForm({ acceptsRedirect = false }) {
           )}
 
           <button
-            className="mt-2 w-1/2 rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white hover:bg-cyan-500"
+            className="mt-2 w-1/2 rounded border-2 border-cyan-500 bg-[#005f70] py-1 text-white transition-colors duration-300 ease-in-out hover:bg-cyan-500"
             type="submit"
             value="Send"
             disabled={isPending}
@@ -113,7 +113,7 @@ export function SignInForm({ acceptsRedirect = false }) {
                 ? navigate({ to: "/signup" })
                 : setOverlayType("sign-up");
             }}
-            className="whitespace-nowrap text-cyan-500 hover:text-cyan-400"
+            className="whitespace-nowrap text-cyan-500 transition-colors duration-300 ease-in-out hover:text-cyan-400"
           >
             Sign Up
           </button>

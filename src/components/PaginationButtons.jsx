@@ -1,9 +1,10 @@
+import { cn } from "@lib/cn";
 import { Link } from "@tanstack/react-router";
 import PropTypes from "prop-types";
 
 export function PaginationButtons({
   contentType,
-  context,
+  pageNumber,
   totalPages,
   search,
 }) {
@@ -14,29 +15,34 @@ export function PaginationButtons({
         aria-label={`Go back`}
         params={{
           pageNumber:
-            Number(context) > 1 ? Number(context) - 1 : Number(context),
+            Number(pageNumber) > 1
+              ? Number(pageNumber) - 1
+              : Number(pageNumber),
         }}
         search={search ? search : undefined}
-        className={`${
-          Number(context) === 1 ? "hidden" : "block"
-        } text-md w-full rounded-full bg-cyan-500 px-1 py-1 text-center lg:p-2`}
+        className={cn(
+          "text-md w-full rounded-full bg-cyan-500 px-1 py-1 text-center lg:p-2",
+          Number(pageNumber) === 1 ? "hidden" : "block",
+        )}
       >
         Go Back
       </Link>
       <Link
         aria-label={`See more`}
-        disabled={Number(context) === totalPages}
+        disabled={Number(pageNumber) === totalPages}
         to={`/${contentType}/$pageNumber`}
         params={{
           pageNumber:
-            Number(context) < totalPages
-              ? Number(context) + 1
-              : Number(context),
+            Number(pageNumber) < totalPages
+              ? Number(pageNumber) + 1
+              : Number(pageNumber),
         }}
         search={search ? search : undefined}
         className="text-md w-full rounded-full bg-cyan-500 px-1 py-1 text-center lg:p-2"
       >
-        {Number(context) === totalPages ? "You've reached the end" : "See More"}
+        {Number(pageNumber) === totalPages
+          ? "You've reached the end"
+          : "See More"}
       </Link>
     </nav>
   );
@@ -44,7 +50,7 @@ export function PaginationButtons({
 
 PaginationButtons.propTypes = {
   contentType: PropTypes.string.isRequired,
-  context: PropTypes.string.isRequired,
+  pageNumber: PropTypes.string.isRequired,
   totalPages: PropTypes.number,
   search: PropTypes.object,
 };

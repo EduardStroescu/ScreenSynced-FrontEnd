@@ -40,7 +40,7 @@ describe("Overlay Component", () => {
 
   it("renders the overlay background", () => {
     const overlayBackground = overlay.container.querySelector(
-      "div.absolute.bg-black\\/90",
+      "div.absolute.bg-black\\/60",
     );
     expect(overlayBackground).toBeInTheDocument();
   });
@@ -48,7 +48,7 @@ describe("Overlay Component", () => {
   it("closes the overlay when the overlay background is clicked", () => {
     // Select the overlay background and simulate a click
     const overlayBackground = overlay.container.querySelector(
-      "div.absolute.bg-black\\/90",
+      "div.absolute.bg-black\\/60",
     );
     fireEvent.click(overlayBackground);
 

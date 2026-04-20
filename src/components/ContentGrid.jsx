@@ -28,7 +28,7 @@ export const ContentGrid = memo(
         <motion.section
           layout="position"
           transition={{ ease: "easeInOut" }}
-          className="grid grid-cols-2 gap-2 overflow-hidden sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-3 xl:grid-cols-6"
+          className="grid grid-cols-2 gap-2 overflow-hidden sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-4 xl:grid-cols-6"
         >
           <AnimatePresence>
             {slicedContent?.map((content) => (

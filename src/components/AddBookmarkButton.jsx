@@ -1,6 +1,7 @@
 import { bookmarkApi } from "@api/backend/modules/bookmark.api";
 import { BookmarkIcon } from "@components/Icons";
 import { useUpdateQueryCache } from "@hooks/useUpdateQueryCache";
+import { cn } from "@lib/cn";
 import { useAuthContext } from "@lib/providers/AuthProvider";
 import { useOverlayContext } from "@lib/providers/OverlayProvider";
 import { useBookmarksQuery } from "@lib/queries";
@@ -73,7 +74,7 @@ export const AddBookmarkButton = memo(
       ?.map((item) => item.mediaId)
       .includes(contentId)
       ? "fill-cyan-500"
-      : "";
+      : undefined;
 
     return (
       <button
@@ -82,9 +83,7 @@ export const AddBookmarkButton = memo(
         className={className}
         onClick={onAddBookmark}
       >
-        <BookmarkIcon
-          className={`${iconSize ? iconSize : ""} ${isBookmarked}`}
-        />
+        <BookmarkIcon className={cn(iconSize, isBookmarked)} />
         {children}
       </button>
     );

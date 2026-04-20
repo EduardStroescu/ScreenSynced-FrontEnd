@@ -1,3 +1,4 @@
+import { cn } from "@lib/cn";
 import PropTypes from "prop-types";
 
 export function HamburgerIcon() {
@@ -103,7 +104,10 @@ export function PlayIcon() {
 export function BookmarkIcon({ className }) {
   return (
     <svg
-      className={`${className} stroke-cyan-500 group-hover:stroke-white`}
+      className={cn(
+        "stroke-cyan-500 transition-colors duration-300 ease-in-out group-hover:stroke-white",
+        className,
+      )}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

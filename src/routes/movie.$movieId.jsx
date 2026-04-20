@@ -1,19 +1,20 @@
 import { AddBookmarkButton } from "@components/AddBookmarkButton";
 import { CastSection } from "@components/CastSection";
 import { ContentDetailsSection } from "@components/ContentDetailsSection";
+import { MovieDetailsSkeleton } from "@components/pageSkeletons/MovieDetailsSkeleton";
 import { PlayerSection } from "@components/PlayerSection";
 import { SimilarContentSection } from "@components/SimilarContentSection";
 import { getMovieIdQueryConfig } from "@lib/queryConfigsForRoutes";
-import { CustomError, getYoutubeLink } from "@lib/utils";
+import { CustomError, getContentImageUrl, getYoutubeLink } from "@lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/movie/$movieId")({
-  beforeLoad: ({ params: { movieId } }) => getMovieIdQueryConfig(movieId),
-  loader: async ({ context: { queryClient, ...queryOptions } }) => {
+  loader: async ({ params: { movieId }, context: { queryClient } }) => {
     try {
+      const queryConfig = getMovieIdQueryConfig(movieId);
       const query = await Promise.all([
-        queryClient.ensureQueryData(queryOptions.movieDetails),
-        queryClient.ensureQueryData(queryOptions.similarMovies),
+        queryClient.ensureQueryData(queryConfig.movieDetails),
+        queryClient.ensureQueryData(queryConfig.similarMovies),
       ]);
 
       if (!query[0]) throw new Error();
@@ -31,6 +32,8 @@ export const Route = createFileRoute("/movie/$movieId")({
     }
   },
   component: MovieDetailsPage,
+  pendingComponent: MovieDetailsSkeleton,
+  pendingMs: 500,
 });
 
 function MovieDetailsPage() {
@@ -43,7 +46,15 @@ function MovieDetailsPage() {
   return (
     <section className="grid w-full gap-4 px-2 py-16 sm:grid-cols-6 sm:px-6 sm:py-20">
       <div className="col-span-6 grid h-full w-full grid-flow-row gap-4">
-        <PlayerSection youtubeLink={youtubeLink}>
+        <PlayerSection
+          youtubeLink={youtubeLink}
+          imageFallback={getContentImageUrl(
+            contentDetails,
+            "original",
+            "original",
+            "backdrop",
+          )}
+        >
           <AddBookmarkButton
             contentId={contentDetails?.id}
             mediaType={"movie"}

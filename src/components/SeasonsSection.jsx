@@ -1,3 +1,4 @@
+import { cn } from "@lib/cn";
 import { useSeasonsQuery } from "@lib/queries";
 import { useParams } from "@tanstack/react-router";
 import PropTypes from "prop-types";
@@ -5,7 +6,6 @@ import { useState } from "react";
 
 export function SeasonsSection({ seasons }) {
   const tvId = useParams({
-    from: "/tv/$tvId",
     select: (params) => params.tvId,
   });
   const [selectedSeason, setSelectedSeason] = useState(() =>
@@ -21,62 +21,75 @@ export function SeasonsSection({ seasons }) {
   if (!seasons || !seasons?.length) return null;
 
   return (
-    <aside
-      data-lenis-prevent
-      className="col-span-6 flex max-h-[1300px] w-full flex-col items-center overflow-auto rounded-xl bg-[#131E2E] p-4 xl:col-span-1"
-    >
-      <div className="border-rounded-sm relative flex w-full flex-col gap-4">
+    <aside className="col-span-6 flex max-h-[408px] w-full flex-col items-center overflow-hidden rounded-xl bg-[#131E2E] xl:col-span-1 xl:max-h-[1432px]">
+      <div
+        className={cn(
+          "border-rounded-sm relative flex w-full flex-col",
+          isDropdownOpen && "h-full",
+        )}
+      >
         <button
           onClick={() => setIsDropdownOpen((x) => !x)}
           aria-expanded={isDropdownOpen}
           aria-label={`Select season. Current selected season: ${selectedSeason.name}`}
-          className="border-rounded-sm flex flex-row items-center justify-center gap-2 rounded-xl border-b-2 border-cyan-500 bg-[#070B11] py-1"
+          className="border-rounded-sm flex flex-row items-center justify-center gap-2 rounded-xl border-b-2 border-t-2 border-cyan-500 bg-[#070B11] py-1"
         >
           {selectedSeason.name}
           <i
-            className={`${
-              isDropdownOpen ? "rotate-[225deg]" : "rotate-45"
-            } border-b-2 border-r-2 border-white p-[3px]`}
+            className={cn(
+              "border-b-2 border-r-2 border-white p-[3px] transition-transform duration-300 ease-in-out",
+              isDropdownOpen ? "rotate-[225deg]" : "rotate-45",
+            )}
           />
         </button>
-        <div className="border-b-2 border-cyan-500" />
-        <ul className="flex flex-col gap-1">
-          {seasons.map((season) => {
-            return (
-              <li
-                key={season.id}
-                className={`${
-                  isDropdownOpen ? "block" : "hidden"
-                } w-full rounded-xl text-center`}
-              >
-                <button
-                  onClick={() => {
-                    setSelectedSeason(season);
-                    setIsDropdownOpen(false);
-                  }}
-                  className={` ${
-                    season.id === selectedSeason.id
-                      ? "bg-cyan-500"
-                      : "bg-[#070B11] hover:bg-cyan-500"
-                  } w-full rounded-xl px-2 py-1`}
+        {isDropdownOpen && (
+          <ul
+            data-lenis-prevent
+            className="flex h-full flex-col gap-1 overflow-y-auto overflow-x-hidden px-3 pb-2 pt-2"
+          >
+            {seasons.map((season, idx) => {
+              return (
+                <li
+                  key={season.id || idx}
+                  className="w-full rounded-xl text-center"
                 >
-                  {season.name}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+                  <button
+                    title={season.name || "N/A"}
+                    onClick={() => {
+                      setSelectedSeason(season);
+                      setIsDropdownOpen(false);
+                    }}
+                    className={cn(
+                      "w-full truncate rounded-xl px-4 py-1",
+                      season.id === selectedSeason.id
+                        ? "bg-cyan-500"
+                        : "bg-[#070B11] transition-colors duration-300 ease-in-out hover:bg-cyan-500",
+                    )}
+                  >
+                    {season.name || "N/A"}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
       {!isDropdownOpen && selectedSeason && (
-        <ul className="flex w-full flex-col gap-1 text-center ">
-          {seasonsData?.episodes?.map((episode) => {
+        <ul
+          data-lenis-prevent
+          className="flex w-full flex-col gap-1 overflow-y-auto overflow-x-hidden px-3 pb-2 pt-2 text-center"
+        >
+          {seasonsData?.episodes?.map((episode, idx) => {
             return (
               <li
-                key={episode?.id}
-                className="rounded-xl bg-[#070B11] py-1 hover:bg-cyan-500"
+                key={episode?.id || idx}
+                className="rounded-xl bg-[#070B11] py-1 transition-colors duration-300 ease-in-out hover:bg-cyan-500"
               >
-                <button className="w-full px-2">
-                  {episode?.episode_number}: {episode?.name}
+                <button
+                  className="w-full truncate px-4"
+                  title={`${episode?.episode_number}: ${episode?.name || "N/A"}`}
+                >
+                  {episode?.episode_number}: {episode?.name || "N/A"}
                 </button>
               </li>
             );

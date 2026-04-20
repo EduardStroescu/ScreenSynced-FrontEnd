@@ -19,31 +19,31 @@ export const ContentCard = memo(({ content, contentType }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ ease: "easeInOut", duration: 1 }}
-      className="group relative z-[4] flex flex-col overflow-hidden border border-transparent object-cover hover:rounded-xl hover:border hover:border-cyan-500"
+      className="group relative z-[4] flex h-full w-full flex-col gap-1 overflow-hidden rounded-xl border border-transparent object-cover p-1 pb-0 transition-colors duration-300 ease-in-out hover:border-cyan-500"
     >
-      <div className="pointer-events-none absolute left-0 top-0 z-[5] aspect-[2/3] w-full rounded-xl group-hover:bg-gradient-to-t group-hover:from-cyan-500/80 group-hover:via-cyan-500/50" />
+      <div className="pointer-events-none absolute left-1 right-1 top-1 z-[5] aspect-[2/3] rounded-xl transition-colors duration-1000 ease-in-out group-hover:bg-gradient-to-t group-hover:from-cyan-500/80 group-hover:via-cyan-500/50" />
       {contentType === "movie" ? (
         <Card
-          key={content?.id}
           linkTo="/movie/$movieId"
           linkParams={{ movieId: content?.id }}
           contentId={content?.id}
-          contentTitle={content?.title}
+          contentType={contentType}
+          contentTitle={content?.title || "N/A"}
           contentImage={getContentImageUrl(content, "medium", "small")}
-          contentVoteAverage={content?.vote_average?.toFixed(1)}
-          contentReleaseDate={content?.release_date?.slice(0, 4)}
+          contentVoteAverage={content?.vote_average?.toFixed(1) || "N/A"}
+          contentReleaseDate={content?.release_date?.slice(0, 4) || "N/A"}
           isInView={isInView}
         />
       ) : (
         <Card
-          key={content?.id}
           linkTo="/tv/$tvId"
           linkParams={{ tvId: content?.id }}
           contentId={content?.id}
-          contentTitle={content?.name}
+          contentType={contentType}
+          contentTitle={content?.name || "N/A"}
           contentImage={getContentImageUrl(content, "medium", "small")}
-          contentVoteAverage={content?.vote_average?.toFixed(1)}
-          contentReleaseDate={content?.first_air_date?.slice(0, 4)}
+          contentVoteAverage={content?.vote_average?.toFixed(1) || "N/A"}
+          contentReleaseDate={content?.first_air_date?.slice(0, 4) || "N/A"}
           isInView={isInView}
         />
       )}
@@ -57,6 +57,7 @@ const Card = memo(
   ({
     linkTo,
     linkParams,
+    contentType,
     contentId,
     contentTitle,
     contentImage,
@@ -71,6 +72,7 @@ const Card = memo(
           to={linkTo}
           params={linkParams}
           preloadDelay={1000}
+          className="h-full w-full rounded-xl"
         >
           <Image
             isInView={isInView}
@@ -78,31 +80,32 @@ const Card = memo(
             alt={`${contentTitle} poster`}
             width={342}
             height={513}
-            className={
-              "z-[4] aspect-[2/3] w-full rounded-xl object-cover p-1 text-cyan-500"
-            }
-            placeholderClassName={
-              "z-[4] aspect-[2/3] w-full rounded-xl object-cover p-1 text-cyan-500"
-            }
+            imageClassName="rounded-xl z-[4] w-full aspect-[2/3]"
           />
         </Link>
-        <article className="flex h-full w-full flex-col items-center justify-start gap-2 overflow-hidden p-2">
-          <div className="flex flex-col items-center gap-1 text-xs sm:flex-row">
-            <span className="translate-y-[0.02rem] rounded-sm bg-cyan-500 px-1 font-black uppercase text-[#070B11] group-hover:text-white">
-              Movie
+        <article className="flex h-full w-full flex-col items-center justify-start gap-2 overflow-hidden px-3 py-2">
+          <div className="flex flex-col items-center gap-2 text-xs sm:flex-row">
+            <span className="translate-y-[0.02rem] rounded-sm bg-cyan-500 px-1 font-black uppercase text-[#070B11] transition-colors duration-300 ease-in-out group-hover:text-white">
+              {contentType === "movie" ? "MOVIE" : "TV"}
             </span>
             <span className="flex flex-row gap-1">
               <AddBookmarkButton
-                className={"w-[0.7rem]"}
+                className="w-[0.7rem]"
                 contentId={contentId}
-                mediaType="movie"
+                mediaType={contentType}
               />
               {contentVoteAverage} | {contentReleaseDate}
             </span>
           </div>
-          <h3 className="w-full truncate text-center font-serif">
+          <Link
+            aria-label={`Link to ${contentTitle}`}
+            to={linkTo}
+            params={linkParams}
+            preloadDelay={1000}
+            className="max-w-full truncate text-center font-serif transition-colors duration-300 ease-in-out hover:text-cyan-500"
+          >
             {contentTitle}
-          </h3>
+          </Link>
         </article>
       </>
     );
@@ -114,6 +117,7 @@ Card.displayName = "Card";
 Card.propTypes = {
   linkTo: PropTypes.string.isRequired,
   linkParams: PropTypes.object.isRequired,
+  contentType: PropTypes.oneOf(["tv", "movie"]).isRequired,
   contentId: PropTypes.number.isRequired,
   contentTitle: PropTypes.string.isRequired,
   contentImage: PropTypes.string.isRequired,

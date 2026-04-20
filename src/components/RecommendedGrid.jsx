@@ -1,4 +1,5 @@
 import { ContentCard } from "@components/ContentCard";
+import { cn } from "@lib/cn";
 import { CARD_LIMIT } from "@lib/const";
 import { contentItemPropTypes } from "@lib/types";
 import PropTypes from "prop-types";
@@ -16,17 +17,19 @@ export const RecommendedGrid = memo(({ apiData }) => {
         <div className="flex flex-row items-center justify-center">
           <button
             onClick={() => setQueryType("movies")}
-            className={`${
-              queryType === "movies" ? "bg-cyan-500" : ""
-            } rounded px-2 py-1 text-sm`}
+            className={cn(
+              "rounded px-2 py-1 text-sm",
+              queryType === "movies" && "bg-cyan-500",
+            )}
           >
             Movies
           </button>
           <button
             onClick={() => setQueryType("tv")}
-            className={`${
-              queryType === "tv" ? "bg-cyan-500" : ""
-            } rounded px-2 py-1 text-sm`}
+            className={cn(
+              "rounded px-2 py-1 text-sm",
+              queryType === "tv" && "bg-cyan-500",
+            )}
           >
             TV Shows
           </button>
@@ -36,10 +39,9 @@ export const RecommendedGrid = memo(({ apiData }) => {
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:grid-rows-3 xl:grid-cols-6">
         {apiData?.[queryType]?.slice(0, CARD_LIMIT).map((content, index) => (
           <ContentCard
+            key={content?.id || index}
             contentType={queryType === "movies" ? "movie" : "tv"}
             content={content}
-            index={index}
-            key={content?.id}
           />
         ))}
       </div>

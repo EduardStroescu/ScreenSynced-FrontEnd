@@ -15,10 +15,6 @@ html.lenis {
   overscroll-behavior: contain;
 }
 
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
@@ -27,10 +23,7 @@ html,
 body {
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  background-color: #070B11;
+  background-color: #070b11;
 }
 
 .swiper {
@@ -47,7 +40,6 @@ body {
   align-items: center;
 }
 
-
 /* Scrollbar width */
 ::-webkit-scrollbar {
   width: 10px;
@@ -55,14 +47,13 @@ body {
 
 /* Scrollbar Track */
 ::-webkit-scrollbar-track {
-  background: #005f70; 
+  background: #005f70;
 }
- 
+
 /* Scrollbar Handle */
 ::-webkit-scrollbar-thumb {
-  background: #0689a0; 
+  background: #0689a0;
   border-radius: 1rem;
-
 }
 
 /* Scrollbar Handle on hover */
@@ -72,8 +63,6 @@ body {
 
 /* Image Reset */
 img {
-  max-width: 100%;
-  height: auto;
   vertical-align: middle;
   font-style: italic;
   background-repeat: no-repeat;
@@ -81,16 +70,16 @@ img {
   shape-margin: 0.75rem;
 }
 
-input[type=file]::file-selector-button {
+input[type="file"]::file-selector-button {
   border: 2px solid #06b6d4;
-  padding: .2em .4em;
-  border-radius: .2em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.2em;
   background-color: #131314;
   transition: 1s;
   color: white;
   border-radius: 9999px;
 }
 
-input[type=file]::file-selector-button:hover {
+input[type="file"]::file-selector-button:hover {
   background-color: #06b6d4;
 }

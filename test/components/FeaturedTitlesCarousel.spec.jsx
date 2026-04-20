@@ -51,17 +51,27 @@ describe("FeaturedTitlesCarousel Component", () => {
     );
   });
 
-  it("renders movie titles and images from apiData", async () => {
+  it("renders movie titles and descriptions from apiData", () => {
     mockApiData.forEach((movie) => {
       expect(screen.getByText(movie.title)).toBeInTheDocument();
       expect(screen.getByText(movie.overview)).toBeInTheDocument();
-      const imageElement = screen.getByAltText(movie.title);
-      expect(imageElement).toBeInTheDocument();
-      expect(imageElement).toHaveAttribute(
-        "src",
-        expect.stringContaining(movie.poster_path),
-      );
     });
+  });
+
+  it("renders only the first image from apiData", () => {
+    const movie1 = mockApiData[0];
+    const imageElement = screen.getByAltText(movie1.title);
+    expect(imageElement).toBeInTheDocument();
+    expect(imageElement).toHaveAttribute(
+      "src",
+      expect.stringContaining(movie1.backdrop_path),
+    );
+  });
+
+  it("does not render the second image from apiData", () => {
+    const movie2 = mockApiData[1];
+    const imageElement = screen.queryByAltText(movie2.title);
+    expect(imageElement).not.toBeInTheDocument();
   });
 
   it("renders all the Watch Now buttons", () => {

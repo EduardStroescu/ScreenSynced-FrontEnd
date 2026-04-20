@@ -8,7 +8,7 @@ export const Route = createFileRoute("/$")({
       </h2>
       <Link
         to="/"
-        className="rounded-xl bg-cyan-500 p-3 text-xl hover:bg-cyan-600"
+        className="rounded-xl bg-cyan-500 p-3 text-xl transition-colors duration-300 ease-in-out hover:bg-cyan-600"
       >
         Return Home
       </Link>

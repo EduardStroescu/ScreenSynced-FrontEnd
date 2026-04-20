@@ -4,7 +4,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import "react-toastify/dist/ReactToastify.css";
 import { routeTree } from "./routeTree.gen";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
@@ -13,7 +13,7 @@ const queryClient = new QueryClient({
     },
   },
 });
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   context: {
     queryClient,

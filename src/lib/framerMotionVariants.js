@@ -1,15 +1,15 @@
 // Variants used by Framer Motion
 
 export const desktopVariants = {
-  open: (height = 1000) => ({
+  open: {
     display: "flex",
-    clipPath: `circle(${height + 200}px at right top)`,
+    clipPath: `circle(300dvh at right top)`,
     transition: {
       type: "spring",
       stiffness: 20,
       restDelta: 2,
     },
-  }),
+  },
   closed: {
     display: "none",
     transition: {
@@ -22,15 +22,15 @@ export const desktopVariants = {
 };
 
 export const mobileVariants = {
-  open: (height = 1100) => ({
+  open: {
     display: "block",
-    clipPath: `circle(${height + 200}px at 40px 40px)`,
+    clipPath: `circle(300dvh at 40px 40px)`,
     transition: {
       type: "spring",
       stiffness: 20,
       restDelta: 2,
     },
-  }),
+  },
   closed: {
     display: "none",
     transition: {

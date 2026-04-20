@@ -1,13 +1,12 @@
-import { thirdPartyConfig } from "@lib/const";
+import { thirdPartyConfig as providers } from "@lib/const";
 
 export function ThirdPartyLogin() {
-  const providers = thirdPartyConfig;
   return (
     <>
       {providers.map((provider) => (
         <button
           key={provider.name}
-          className="inline-flex h-8 w-full items-center justify-center gap-2 rounded-full border border-cyan-500 bg-[#131314] p-2 text-sm font-medium text-white hover:bg-[#171718]"
+          className="inline-flex h-8 w-full items-center justify-center gap-2 rounded-full border border-cyan-500 bg-[#131314] p-2 text-sm font-medium text-white transition-colors duration-300 ease-in-out hover:bg-[#171718]"
           onClick={() => {
             window.location.href =
               import.meta.env.VITE_BACKEND_URL + `/auth/login/${provider.name}`;

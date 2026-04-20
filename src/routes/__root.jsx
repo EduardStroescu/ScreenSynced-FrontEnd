@@ -2,12 +2,12 @@ import { ChangeAccountDetailsForm } from "@components/ChangeAccountDetailsForm";
 import { ChangeAvatarForm } from "@components/ChangeAvatarForm";
 import { ChangePasswordForm } from "@components/ChangePasswordForm";
 import { Layout } from "@components/Layout";
-import { LenisWrapper } from "@components/LenisWrapper";
 import { Overlay } from "@components/Overlay";
 import { SearchBarMobile } from "@components/SearchBar";
 import { SignInForm } from "@components/SignInForm";
 import { SignUpForm } from "@components/SignUpForm";
 import { AuthProvider } from "@lib/providers/AuthProvider";
+import { LenisProvider } from "@lib/providers/LenisProvider";
 import { OverlayProvider } from "@lib/providers/OverlayProvider";
 import {
   Outlet,
@@ -35,7 +35,7 @@ function RootComponent() {
   );
 
   return (
-    <LenisWrapper>
+    <LenisProvider>
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
@@ -60,6 +60,6 @@ function RootComponent() {
         </AuthProvider>
       </OverlayProvider>
       <ScrollRestoration />
-    </LenisWrapper>
+    </LenisProvider>
   );
 }

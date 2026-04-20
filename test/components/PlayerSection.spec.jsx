@@ -49,7 +49,7 @@ describe("PlayerSection Component", () => {
       </PlayerSection>,
     );
 
-    const placeholder = screen.getByRole("presentation");
+    const placeholder = screen.getByRole("presentation", { name: "" });
     expect(placeholder).toBeInTheDocument();
     expect(placeholder).toHaveAttribute("alt", "");
     expect(placeholder).toHaveAttribute(

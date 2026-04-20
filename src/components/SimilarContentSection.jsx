@@ -7,8 +7,8 @@ export function SimilarContentSection({ similarContent, mediaType }) {
   if (!similarContent?.length) return;
 
   return (
-    <section className="col-span-6 overflow-hidden rounded-xl border-4 border-[#131E2E] px-2 py-6 sm:px-4">
-      <header className="flex pl-2 text-cyan-500">
+    <section className="col-span-6 flex flex-col gap-4 overflow-hidden rounded-xl border-4 border-[#131E2E] p-4">
+      <header className="ml-1 flex text-cyan-500">
         <h3 className="text-3xl">You may also like:</h3>
       </header>
       <Swiper
@@ -18,7 +18,6 @@ export function SimilarContentSection({ similarContent, mediaType }) {
         }}
         style={{
           "--swiper-navigation-color": "#06b6d4",
-          "--swiper-pagination-color": "#06b6d4",
           "--swiper-navigation-top-offset": "40%",
         }}
         slidesPerView={"auto"}
@@ -26,23 +25,22 @@ export function SimilarContentSection({ similarContent, mediaType }) {
         centeredSlides={false}
         navigation={true}
         modules={[Navigation]}
+        spaceBetween={8}
       >
-        <div className="grid lg:grid-cols-6 lg:grid-rows-1 lg:gap-2 lg:px-4">
-          {similarContent.map((content, index) => {
-            return (
-              <SwiperSlide
-                key={content?.id ?? index}
-                className="w-[8rem] overflow-hidden sm:w-[11rem] lg:w-[15rem]"
-              >
-                <ContentCard
-                  contentType={mediaType}
-                  content={content}
-                  index={index}
-                />
-              </SwiperSlide>
-            );
-          })}
-        </div>
+        {similarContent.map((content, index) => {
+          return (
+            <SwiperSlide
+              key={content?.id ?? index}
+              className="h-full w-[11rem] cursor-grab overflow-hidden active:cursor-grabbing lg:w-[15rem]"
+            >
+              <ContentCard
+                contentType={mediaType}
+                content={content}
+                index={index}
+              />
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </section>
   );

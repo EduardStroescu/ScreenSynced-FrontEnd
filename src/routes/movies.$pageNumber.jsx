@@ -1,23 +1,19 @@
 import { ContentGrid } from "@components/ContentGrid";
 import { FeaturedTitlesCarousel } from "@components/FeaturedTitlesCarousel";
+import { MoviesSkeleton } from "@components/pageSkeletons/MoviesSkeleton";
 import { PaginationButtons } from "@components/PaginationButtons";
 import { Sidebar } from "@components/Sidebar";
-import { CARD_LIMIT } from "@lib/const";
 import { getMoviesPageQueryConfig } from "@lib/queryConfigsForRoutes";
 import { CustomError } from "@lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/movies/$pageNumber")({
-  beforeLoad: ({ params: { pageNumber } }) => {
-    const queryContent = getMoviesPageQueryConfig(pageNumber);
-    const context = pageNumber;
-    return { queryContent, context };
-  },
-  loader: async ({ context: { queryClient, queryContent } }) => {
+  loader: async ({ params: { pageNumber }, context: { queryClient } }) => {
     try {
+      const queryConfig = getMoviesPageQueryConfig(pageNumber);
       const query = await Promise.all([
-        queryClient.ensureQueryData(queryContent.popularMovies),
-        queryClient.ensureQueryData(queryContent.upcomingMovies),
+        queryClient.ensureQueryData(queryConfig.popularMovies),
+        queryClient.ensureQueryData(queryConfig.upcomingMovies),
       ]);
 
       if (!query[0]?.results?.length) throw new Error();
@@ -36,14 +32,14 @@ export const Route = createFileRoute("/movies/$pageNumber")({
     }
   },
   component: MoviesPage,
+  pendingComponent: MoviesSkeleton,
+  pendingMs: 500,
 });
 
 function MoviesPage() {
   const { popularMovies, upcomingMovies } = Route.useLoaderData();
 
-  const context = Route.useRouteContext({
-    select: (context) => context.context,
-  });
+  const pageNumber = Route.useParams({ select: (params) => params.pageNumber });
 
   return (
     <>
@@ -51,14 +47,13 @@ function MoviesPage() {
       <section className="grid grid-cols-4">
         <ContentGrid
           contentType="movie"
-          title="Movies"
+          title="Latest Movies"
           apiData={popularMovies}
-          cardLimit={CARD_LIMIT}
         />
         <Sidebar contentType="movie" upcomingData={upcomingMovies} />
         <PaginationButtons
           contentType="movies"
-          context={context}
+          pageNumber={pageNumber}
           totalPages={500}
         />
       </section>

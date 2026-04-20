@@ -4,22 +4,20 @@ import { PaginationButtons } from "@components/PaginationButtons";
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { useDiscoverQuery } from "@lib/queries";
 import { jaroWinkler } from "string-similarity-alg";
+import { cn } from "@lib/cn";
 
 export const Route = createFileRoute("/discover/$pageNumber")({
-  beforeLoad: ({ params: { pageNumber = 1 } }) => {
-    const context = { pageNumber: pageNumber };
-    return context;
-  },
   component: DiscoverPage,
 });
 
 function DiscoverPage() {
-  const router = useRouter();
-  const { contentType = "movies", genres } = Route.useSearch();
-  const parsedGenres = genres ? genres.split(",") : [];
-  const pageNumber = Route.useRouteContext({
-    select: (context) => context.pageNumber,
+  const pageNumber = Route.useParams({
+    select: (params) => params.pageNumber,
   });
+  const { contentType = "movies", genres } = Route.useSearch();
+  const router = useRouter();
+
+  const parsedGenres = genres ? genres.split(",") : [];
 
   const { data: apiData } = useDiscoverQuery(
     contentType,
@@ -79,11 +77,12 @@ function DiscoverPage() {
             contentType: "movies",
             genres: findEquivalentGenres(parsedGenres, "movies"),
           }}
-          className={`${
+          className={cn(
+            "rounded border-2 px-2 py-1 text-xl transition-colors duration-300 ease-in-out",
             contentType === "movies"
               ? "border-transparent bg-cyan-500"
-              : "border-2 border-cyan-500 hover:bg-cyan-500"
-          } rounded border-2 px-2 py-1 text-xl`}
+              : "border-cyan-500 hover:bg-cyan-500",
+          )}
         >
           Movies
         </Link>
@@ -94,11 +93,12 @@ function DiscoverPage() {
             contentType: "series",
             genres: findEquivalentGenres(parsedGenres, "series"),
           }}
-          className={`${
+          className={cn(
+            "rounded border-2 px-4 py-1 text-xl transition-colors duration-300 ease-in-out",
             contentType === "series"
               ? "border-transparent bg-cyan-500"
-              : "border-cyan-500 hover:bg-cyan-500"
-          } rounded border-2 px-4 py-1 text-xl`}
+              : "border-cyan-500 hover:bg-cyan-500",
+          )}
         >
           Series
         </Link>
@@ -106,26 +106,26 @@ function DiscoverPage() {
           to="/discover/$pageNumber"
           params={{ pageNumber: 1 }}
           search={{ contentType }}
-          className="border-4 border-double border-cyan-500 px-2 py-1 hover:text-red-500"
+          className="border-4 border-double border-cyan-500 px-2 py-1 transition-colors duration-300 ease-in-out hover:text-red-500"
         >
           Clear Filters
         </Link>
       </div>
       <div className="flex flex-row flex-wrap items-center justify-center gap-2 px-4 pt-6">
-        {contentGenres[contentType].map((genre) => {
-          const style = parsedGenres?.includes(genre.name.toLowerCase())
-            ? "bg-cyan-500 rounded-sm"
-            : "hover:border-cyan-500 rounded";
-          return (
-            <button
-              onClick={() => onAddGenre(genre.name.toLowerCase())}
-              key={genre.id}
-              className={`${style} border-2 border-transparent px-2 py-1`}
-            >
-              {genre.name}
-            </button>
-          );
-        })}
+        {contentGenres[contentType].map((genre) => (
+          <button
+            onClick={() => onAddGenre(genre.name.toLowerCase())}
+            key={genre.id}
+            className={cn(
+              "rounded border-2 border-transparent px-2 py-1 transition-colors duration-300 ease-in-out",
+              parsedGenres?.includes(genre.name.toLowerCase())
+                ? "bg-cyan-500"
+                : "hover:border-cyan-500",
+            )}
+          >
+            {genre.name}
+          </button>
+        ))}
       </div>
       <ContentGrid
         contentType={contentType === "movies" ? "movie" : "tv"}
@@ -134,7 +134,7 @@ function DiscoverPage() {
       {!!apiData?.results?.length && apiData?.total_pages > 1 && (
         <PaginationButtons
           contentType={"discover"}
-          context={pageNumber}
+          pageNumber={pageNumber}
           search={{ contentType, genres: parsedGenres.join(",") }}
           totalPages={500}
         />

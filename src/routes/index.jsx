@@ -1,23 +1,23 @@
 import { ContentGrid } from "@components/ContentGrid";
 import { FeaturedTitlesCarousel } from "@components/FeaturedTitlesCarousel";
+import { IndexSkeleton } from "@components/pageSkeletons/IndexSkeleton";
 import { RecommendedGrid } from "@components/RecommendedGrid";
 import { Sidebar } from "@components/Sidebar";
-import { CARD_LIMIT } from "@lib/const";
 import { getIndexQueryConfig } from "@lib/queryConfigsForRoutes";
 import { CustomError } from "@lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: getIndexQueryConfig,
-  loader: async ({ context: { queryClient, ...queryContent } }) => {
+  loader: async ({ context: { queryClient } }) => {
     try {
+      const queryConfig = getIndexQueryConfig();
       const query = await Promise.all([
-        queryClient.ensureQueryData(queryContent.popularMovies),
-        queryClient.ensureQueryData(queryContent.popularSeries),
-        queryClient.ensureQueryData(queryContent.recommendedMovies),
-        queryClient.ensureQueryData(queryContent.recommendedSeries),
-        queryClient.ensureQueryData(queryContent.upcomingMovies),
-        queryClient.ensureQueryData(queryContent.upcomingSeries),
+        queryClient.ensureQueryData(queryConfig.popularMovies),
+        queryClient.ensureQueryData(queryConfig.popularSeries),
+        queryClient.ensureQueryData(queryConfig.recommendedMovies),
+        queryClient.ensureQueryData(queryConfig.recommendedSeries),
+        queryClient.ensureQueryData(queryConfig.upcomingMovies),
+        queryClient.ensureQueryData(queryConfig.upcomingSeries),
       ]);
 
       return {
@@ -53,6 +53,8 @@ export const Route = createFileRoute("/")({
     }
   },
   component: HomePage,
+  pendingComponent: IndexSkeleton,
+  pendingMs: 500,
 });
 
 function HomePage() {
@@ -71,19 +73,17 @@ function HomePage() {
         <ContentGrid
           contentType="movie"
           seeMore={true}
-          title="Movies"
+          title="Latest Movies"
           queryType="movies"
           apiData={apiData.popular}
-          cardLimit={CARD_LIMIT}
         />
         <Sidebar contentType="tv" upcomingData={apiData.upcoming} />
         <ContentGrid
           contentType="tv"
           seeMore={true}
           queryType="tv"
-          title="Series"
+          title="Latest Series"
           apiData={apiData.popular}
-          cardLimit={CARD_LIMIT}
         />
       </section>
     </>

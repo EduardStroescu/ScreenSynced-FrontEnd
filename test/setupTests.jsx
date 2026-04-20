@@ -2,6 +2,7 @@
 import * as matchers from "@testing-library/jest-dom/matchers";
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
+import { forwardRef, useImperativeHandle } from "react";
 import { afterEach, beforeEach, expect, vi } from "vitest";
 
 expect.extend(matchers);
@@ -83,6 +84,13 @@ beforeEach(() => {
     useLocation: vi.fn(() => ({
       search: "",
     })),
+    useRouterState: vi.fn(({ select }) =>
+      select({
+        location: {
+          state: { key: "test-key" },
+        },
+      }),
+    ),
     // eslint-disable-next-line no-unused-vars
     Link: ({ to, params = {}, preloadDelay, search, children, ...props }) => {
       let href = to;
@@ -105,6 +113,19 @@ beforeEach(() => {
   vi.mock("react-toastify", () => ({
     toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },
   }));
+  vi.mock("@studio-freight/react-lenis", () => {
+    const ReactLenis = forwardRef(({ children }, ref) => {
+      useImperativeHandle(ref, () => ({
+        stop: vi.fn(),
+        start: vi.fn(),
+      }));
+
+      return children;
+    });
+    ReactLenis.displayName = "ReactLenis";
+
+    return { ReactLenis };
+  });
 
   // eslint-disable-next-line no-undef
   global.matchMedia = (query) => ({

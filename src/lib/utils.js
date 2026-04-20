@@ -16,21 +16,32 @@ export function getYoutubeLink(videoId) {
   return null;
 }
 
-export function getContentImageUrl(content, posterSize, backdropSize) {
-  if (content.poster_path != null) {
-    return imagePrefixes.poster[posterSize] + content.poster_path;
+export function getContentImageUrl(
+  content,
+  posterSize,
+  backdropSize,
+  prefers = "poster",
+) {
+  const order =
+    prefers === "backdrop" ? ["backdrop", "poster"] : ["poster", "backdrop"];
+
+  for (const type of order) {
+    if (type === "poster" && content.poster_path) {
+      return imagePrefixes.poster[posterSize] + content.poster_path;
+    }
+
+    if (type === "backdrop" && content.backdrop_path) {
+      return imagePrefixes.backdrop[backdropSize] + content.backdrop_path;
+    }
   }
-  if (content.backdrop_path != null) {
-    return imagePrefixes.backdrop[backdropSize] + content.backdrop_path;
-  }
+
   return placeholderImage;
 }
 
 export function getCastImageUrl(director) {
-  if (director.profile_path != null) {
+  if (director.profile_path) {
     return imagePrefixes.poster.small + director.profile_path;
   }
-  return placeholderImage;
 }
 
 export function getYoutubeLinks(videoIds) {

@@ -48,7 +48,8 @@ describe("SeasonsSection Component", () => {
       wrapper: TestProviders,
     });
     const seasons = screen.getAllByText(/season \d+/i);
-    // Number of seasons #seasonNumber +1 for the header
-    expect(seasons).toHaveLength(3);
+    // The number of seasons rendered is 1 because the dropdown is closed by default in state so the buttons are not rendered.
+    expect(seasons).toHaveLength(1);
+    expect(seasons[0]).toHaveTextContent("Season 1");
   });
 });

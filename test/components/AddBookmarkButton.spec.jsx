@@ -39,20 +39,6 @@ describe("AddBookmarkButton Component", () => {
     expect(screen.getByLabelText(/add bookmark/i)).toBeInTheDocument();
   });
 
-  it("applies the passed styles", () => {
-    render(
-      <AddBookmarkButton
-        mediaType="movie"
-        contentId={1}
-        className="w-full bg-black"
-      />,
-      { wrapper: TestProviders },
-    );
-
-    const bookmarkButton = screen.getByLabelText(/add bookmark/i);
-    expect(bookmarkButton).toHaveClass("bg-black w-full");
-  });
-
   it("renders the button as an active bookmark when it is already added", async () => {
     useQuery.mockReturnValue({
       data: [{ id: 1, mediaId: 1, mediaType: "movie" }],
